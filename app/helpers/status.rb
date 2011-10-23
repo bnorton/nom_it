@@ -14,6 +14,14 @@ module Status
       message -1, "you are not authorized to view that user"
     end
     
+    def user_not_found
+      message -1, "the user you were looking for was not found"
+    end
+    
+    def couldnt_follow
+      message -1, "something went wrong and the specificed user couldn't be followed"
+    end
+    
     def insufficient_arguments(options={})
       msg = options[:message] || "insufficient arguments"
       message -1, msg
