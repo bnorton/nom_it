@@ -7,6 +7,9 @@ class UsersController < ApplicationController
   before_filter :user_params,       :only => [:me, :login, :register]
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :required_params,   :only => [:login, :register]
+  before_filter :search_params,     :only => [:search]
+  
+  before_filter :authentication_required, :only => [:me]
   
   def me
     me = User.me(@token)
@@ -14,11 +17,8 @@ class UsersController < ApplicationController
   end
   
   def login
-    response = if User.login(@email, @password) && detail = User.detail(@email)
-      Status.OK(detail) # Status.OK(detail,{:result_name => :users})
-    else
-      Status.user_not_authorized
-    end
+    condition = User.login(@email, @password)
+    response  = ok_or_not(condition)
     respond_with response
   end
   
@@ -32,26 +32,34 @@ class UsersController < ApplicationController
         User.register(@email, @password, @vname)
       end
       
-      response = if registration.nil?
-        Status.user_not_authorized
-      else
-        # Status.user_detail(User.detail(@email))
-        detail = User.detail(@email)
-        Status.OK(detail)
-      end
+    condition = !registration.blank?
+    response  = ok_or_not(condition)
+    respond_with response
+  end
+  
+  def search
+    results   = User.search_by_all(@query)
+    condition = !results.try(:empty?) && !results.blank?
+    response  = ok_or_not(condition,{:results=>results,:not_found=>true})
     respond_with response
   end
   
   private
   
+  def ok_or_not(condition,options={})
+    if condition && detail = options[:results] || User.detail(@email)
+      Status.OK(detail)
+    elsif options[:not_found]
+      Status.user_not_found
+    else
+      Status.user_not_authorized
+    end
+  end
+  
   def required_params
     if @email.blank? || @password.blank?
       respond_with Status.user_not_authorized
     end
-  end
-  
-  def authenticate_user
-    
   end
   
   def user_params
@@ -64,11 +72,22 @@ class UsersController < ApplicationController
   
   def auth_params
     @password = params[:password]
-    @oauth_token  = params[:token]
+    @token = @oauth_token = params[:token]
     @registration_type = params[:regtype]
   end
-    
-  def validate_token
-    
+  
+  def search_params
+    @query = params[:query] || params[:q] || params[:name] || params[:email]
+    unless @query && !@query.blank?
+      respond_with User.user_not_authorized
+    end
   end
+  
+  def validate_token
+    unless @token && !@token.blank? && User.token_match?(@id,@token)
+      respond_with User.user_not_authorized
+    end
+  end
+  
+  
 end

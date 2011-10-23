@@ -7,6 +7,7 @@ class GeolocationsController < ApplicationController
   before_filter :lat_lng_dist, :only => [:here, :search]
   before_filter :primary,      :only => [:search]
   before_filter :secondary,    :only => [:search]
+  before_filter :authentication_required, :only => []
   
   def here
     @search = Geolocation.search_by_geolocation(@lat,@lng,@dist)
@@ -43,6 +44,10 @@ class GeolocationsController < ApplicationController
   
   def secondary
     @secondary = params[:secondary]
+  end
+  
+  def authentication_required
+    
   end
   
 end

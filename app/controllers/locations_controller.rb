@@ -3,6 +3,7 @@ class LocationsController < ApplicationController
   respond_to :json
   
   before_filter :validate_ids
+  before_filter :authentication_required, :only => [:edit]
   
   def detail
     response = if locations = Location.detail_for_ids(@locations)
@@ -11,6 +12,10 @@ class LocationsController < ApplicationController
       Status.no_locations_found
     end
     respond_with response
+  end
+  
+  def edit
+    
   end
   
   def validate_ids
@@ -26,6 +31,10 @@ class LocationsController < ApplicationController
       end
     end
     respond_with Status.location_not_properly_formatted({:plural=>true}) if flag
+  end
+  
+  def authentication_required
+    
   end
   
 end
