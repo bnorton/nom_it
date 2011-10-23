@@ -2,15 +2,21 @@ NomIt::Application.routes.draw do
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
-  get "/r/:hash" => "details#detail"
+  get "/r/:hash"            => "details#detail"
   
-  get "/user/me" => "users#me"
+  get "/user/me"            => "users#me"              ### POST
   
-  get "/user/login"       => "users#login"
-  get "/user/register"    => "users#register"
+  get "/user/login"         => "users#login"           ### POST
+  get "/user/register"      => "users#register"        ### POST
   
-  get "/locations/search" => "geolocations#search"
-  get "/locations/here"   => "geolocations#here"
+  get "/users/search"       => "users#search"
+  
+  get "/user/follow"        => "followers#follow"       ### POST
+  get "/user/followers/me"  => "followers#follows_me"   ### POST
+  get "/user/followers/:id" => "followers#followers"    ### POST
+  
+  get "/locations/search"   => "geolocations#search"
+  get "/locations/here"     => "geolocations#here"
   
   root :to => "users#index"
 
