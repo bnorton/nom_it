@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111022222007) do
+ActiveRecord::Schema.define(:version => 20111023222337) do
 
   create_table "checkins", :force => true do |t|
     t.datetime "created_at"
@@ -31,18 +31,18 @@ ActiveRecord::Schema.define(:version => 20111022222007) do
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "from",                          :null => false
-    t.string   "from_name"
+    t.integer  "user",                             :null => false
+    t.string   "user_name"
     t.string   "from_city"
-    t.integer  "to",                            :null => false
-    t.string   "to_name"
-    t.boolean  "approved",   :default => true,  :null => false
-    t.boolean  "undirected", :default => false, :null => false
+    t.integer  "follower",                         :null => false
+    t.string   "follower_name"
+    t.boolean  "approved",      :default => true,  :null => false
+    t.boolean  "undirected",    :default => false, :null => false
     t.binary   "schemaless"
   end
 
-  add_index "followers", ["from", "to"], :name => "followers_from_to", :unique => true
-  add_index "followers", ["to", "from"], :name => "followers_to_from", :unique => true
+  add_index "followers", ["follower", "user"], :name => "followers_to_from", :unique => true
+  add_index "followers", ["user", "follower"], :name => "followers_from_to", :unique => true
 
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"
@@ -261,12 +261,12 @@ ActiveRecord::Schema.define(:version => 20111022222007) do
     t.string   "state"
     t.string   "zip"
     t.string   "country"
-    t.binary   "password",       :limit => 255,  :null => false
-    t.string   "salt",                           :null => false
+    t.string   "password",                       :default => ""
+    t.string   "salt"
     t.string   "session_id"
     t.binary   "newpassword",    :limit => 255
     t.datetime "newpass_time"
-    t.string   "email",                          :null => false
+    t.string   "email"
     t.string   "phone"
     t.string   "screen_name"
     t.text     "description"
@@ -282,6 +282,7 @@ ActiveRecord::Schema.define(:version => 20111022222007) do
     t.string   "oauth_secret"
     t.binary   "facebook_hash"
     t.binary   "twitter_hash"
+    t.boolean  "has_joined",                     :default => true
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true
