@@ -58,3 +58,8 @@ end
   #   t.boolean  "is_new",                    :default => false, :null => false
   #   t.string   "code"
   #   t.binary   "schemaless"
+  #
+  #
+  
+  
+  

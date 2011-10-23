@@ -1,31 +1,51 @@
 
 class User < ActiveRecord::Base
   
+  scope :public_fields, lambda {
+    select(User.fields)
+  }
+  scope :private_fields, lambda {
+    select(User.fields({:private => true}))
+  }
   scope :me, lambda {|token|
-    User.where(["session_id=?",token])
+    private_fields.where(["session_id=?",token])
   }
   scope :find_by_id_or_email, lambda {|id|
-    User.where(["id=? or email=?", id, id])
+    public_fields.where(["id=? or email=?", id, id])
+  }
+  scope :find_by_any_means_necessary, lambda {|id|
+    items = [id,id,id,id,id]
+    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
+  }
+  scope :find_by_not_yet_joined, lambda {|eamil|
+    public_fields.where(["email=? and has_joined=0", email])
   }
   scope :detail, lambda {|id|
-    User.find_by_id_or_email(id).select(User.fields)
-    # User.find(*User.fields).
+    find_by_id_or_email(id).select(User.fields)
   }
   scope :find_by_name, lambda {|name|
-    User.select(User.fields).where(["name like ?", "%#{name}%"])
+    public_fields.where(["name like ?", "%#{name}%"])
   }
   scope :find_by_username, lambda {|username|
-    User.select(User.fields).where(["screen_name=?", username])
+    public_fields.where(["screen_name=?", username])
+  }
+  scope :search_by_all, lambda {|query|
+    items = ["%#{query}%",query,query]
+    public_fields.where(["name like ? or email=? or screen_name=?", *items])
   }
   
-  def self.authentic_request?(id, token)
-    true
+  def self.token_match?(id, token)
+    begin
+      id == me(token).id
+    rescue Exception
+      false
+    end
   end
   
   def self.login(email,vname='',password)
     unless email.blank?
       user = User.find_by_email(email)
-      if user && user[:password] == Digest::SHA2.hexdigest(user[:salt] + password)
+      if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
         user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
         user.last_seen  = Time.now
         user.save!
@@ -34,19 +54,20 @@ class User < ActiveRecord::Base
   end
   
   def self.register(email, pass, username='')
-    # return false unless User.find_by_email(email).blank?
-    new_user = User.new do |user|
+    new_user = new_or_hasnt_joined(email)
+    nuser = new_user do |user|
       user.email    = email
       user.salt     = rand(1<<32).to_s
       user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
       user.last_seen= Time.now
+      user.va
       user.screen_name=username
     end
-    new_user.save!
+    nuser.save!
   end
   
-  def self.register_with_facebook(fbHash, username='')
-    user = User.new
+  def self.register_with_facebook(fbHash,username='')
+    user = new_or_hasnt_joined(fbHash['email'])
     user.screen_name = username
     user.facebook = fbHash['id']
     user.name     = fbHash['name']
@@ -59,8 +80,8 @@ class User < ActiveRecord::Base
     user.save!
   end
   
-  def self.register_with_twitter(twHash,username='', email='')
-    user = User.new
+  def self.register_with_twitter(twHash,username='',email='')
+    user = new_or_hasnt_joined(twHash['email'])
     user.screen_name = username
     user.email    = email
     user.twitter  = twHash['id']
@@ -71,6 +92,27 @@ class User < ActiveRecord::Base
     user.city, user.state = parse_location(twHash['location'])
     user.token_expires = Time.now + 14.days
     user.save!
+  end
+    
+  def self.new_or_hasnt_joined(email)
+    User.find_by_not_yet_joined(email) || User.new
+  end
+  
+  def self.create_should_join(items)
+    new_user = User.new do |user|
+      user.email        = items[:email]
+      user.twitter      = items[:twid]
+      user.facebook     = items[:fbid]
+      user.token        = email_token
+      user.token_expires= email_token_expires
+      ## - warning   #####################################################
+      ## - make sure that we know this is not a valid user as they      ##
+      ##    are here because someone followed them via some identifier  ##
+      user.has_joined = false                                           ##
+      ## end warning #####################################################
+    end
+    puts "NEW USER #{new_user.inspect}"
+    new_user.save!
   end
   
   def self.parse_location(location)
@@ -87,6 +129,10 @@ class User < ActiveRecord::Base
   
   def self.email_token(email)
     Digest::SHA2.hexdigest(email.to_s + Time.now.to_s, 256)
+  end
+  
+  def self.email_token_expires
+    Time.now + 14.days
   end
   
   def self.fields(opt=:public)
@@ -134,6 +180,7 @@ end
   #   t.integer  "follower_count"
   #   t.string   "oauth_token"
   #   t.string   "oauth_secret"
+  #   t.boolean  "has_joined"     :default => true
   
   # Fields from the facebook hash that is sent to the facebook registration outlet  
   #   {
@@ -268,3 +315,5 @@ end
 #     }
 # 
 # ]
+#
+#

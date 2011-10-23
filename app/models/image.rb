@@ -1,6 +1,6 @@
 class Image < ActiveRecord::Base
   
-  COMPACT = [:link,:created_at,:description]
+  COMPACT = "link,created_at,description"
   
   scope :for_location, lambda {|id|
     Image.select(COMPACT).valid_only.where(["location=?",id])
@@ -25,3 +25,6 @@ end
   #   t.boolean  "is_valid",    :default => false, :null => false
   #   t.binary   "schemaless"
   # end
+  #
+  #
+  

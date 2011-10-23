@@ -64,3 +64,16 @@ class Geolocation < ActiveRecord::Base
   end
   
 end
+
+
+  # The schema for the geolocations model
+  # create_table "geolocations", :force => true do |t|
+  # t.datetime "created_at"
+  # t.datetime "updated_at"
+  # t.integer  "location",                    :null => false
+  # t.float    "lat",        :default => 0.0
+  # t.float    "lng",        :default => 0.0
+  #
+  #
+  
+  
