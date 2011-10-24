@@ -15,13 +15,23 @@ NomIt::Application.routes.draw do
   get "/follow/create"      => "followers#create"         ### POST
   get "/follow/destroy"     => "followers#destroy"        ### POST
   
-  get "/followers"          => "followers#followers"
-  get "/follows"            => "followers#who_follow_id"
+  get "/followers"          => "followers#who_follows_id"
+  get "/follows"            => "followers#followers"
+  
+  get "/user/:id/followers" => "followers#who_follows_id"
+  get "/user/:id/follows"   => "followers#followers"
   
   get "/locations/search"   => "geolocations#search"
   get "/locations/here"     => "geolocations#here"
   
-  root :to => "users#index"
+  get "/recommendation/create"        => "recommendations#create"    ### POST
+  get "/recommendation/destroy"       => "recommendations#destroy"   ### POST
+  get "/recommendation/update"        => "recommendations#update"   ### POST
+  
+  get "/user/:id/recommendations"     => "recommendations#user"
+  get "/location/:id/recommendations" => "recommendations#location"
+  
+  root :to => "detail#index"
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'

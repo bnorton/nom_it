@@ -4,10 +4,10 @@ class FollowersController < ApplicationController
   
   respond_to :json
   
-  before_filter :parse_params,            :only => [:create,:destroy,:followers,:who_follow_id]
-  before_filter :check_params,            :only => [:create,:destroy,:followers,:who_follow_id]
+  before_filter :parse_params,            :only => [:create,:destroy,:followers,:who_follows_id]
+  before_filter :check_params,            :only => [:create,:destroy,:followers,:who_follows_id]
   before_filter :authentication_required, :only => [:create,:destroy]
-  before_filter :validate_ids,            :only => [:followers,:who_follow_id]
+  before_filter :validate_ids,            :only => [:followers,:who_follows_id]
   
   def create
     follow_params
@@ -34,7 +34,8 @@ class FollowersController < ApplicationController
   end
   
   # ids of the people who follow some `id`
-  def who_follow_id
+  def who_follows_id
+    puts "BITCH id #{@id}"
     ids = Follower.follows_id_ids(@id)
     respond_with response_from_ids(ids)
   end
@@ -60,7 +61,7 @@ class FollowersController < ApplicationController
 
   
   def parse_params
-    @id    = params[:id].try(:to_s)
+    @id    = params[:id]
     @new   = params[:follower] || params[:other]
     @email = params[:email]
     @fbid  = params[:fbid]

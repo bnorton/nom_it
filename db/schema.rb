@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111023230658) do
+ActiveRecord::Schema.define(:version => 20111024150946) do
 
   create_table "checkins", :force => true do |t|
     t.datetime "created_at"
@@ -117,46 +117,24 @@ ActiveRecord::Schema.define(:version => 20111023230658) do
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "uid",                              :null => false
+    t.integer  "user",                             :null => false
     t.string   "token"
     t.integer  "location",                         :null => false
     t.string   "location_name"
     t.string   "location_city"
     t.string   "title"
     t.text     "text"
-    t.boolean  "to_followers",  :default => true,  :null => false
-    t.boolean  "facebook",      :default => false, :null => false
-    t.boolean  "twitter",       :default => false, :null => false
+    t.boolean  "facebook",      :default => false
+    t.boolean  "twitter",       :default => false
     t.float    "lat"
-    t.float    "lon"
-    t.boolean  "new",           :default => true,  :null => false
+    t.float    "lng"
+    t.boolean  "new",           :default => true
     t.binary   "schemaless"
-    t.boolean  "is_valid",      :default => true,  :null => false
+    t.boolean  "is_valid",      :default => true
   end
 
   add_index "recommendations", ["location", "new"], :name => "recommendations_location_new"
-  add_index "recommendations", ["uid", "new"], :name => "recommendations_uid_new"
-
-  create_table "recommends", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "from"
-    t.string   "from_name"
-    t.integer  "to"
-    t.string   "to_name"
-    t.integer  "location",                        :null => false
-    t.string   "location_name"
-    t.string   "location_city"
-    t.string   "title"
-    t.string   "text"
-    t.float    "lat",           :default => 0.0
-    t.float    "long",          :default => 0.0
-    t.binary   "schemaless"
-    t.boolean  "is_valid",      :default => true, :null => false
-  end
-
-  add_index "recommends", ["from", "to"], :name => "recommendations_from_to"
-  add_index "recommends", ["to", "from"], :name => "recommendations_to_from"
+  add_index "recommendations", ["user", "new"], :name => "recommendations_uid_new"
 
   create_table "revisions", :force => true do |t|
     t.datetime "created_at"

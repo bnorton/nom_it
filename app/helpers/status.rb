@@ -26,6 +26,11 @@ module Status
       message -1, "it appears that user dont { have any followers, follow anyone }"
     end
     
+    def recommendation_not(options={})
+      word = options[:word] || "made"
+      message -1, "The recommendation was not #{word}"
+    end
+    
     def insufficient_arguments(options={})
       msg = options[:message] || "insufficient or malformed arguments"
       message -1, msg
