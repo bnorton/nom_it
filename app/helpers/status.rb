@@ -18,8 +18,12 @@ module Status
       message -1, "the user you were looking for was not found"
     end
     
-    def couldnt_follow
-      message -1, "The specificed user couldn't be followed, Make sure to pass an `id`, `email`, `fbid`, or `twid`"
+    def couldnt_follow_or_unfollow
+      message -1, "The specificed user couldn't be { followed, unfollowed }"
+    end
+    
+    def no_followers
+      message -1, "it appears that user dont { have any followers, follow anyone }"
     end
     
     def insufficient_arguments(options={})

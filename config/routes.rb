@@ -4,17 +4,19 @@ NomIt::Application.routes.draw do
 
   get "/r/:hash"            => "details#detail"
   
-  get "/user/me"            => "users#me"              ### POST
+  get "/user/me"            => "users#me"                 ### POST
   
-  get "/user/login"         => "users#login"           ### POST
-  get "/user/register"      => "users#register"        ### POST
+  get "/user/login"         => "users#login"              ### POST
+  get "/user/register"      => "users#register"           ### POST
   
   get "/users/search"       => "users#search"
   get "/users/detail"       => "users#detail"
   
-  get "/user/:id/follow"    => "followers#follow"       ### POST
-  get "/user/me/followers/" => "followers#follows_me"   ### POST
-  get "/user/:id/followers/"=> "followers#followers"    ### POST
+  get "/follow/create"      => "followers#create"         ### POST
+  get "/follow/destroy"     => "followers#destroy"        ### POST
+  
+  get "/followers"          => "followers#followers"
+  get "/follows"            => "followers#who_follow_id"
   
   get "/locations/search"   => "geolocations#search"
   get "/locations/here"     => "geolocations#here"

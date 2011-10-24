@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     find_by_id_or_email(id)
   }
   scope :detail_for_ids, lambda {|ids|
-    public_fields.where(["id in (?)", ids])
+    public_fields.where(["id in (?)", ids.split(',')])
   }
   scope :find_by_name, lambda {|name|
     public_fields.where(["name like ?", "%#{name}%"]).has_joined

@@ -1,18 +1,36 @@
 class Follower < ActiveRecord::Base
   
-  IDS = "follower"
-  SINGLE_TABLE = "follower as id,follower_name as name,user_city as city,undirected"
+  IFOLLOW      = "follower"
+  FOLLOWS_ME   = "user"
+  SINGLE_TABLE = "follower,follower_name,user,user_name,user_city,undirected"
   
-  scope :ids_only, lambda {
-    select(IDS) }
+  ##  follower_3
+  ##      ^                       follower_3 is followed by me
+  ##     |                        follower_2 is undirected to me
+  ##   ----  <---> follower_2     follower_1 is ALSO undirected to me
+  ##  | me | <---> follower_1
+  ##   ----
+  ##
+  scope :iids, lambda {
+    select(IFOLLOW) }
+  scope :fids, lambda {
+    select(FOLLOWS_ME) }
   scope :info, lambda {
     select(SINGLE_TABLE) }
-  scope :followers, lambda {|from|
-    where(["user=?",from]) }
-  scope :followers_ids, lambda {|from|
-    ids_only.followers(from) }
-  scope :my_followers, lambda {|me|
-    info.followers(me) }
+  
+  scope :followers__, lambda {|me|
+    where(["user in (?)",me.split(',')]) }
+  scope :followers, lambda {|me|
+    info.followers__(me) }
+  scope :followers_ids, lambda {|me|
+    iids.followers__(me) }
+  
+  scope :follows_id__, lambda {|id|
+    where(["follower in (?)",id.split(',')]) }
+  scope :follows_id, lambda {|id|
+    info.follows_id__(id) }
+  scope :follows_id_ids, lambda {|id|
+    fids.follows_id__(id) }
   
   def self.find_or_create(id,their_identifier,items)
     other = User.find_by_any_means_necessary(their_identifier)

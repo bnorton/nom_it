@@ -9,7 +9,7 @@ class Location < ActiveRecord::Base
     detail_for_ids([id])
   }
   scope :detail_for_ids, lambda {|ids| 
-    compact.where(["id in (?)", ids])
+    compact.where(["id in (?)", ids.split(',')])
   }
   scope :find_by_name, lambda {|name|
     compact.where(["name like ?", "%#{name}%"])
