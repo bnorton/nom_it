@@ -5,33 +5,42 @@ class User < ActiveRecord::Base
     select(User.fields)
   }
   scope :private_fields, lambda {
-    select(User.fields({:private => true}))
+    select(User.fields(:private))
+  }
+  scope :private_id, lambda {|id|
+    private_fields.where(["id=?",id])
   }
   scope :me, lambda {|token|
     private_fields.where(["session_id=?",token])
   }
+  scope :has_joined, lambda {
+    where(["has_joined=1"])
+  }
   scope :find_by_id_or_email, lambda {|id|
-    public_fields.where(["id=? or email=?", id, id])
+    public_fields.where(["id=? or email=?", id, id]).has_joined
   }
   scope :find_by_any_means_necessary, lambda {|id|
     items = [id,id,id,id,id]
-    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
+    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items]).has_joined
   }
   scope :find_by_not_yet_joined, lambda {|eamil|
     public_fields.where(["email=? and has_joined=0", email])
   }
   scope :detail, lambda {|id|
-    find_by_id_or_email(id).select(User.fields)
+    find_by_id_or_email(id)
+  }
+  scope :detail_for_ids, lambda {|ids|
+    public_fields.where(["id in (?)", ids])
   }
   scope :find_by_name, lambda {|name|
-    public_fields.where(["name like ?", "%#{name}%"])
+    public_fields.where(["name like ?", "%#{name}%"]).has_joined
   }
   scope :find_by_username, lambda {|username|
-    public_fields.where(["screen_name=?", username])
+    public_fields.where(["screen_name=?", username]).has_joined
   }
   scope :search_by_all, lambda {|query|
     items = ["%#{query}%",query,query]
-    public_fields.where(["name like ? or email=? or screen_name=?", *items])
+    public_fields.where(["name like ? or email=? or screen_name=?", *items]).has_joined
   }
   
   def self.token_match?(id, token)
@@ -112,7 +121,9 @@ class User < ActiveRecord::Base
       ## end warning #####################################################
     end
     puts "NEW USER #{new_user.inspect}"
-    new_user.save!
+    if new_user.save!
+      new_user
+    end
   end
   
   def self.parse_location(location)
@@ -127,7 +138,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.email_token(email)
+  def self.email_token(email=rand(1<<16).to_s)
     Digest::SHA2.hexdigest(email.to_s + Time.now.to_s, 256)
   end
   
@@ -136,7 +147,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "name,last_seen,city,screen_name,follower_count,description,created_at"
+    fields = "id,name,last_seen,city,screen_name,follower_count,description,created_at"
     if opt == :private
       fields << ",street,country,email,phone,facebook,twitter"
     end
@@ -161,12 +172,12 @@ end
   #   t.string   "state"
   #   t.string   "zip"
   #   t.string   "country"
-  #   t.binary   "password",       :limit => 255,  :null => false
-  #   t.string   "salt",                           :null => false
+  #   t.string   "password",                       :default => ""
+  #   t.string   "salt"
   #   t.string   "session_id"
   #   t.binary   "newpassword",    :limit => 255
   #   t.datetime "newpass_time"
-  #   t.string   "email",                          :null => false
+  #   t.string   "email"
   #   t.string   "phone"
   #   t.string   "screen_name"
   #   t.text     "description"
@@ -180,62 +191,10 @@ end
   #   t.integer  "follower_count"
   #   t.string   "oauth_token"
   #   t.string   "oauth_secret"
-  #   t.boolean  "has_joined"     :default => true
-  
-  # Fields from the facebook hash that is sent to the facebook registration outlet  
-  #   {
-  #    "id": "679816146",
-  #    "name": "Brian Norton",
-  #    "first_name": "Brian",
-  #    "last_name": "Norton",
-  #    "link": "http://www.facebook.com/bnort",
-  #    "username": "bnort",
-  #    "birthday": "08/27/1987",
-  #    "location": {
-  #       "id": "114952118516947",
-  #       "name": "San Francisco, California"
-  #    },
-  #    "education": [
-  #       {
-  #          "school": {
-  #             "id": "10111634660",
-  #             "name": "UC Berkeley"
-  #          },
-  #          "year": {
-  #             "id": "144044875610606",
-  #             "name": "2011"
-  #          },
-  #          "concentration": [
-  #             {
-  #                "id": "104076956295773",
-  #                "name": "Computer Science"
-  #             }
-  #          ],
-  #          "type": "College"
-  #       },
-  #       {
-  #          "school": {
-  #             "id": "110242592338268",
-  #             "name": "University of California, Berkeley"
-  #          },
-  #          "type": "College",
-  #          "with": [
-  #             {
-  #                "id": "1581904554",
-  #                "name": "Horia Airoh"
-  #             }
-  #          ]
-  #       }
-  #    ],
-  #    "gender": "male",
-  #    "relationship_status": "In a relationship",
-  #    "website": "about.me/nort\r\ntwitter.com/nort",
-  #    "timezone": -7,
-  #    "locale": "en_US",
-  #    "verified": true,
-  #    "updated_time": "2011-10-16T05:54:20+0000"
-  # }
-  
+  #   t.binary   "facebook_hash"
+  #   t.binary   "twitter_hash"
+  #   t.boolean  "has_joined",                     :default => true
+  # end  
   # what is returned from a twitter session
 #   [
 # 
