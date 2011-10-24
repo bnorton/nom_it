@@ -10,10 +10,11 @@ NomIt::Application.routes.draw do
   get "/user/register"      => "users#register"        ### POST
   
   get "/users/search"       => "users#search"
+  get "/users/detail"       => "users#detail"
   
-  get "/user/follow"        => "followers#follow"       ### POST
-  get "/user/followers/me"  => "followers#follows_me"   ### POST
-  get "/user/followers/:id" => "followers#followers"    ### POST
+  get "/user/:id/follow"    => "followers#follow"       ### POST
+  get "/user/me/followers/" => "followers#follows_me"   ### POST
+  get "/user/:id/followers/"=> "followers#followers"    ### POST
   
   get "/locations/search"   => "geolocations#search"
   get "/locations/here"     => "geolocations#here"

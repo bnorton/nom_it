@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111023222337) do
+ActiveRecord::Schema.define(:version => 20111023230658) do
 
   create_table "checkins", :force => true do |t|
     t.datetime "created_at"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20111023222337) do
     t.datetime "updated_at"
     t.integer  "user",                             :null => false
     t.string   "user_name"
-    t.string   "from_city"
+    t.string   "user_city"
     t.integer  "follower",                         :null => false
     t.string   "follower_name"
     t.boolean  "approved",      :default => true,  :null => false
