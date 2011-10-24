@@ -1,13 +1,16 @@
 
 class UsersController < ApplicationController
   
+  NUMBER_ARR = /^([0-9]+)(,[0-9]+)*$/  
+  
   respond_to :json
   
-  before_filter :authenticate_user, :only => [:login]
   before_filter :user_params,       :only => [:me, :login, :register]
   before_filter :auth_params,       :only => [:me, :login, :register]
-  before_filter :required_params,   :only => [:login, :register]
+  before_filter :force_email_passwd,:only => [:login]
   before_filter :search_params,     :only => [:search]
+  before_filter :validate_ids,      :only => [:detail]
+  before_filter :validate_token,    :only => []
   
   before_filter :authentication_required, :only => [:me]
   
@@ -37,9 +40,16 @@ class UsersController < ApplicationController
     respond_with response
   end
   
+  def detail
+    results   = User.detail_for_ids(@ids)
+    condition = !results.blank?
+    response  = ok_or_not(condition,{:results=>results})
+    respond_with response
+  end
+  
   def search
     results   = User.search_by_all(@query)
-    condition = !results.try(:empty?) && !results.blank?
+    condition = !results.blank?
     response  = ok_or_not(condition,{:results=>results,:not_found=>true})
     respond_with response
   end
@@ -56,7 +66,7 @@ class UsersController < ApplicationController
     end
   end
   
-  def required_params
+  def force_email_passwd
     if @email.blank? || @password.blank?
       respond_with Status.user_not_authorized
     end
@@ -78,14 +88,21 @@ class UsersController < ApplicationController
   
   def search_params
     @query = params[:query] || params[:q] || params[:name] || params[:email]
-    unless @query && !@query.blank?
-      respond_with User.user_not_authorized
+    if !@query.blank?
+      respond_with Status.user_not_authorized
+    end
+  end
+  
+  def validate_ids
+    @ids = params[:ids]
+    if @ids.blank? || !(@ids =~ NUMBER_ARR)
+      respond_with Status.insufficient_arguments
     end
   end
   
   def validate_token
     unless @token && !@token.blank? && User.token_match?(@id,@token)
-      respond_with User.user_not_authorized
+      respond_with Status.user_not_authorized
     end
   end
   

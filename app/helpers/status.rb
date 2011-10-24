@@ -19,11 +19,11 @@ module Status
     end
     
     def couldnt_follow
-      message -1, "something went wrong and the specificed user couldn't be followed"
+      message -1, "The specificed user couldn't be followed, Make sure to pass an `id`, `email`, `fbid`, or `twid`"
     end
     
     def insufficient_arguments(options={})
-      msg = options[:message] || "insufficient arguments"
+      msg = options[:message] || "insufficient or malformed arguments"
       message -1, msg
     end
     
