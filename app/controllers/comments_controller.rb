@@ -28,7 +28,7 @@ class CommentsController < ApplicationController
   end
   
   def search
-    respond_with "{status:-10}"
+    respond_with '{"status":-10}'
   end
   
   def ok_or_not(condition,comments)

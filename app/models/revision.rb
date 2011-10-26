@@ -3,6 +3,9 @@ class Revision < ActiveRecord::Base
   CATEGORY = "primary_category,secondary_category"
   BASIC = "updated_at,location_id,#{CATEGORY},title,text,phone,url"
   
+  has_one :user
+  has_one :location
+  
   scope :basic, lambda {
     select(BASIC)
   }

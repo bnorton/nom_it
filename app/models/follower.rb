@@ -7,6 +7,8 @@ class Follower < ActiveRecord::Base
   FOLLOWS_ME   = "user_id"
   SINGLE_TABLE = "to_user_id,to_name,user_name,user_name,user_city,undirected"
   
+  belongs_to :user
+  
   ##  follower_3
   ##      ^                       follower_3 is followed by me
   ##     |                        follower_2 is undirected to me
@@ -52,8 +54,7 @@ class Follower < ActiveRecord::Base
       other = User.create_should_join(items)
       return false if other.blank?
     end
-    newf = Follower.new_follower(id,other.first)
-    newf
+    Follower.new_follower(id,other.first)
   end
   
   private
@@ -69,6 +70,7 @@ class Follower < ActiveRecord::Base
       f.user_city    = me.city
       f.to_user_id   = other.id
       f.to_name      = other_name
+      f.nid          = Util.ID
     end
     begin
       if nfollower.save!

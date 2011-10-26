@@ -1,42 +1,18 @@
-class Recommend
+require 'mongo_ruby'
+
+class Recommend < MongoRuby
   
   attr_accessor :id,    :user_id,:user_name, :to_user_id
   attr_accessor :token, :name,   :city
   attr_accessor :text,  :title,  :lat,       :lng
   attr_accessor :time,  :image,  :location_id
-  
-  # index :id
-  # index :to
-  # index :token
-  
-  def self.dbdatabase
-    "nom_prod_test"
-  end
-  
+    
   def self.dbcollection
     "recommends"
   end
   
-  def self.collection
-    if @collection.nil?
-      self.connect
-    end
-    @collection
-  end
-  
-  def self.save(*args)
-    self.collection.save(*args)
-  end
-  
-  def self.connect
-  db = Mongo::Connection.new.db(self.dbdatabase)
-  @collection = db[self.dbcollection]
-  end
-  
   def self.create(recommendation,followers)
-    if recommendation.blank? || followers.blank?
-      return
-    end
+    return false if recommendation.blank? || followers.blank?
     r = recommendation
     followers.each do |follower|
       self.save({
@@ -62,15 +38,15 @@ class Recommend
     
   end
   
-  def self.by(id)
+  def self.by_id(id)
     self.collection.find({:user_id => id})
   end
   
-  def self.for(id)
+  def self.for_id(id)
     self.collection.find({:to_user_id => id})
   end
   
-  def self.about(id)
+  def self.about_id(id)
     self.collection.find({:location_id => id})
   end
   

@@ -1,6 +1,11 @@
 
 class User < ActiveRecord::Base
   
+  has_many :revisions
+  has_many :followers
+  has_many :images
+  has_many :recommendations
+  
   scope :public_fields, lambda {
     select(User.fields)
   }

@@ -5,6 +5,8 @@ class Geolocation < ActiveRecord::Base
   TAG = /^[a-zA-Z_]+$/
   MIN_ENTRIES = 5
   
+  has_one :location
+  
   scope :find_by_distance, lambda {|lat,lng,dist|
     select("location_id").
     where(["DEGREES(ACOS(SIN(RADIANS(?))*SIN(RADIANS(lat))+COS(RADIANS(?))*COS(RADIANS(lat))*COS(RADIANS(?-lng))))*60*1.1515<?",lat,lat,lng,dist])
@@ -17,8 +19,7 @@ class Geolocation < ActiveRecord::Base
   }
   
   def self.category_search(lat,lng,dist,primary,secondary='',retries=3)
-    return false unless retries >= 0
-    return false unless primary =~ TAG
+    return false unless retries >= 0 && primary =~ TAG
     locations = unless secondary.blank?
       return false unless secondary =~ TAG
       Geolocation.search_by_categories(lat,lng,dist,primary,secondary)

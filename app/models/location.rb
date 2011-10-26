@@ -3,6 +3,8 @@ class Location < ActiveRecord::Base
   COMPACT = "name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
   
   has_many :revisions
+  has_many :images
+  has_one  :geolocation
   
   scope :compact, lambda {
     Location.select(COMPACT)

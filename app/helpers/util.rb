@@ -15,5 +15,9 @@ class Util
       end
     end
     
+    def ID
+      BSON::ObjectId.new
+    end
+    
   end
 end

@@ -1,6 +1,9 @@
 class Recommendation < ActiveRecord::Base
   require 'base64'
   
+  has_one :user
+  has_one :location
+  
   COMPACT = "id,user_id,lat,lng,token,location_id,location_name,location_city,title,text,created_at,image"
   
   scope :compact, lambda {
@@ -28,6 +31,7 @@ class Recommendation < ActiveRecord::Base
       r.facebook = this[:twitter]  || false
       r.location_name = this[:name]
       r.location_city = this[:city]
+      r.nid      = Util.ID
     end
     if recommendation.save!
       token = Base64.encode64(recommendation.id.to_s)
