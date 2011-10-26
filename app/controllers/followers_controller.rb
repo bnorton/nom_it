@@ -31,13 +31,13 @@ class FollowersController < ApplicationController
   # ids of the people who I follow.
   def followers
     ids = Follower.followers_ids(@id)
-    respond_with response_from_ids(ids,:to_user)
+    respond_with response_from_ids(ids,:to_user_id)
   end
   
   # ids of the people who follow some `id`
   def who_follows_id
     ids = Follower.follows_id_ids(@id)
-    respond_with response_from_ids(ids,:user)
+    respond_with response_from_ids(ids,:user_id)
   end
   
   def response_from_ids(ids,key)

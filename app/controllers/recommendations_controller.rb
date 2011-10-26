@@ -66,8 +66,8 @@ class RecommendationsController < ApplicationController
   def required_for_creation
     @lat  = params[:lat]
     @lng  = params[:lng]
-    @user = params[:user]
-    @location = params[:location]
+    @user = params[:user_id]
+    @location = params[:location_id]
     if (@lat.blank? || @lng.blank? || @user.blank? || @location.blank?)
       respond_with Status.recommendation_not({:word => "made"})
     end
@@ -75,7 +75,7 @@ class RecommendationsController < ApplicationController
   
   def required_for_destroy
     @recid = params[:id]  || params[:recommendation]
-    @user  = params[:uid] || params[:user]
+    @user  = params[:uid] || params[:user_id]
     if @recid.blank? || @user.blank?
       respond_with Status.recommendation_not({:word => "destroyed"})
     end
@@ -90,7 +90,7 @@ class RecommendationsController < ApplicationController
   end
   
   def user_or_location
-    @user = params[:user] || params[:uid]
+    @user = params[:user_id] || params[:uid]
     if @user.blank?
       respond_with Status.no_recommendations
     end
@@ -111,9 +111,9 @@ class RecommendationsController < ApplicationController
     @all_params = {
       :lat  => @lat,
       :lng  => @lng,
-      :user => @user,
+      :user_id => @user,
       :text => @text,
-      :location => @location,
+      :location_id => @location,
       ## optional
       :title => @title,
       :name  => @name,
