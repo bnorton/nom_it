@@ -5,7 +5,7 @@ class Geolocation < ActiveRecord::Base
   TAG = /^[a-zA-Z_]+$/
   MIN_ENTRIES = 5
   
-  has_one :location
+  belongs_to :location
   
   scope :find_by_distance, lambda {|lat,lng,dist|
     select("location_id").
@@ -69,12 +69,12 @@ end
 
   # The schema for the geolocations model
   # create_table "geolocations", :force => true do |t|
-  # t.datetime "created_at"
-  # t.datetime "updated_at"
-  # t.integer  "location",                    :null => false
-  # t.float    "lat",        :default => 0.0
-  # t.float    "lng",        :default => 0.0
-  #
-  #
+  #   t.datetime "created_at"
+  #   t.datetime "updated_at"
+  #   t.integer  "location_id",                  :null => false
+  #   t.float    "lat",         :default => 0.0
+  #   t.float    "lng",         :default => 0.0
+  #   t.string   "nid"
+  # end
   
   

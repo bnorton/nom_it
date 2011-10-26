@@ -1,10 +1,10 @@
 class Revision < ActiveRecord::Base
   
   CATEGORY = "primary_category,secondary_category"
-  BASIC = "updated_at,location_id,#{CATEGORY},title,text,phone,url"
+  BASIC = "id,nid,updated_at,location_id,#{CATEGORY},title,text,phone,url"
   
-  has_one :user
-  has_one :location
+  belongs_to :user
+  belongs_to :location
   
   scope :basic, lambda {
     select(BASIC)
@@ -35,10 +35,10 @@ end
   # create_table "revisions", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
-  #   t.integer  "location",                              :null => false
+  #   t.integer  "location_id",                           :null => false
   #   t.string   "primary_category"
   #   t.string   "secondary_category"
-  #   t.integer  "uid",                                   :null => false
+  #   t.integer  "user_id",                               :null => false
   #   t.string   "title"
   #   t.text     "text"
   #   t.text     "best"
@@ -52,4 +52,5 @@ end
   #   t.string   "url"
   #   t.integer  "walkability"
   #   t.binary   "schemaless"
+  #   t.string   "nid"
   # end

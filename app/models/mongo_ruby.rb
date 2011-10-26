@@ -37,9 +37,10 @@ class MongoRuby
   end
   
   def self.connect()
-    puts "CONNECTIONG TO MongoRuby"
+    unless @collection
       db = Mongo::Connection.new.db(self.dbdatabase)
       @collection = db[self.dbcollection]
+    end
   end
   ### End Ruby MongoDB Driver Wrapper
   #####################################################################

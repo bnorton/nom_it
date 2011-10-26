@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
   
-  COMPACT = "name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "id,nid,name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
   
   has_many :revisions
   has_many :images
@@ -56,6 +56,7 @@ class Location < ActiveRecord::Base
 end
 
   # create_table "locations", :force => true do |t|
+  # create_table "locations", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
   #   t.string   "name"
@@ -76,7 +77,10 @@ end
   #   t.boolean  "is_new",                    :default => false, :null => false
   #   t.string   "code"
   #   t.binary   "schemaless"
-  #
+  #   t.string   "primary"
+  #   t.string   "secondary"
+  #   t.string   "nid"
+  # end
   #
   
   

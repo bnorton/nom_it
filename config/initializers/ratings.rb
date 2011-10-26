@@ -1,4 +1,2 @@
-# require 'light_mongo'
-# 
-# LightMongo.database = "test"
-# LightMongo.connection = Mongo::Connection.new('localhost','27017')
+RankingAverage::add_new_rating
+RankingAverage::add_update_rating

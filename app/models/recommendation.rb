@@ -1,10 +1,10 @@
 class Recommendation < ActiveRecord::Base
   require 'base64'
   
-  has_one :user
-  has_one :location
+  belongs_to :user
+  belongs_to :location
   
-  COMPACT = "id,user_id,lat,lng,token,location_id,location_name,location_city,title,text,created_at,image"
+  COMPACT = "id,nid,user_id,lat,lng,token,location_id,location_name,location_city,title,text,created_at,image"
   
   scope :compact, lambda {
     Recommendation.select(COMPACT)
@@ -60,9 +60,9 @@ end
   # create_table "recommendations", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
-  #   t.integer  "user",                             :null => false
+  #   t.integer  "user_id",                          :null => false
   #   t.string   "token"
-  #   t.integer  "location",                         :null => false
+  #   t.integer  "location_id",                      :null => false
   #   t.string   "location_name"
   #   t.string   "location_city"
   #   t.string   "title"
@@ -74,4 +74,7 @@ end
   #   t.boolean  "new",           :default => true
   #   t.binary   "schemaless"
   #   t.boolean  "is_valid",      :default => true
+  #   t.string   "image"
+  #   t.string   "user_name"
+  #   t.string   "nid"
   # end

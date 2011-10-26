@@ -31,14 +31,26 @@ class RecommendationsController < ApplicationController
     
   end
   
+  # the recommendations made by some user
   def user
     wrapper(Recommendation.for_user(@user),
              {:empty => "user"})
   end
   
+  # the recommendations made about some location
   def location
      wrapper(Recommendation.for_location(@user),
              {:empty => "location"})
+  end
+  
+  def to_user
+    recommendations = Recommend.for_user_id(@id)
+    respond_with ok_or_not(Util.prepare(recommendations),{
+      :recommends=>r})
+  end
+  
+  def about_location
+    respond_with "{\"status\": 1}"
   end
   
   def wrapper(recommendations,options={})

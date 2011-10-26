@@ -5,7 +5,7 @@ class Follower < ActiveRecord::Base
   
   IFOLLOW      = "to_user_id"   # the field that is needed when looking for users that I follow
   FOLLOWS_ME   = "user_id"
-  SINGLE_TABLE = "to_user_id,to_name,user_name,user_name,user_city,undirected"
+  SINGLE_TABLE = "id,nid,to_user_id,to_name,user_name,user_name,user_city,undirected"
   
   belongs_to :user
   
@@ -107,14 +107,12 @@ end
   # create_table "followers", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
-  #   t.integer  "user",                             :null => false
+  #   t.integer  "user_id",                       :null => false
   #   t.string   "user_name"
   #   t.string   "user_city"
-  #   t.integer  "to",                         :null => false
+  #   t.integer  "to_user_id",                    :null => false
   #   t.string   "to_name"
-  #   t.boolean  "approved",      :default => true,  :null => false
-  #   t.boolean  "undirected",    :default => false, :null => false
+  #   t.boolean  "approved",   :default => true,  :null => false
+  #   t.boolean  "undirected", :default => false, :null => false
   #   t.binary   "schemaless"
-  # end  
-  
-  
+  # end

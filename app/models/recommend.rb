@@ -38,15 +38,15 @@ class Recommend < MongoRuby
     
   end
   
-  def self.by_id(id)
+  def self.by_user_id(id)
     self.collection.find({:user_id => id})
   end
   
-  def self.for_id(id)
+  def self.for_user_id(id)
     self.collection.find({:to_user_id => id})
   end
   
-  def self.about_id(id)
+  def self.about_location_id(id)
     self.collection.find({:location_id => id})
   end
   

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026065421) do
+ActiveRecord::Schema.define(:version => 20111026142035) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -88,19 +88,6 @@ ActiveRecord::Schema.define(:version => 20111026065421) do
   add_index "locations", ["code"], :name => "locations_code"
   add_index "locations", ["id", "revision"], :name => "locations_id_revision", :unique => true
   add_index "locations", ["name", "address"], :name => "locations_name_address", :unique => true
-
-  create_table "rankings", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location_id",              :null => false
-    t.integer  "user_id",                  :null => false
-    t.integer  "value",       :limit => 8
-    t.binary   "schemaless"
-    t.string   "nid"
-  end
-
-  add_index "rankings", ["location_id", "user_id"], :name => "rankings_location_uid", :unique => true
-  add_index "rankings", ["user_id", "location_id"], :name => "rankings_uid_location"
 
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
@@ -190,17 +177,6 @@ ActiveRecord::Schema.define(:version => 20111026065421) do
 
   add_index "statistics", ["location_id"], :name => "statistics_location", :unique => true
   add_index "statistics", ["rrr", "rrt"], :name => "statistics_rrr_rrt"
-
-  create_table "tags", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location_id", :null => false
-    t.string   "text"
-    t.string   "nid"
-  end
-
-  add_index "tags", ["text", "location_id"], :name => "sc_tags_bId", :unique => true
-  add_index "tags", ["text", "location_id"], :name => "text_location"
 
   create_table "users", :force => true do |t|
     t.datetime "created_at"

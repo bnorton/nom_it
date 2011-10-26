@@ -15,6 +15,14 @@ class Util
       end
     end
     
+    def prepare(items,opt={})
+      ii = []
+      items.each do |it|
+        ii << Util.nidify(it)
+      end
+      ii
+    end
+    
     def ID
       BSON::ObjectId.new
     end

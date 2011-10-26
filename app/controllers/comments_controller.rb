@@ -3,7 +3,7 @@ class CommentsController < ApplicationController
   respond_to :json
   
   before_filter :check_params,  :only => [:recommendation,:location,:user]
-  before_filter :search_params, :only => [:search]
+  before_filter :search_params, :only => [:search,:create]
   
   def recommendation
     comments 'recommendation'
@@ -17,22 +17,32 @@ class CommentsController < ApplicationController
     comments 'user'
   end
   
-  def comments(method_name)
-    comments = []
-    all_coments = Comment.send("for_#{method_name}_id".to_sym, @id, {:start=>@start,:limit=>@limit})
-    all_coments.each do |comment|
-      comments << Util.nidify(comment)
-    end
-    condition = !comments.blank?
-    respond_with ok_or_not(condition,comments)
-  end
-  
   def search
-    respond_with '{"status":-10}'
+    comments = Comment.search(@search)
+    prepared = Util.prepare(comments)
+    respond_with ok_or_not(prepared)
   end
   
-  def ok_or_not(condition,comments)
-    if condition
+  def create
+    nid = if @search[:rid] && @search[:lid]
+      Comment.create_comment_for_recommendation(@search)
+    else
+      Comment.create_comment_for_location(@search)
+    end
+    message = nid ? [{:nid=>nid.to_s}] : nil
+    respond_with ok_or_not(message)
+  end
+  
+  private 
+  
+  def comments(method_name)
+    comments = Comment.send("for_#{method_name}_id".to_sym, @id, {:start=>@start,:limit=>@limit})
+    prepared = Util.prepare(comments)
+    respond_with ok_or_not(prepared)
+  end
+  
+  def ok_or_not(comments)
+    unless comments.blank?
       Status.OK(comments,{:result_name=>:comments})
     else
       Status.comments_not_found
@@ -49,7 +59,17 @@ class CommentsController < ApplicationController
   end
   
   def search_params
-    
+    @search = {
+      :nid  => params[:nid],
+      :uid  => params[:uid],
+      :lid  => params[:lid],
+      :rid  => params[:rid],
+      :text => params[:text]
+    }
+    unless @search[:nid] || @search[:uid] || @search[:lid] || @search[:rid] || @search[:text]
+      respond_with Status.insufficient_arguments({
+        :message=>"must have a `nid`, `uid`, `lid` ,`rid`, or some `text`"})
+    end
   end
   
 end
