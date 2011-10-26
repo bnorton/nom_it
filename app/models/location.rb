@@ -1,15 +1,21 @@
 class Location < ActiveRecord::Base
   
-  COMPACT = "name,revision,address,cross_street,street,city,state"
+  COMPACT = "name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  
+  has_many :revisions
   
   scope :compact, lambda {
     Location.select(COMPACT)
   }
   scope :detail_for_id, lambda {|id| 
-    detail_for_ids([id])
+    detail_for_ids(id.to_s)
   }
   scope :detail_for_ids, lambda {|ids| 
     compact.where(["id in (?)", ids.split(',')])
+  }
+  scope :full_detail_for_ids, lambda {|ids| 
+    fields = "#{Location.join_fields},#{Revision.join_fields}"
+    select(fields).joins(:revisions).where(["locations.id in (?)", ids.split(',')])
   }
   scope :find_by_name, lambda {|name|
     compact.where(["name like ?", "%#{name}%"])
@@ -33,6 +39,16 @@ class Location < ActiveRecord::Base
       locations << locid.location
     end
     locations.join(',')
+  end
+  
+  def self.full(ids)
+    
+  end
+  
+  def self.join_fields
+    "locations.name,locations.revision,locations.address,locations.cross_street,
+     locations.street,locations.city,locations.state,locations.fsq_id,locations.gowalla_url
+    "
   end
   
 end

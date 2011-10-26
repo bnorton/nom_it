@@ -12,8 +12,8 @@ gem 'dalli'
 
 gem "bson_ext", "~> 1.4.1"
 
-gem 'light_mongo'
 gem 'mongo'
+gem 'light_mongo'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -31,6 +31,10 @@ gem 'capistrano'
 
 #testing the codez
 gem 'rspec'
+gem 'rspec-rails'
+
+
+gem 'factory_girl_rails'
 
 group :test do
   # Pretty printed test output

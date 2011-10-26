@@ -88,7 +88,7 @@ class UsersController < ApplicationController
   
   def search_params
     @query = params[:query] || params[:q] || params[:name] || params[:email]
-    if !@query.blank?
+    if @query.blank?
       respond_with Status.user_not_authorized
     end
   end

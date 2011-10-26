@@ -6,8 +6,12 @@ module Status
       {:status => status, :message => message, :results => []}
     end
     
-    def OK(item,options={})
+    def OK(item=nil,options={})
       status_message_results(1,'OK',item,options)
+    end
+    
+    def TOKEN(token)
+      status_message_results(1,'OK',token,{:result_name=>:token})
     end
     
     def user_not_authorized
@@ -29,6 +33,15 @@ module Status
     def recommendation_not(options={})
       word = options[:word] || "made"
       message -1, "The recommendation was not #{word}"
+    end
+    
+    def couldnt_complete_recommendation(action)
+      message -1, "Your request to #{action} the recommendation couldn't be completed"
+    end
+    
+    def no_recommendations(options={})
+      msg = options[:message] || "There were no recommendations for that #{options[:empty] || '{ user, location }'}"
+      message -1, msg
     end
     
     def insufficient_arguments(options={})
@@ -66,7 +79,13 @@ module Status
     private
     
     def status_message_results(status,message,results,options)
-      result_name = options[:result_name] || :results 
+      if results.nil?
+        result_name = :message_detail
+        results = 'everything went fine on our end'
+      else
+        result_name = options[:result_name] || :results
+      end
+      
       {
         :status  => status,
         :message => message,

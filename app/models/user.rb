@@ -120,7 +120,6 @@ class User < ActiveRecord::Base
       user.has_joined = false                                           ##
       ## end warning #####################################################
     end
-    puts "NEW USER #{new_user.inspect}"
     if new_user.save!
       new_user
     end
@@ -131,10 +130,9 @@ class User < ActiveRecord::Base
     unless city_state.nil?
       parts = city_state.split
       if parts.length > 1
-        [parts[0].strip, parts[1].strip]
-      else
-        city_state
+        return [parts[0].strip, parts[1].strip]
       end
+      city_state
     end
   end
   

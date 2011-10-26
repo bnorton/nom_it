@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,45 +10,30 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111024150946) do
-
-  create_table "checkins", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location",                      :null => false
-    t.integer  "uid",                           :null => false
-    t.string   "title"
-    t.string   "text"
-    t.string   "image"
-    t.boolean  "private",    :default => false, :null => false
-    t.binary   "schemaless"
-  end
-
-  add_index "checkins", ["location"], :name => "checkins_location"
-  add_index "checkins", ["uid"], :name => "checkins_uid"
+ActiveRecord::Schema.define(:version => 20111026033410) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user",                             :null => false
+    t.integer  "user_id",                       :null => false
     t.string   "user_name"
     t.string   "user_city"
-    t.integer  "follower",                         :null => false
-    t.string   "follower_name"
-    t.boolean  "approved",      :default => true,  :null => false
-    t.boolean  "undirected",    :default => false, :null => false
+    t.integer  "to_user",                       :null => false
+    t.string   "to_name"
+    t.boolean  "approved",   :default => true,  :null => false
+    t.boolean  "undirected", :default => false, :null => false
     t.binary   "schemaless"
   end
 
-  add_index "followers", ["follower", "user"], :name => "followers_to_from", :unique => true
-  add_index "followers", ["user", "follower"], :name => "followers_from_to", :unique => true
+  add_index "followers", ["to_user", "user_id"], :name => "followers_to_from", :unique => true
+  add_index "followers", ["user_id", "to_user"], :name => "followers_from_to", :unique => true
 
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location",                    :null => false
-    t.float    "lat",        :default => 0.0
-    t.float    "lng",        :default => 0.0
+    t.integer  "location_id",                  :null => false
+    t.float    "lat",         :default => 0.0
+    t.float    "lng",         :default => 0.0
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
@@ -60,7 +44,7 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
     t.datetime "updated_at"
     t.string   "link"
     t.integer  "uid",                            :null => false
-    t.integer  "location",                       :null => false
+    t.integer  "location_id",                    :null => false
     t.string   "name"
     t.integer  "size"
     t.integer  "width"
@@ -71,7 +55,7 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
     t.binary   "schemaless"
   end
 
-  add_index "images", ["location", "link"], :name => "images_link"
+  add_index "images", ["location_id", "link"], :name => "images_link"
 
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
@@ -105,21 +89,21 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
   create_table "rankings", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location",                :null => false
-    t.integer  "uid",                     :null => false
-    t.integer  "value",      :limit => 8
+    t.integer  "location_id",              :null => false
+    t.integer  "user_id",                  :null => false
+    t.integer  "value",       :limit => 8
     t.binary   "schemaless"
   end
 
-  add_index "rankings", ["location", "uid"], :name => "rankings_location_uid", :unique => true
-  add_index "rankings", ["uid", "location"], :name => "rankings_uid_location"
+  add_index "rankings", ["location_id", "user_id"], :name => "rankings_location_uid", :unique => true
+  add_index "rankings", ["user_id", "location_id"], :name => "rankings_uid_location"
 
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user",                             :null => false
+    t.integer  "user_id",                          :null => false
     t.string   "token"
-    t.integer  "location",                         :null => false
+    t.integer  "location_id",                      :null => false
     t.string   "location_name"
     t.string   "location_city"
     t.string   "title"
@@ -131,18 +115,20 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
     t.boolean  "new",           :default => true
     t.binary   "schemaless"
     t.boolean  "is_valid",      :default => true
+    t.string   "image"
+    t.string   "user_name"
   end
 
-  add_index "recommendations", ["location", "new"], :name => "recommendations_location_new"
-  add_index "recommendations", ["user", "new"], :name => "recommendations_uid_new"
+  add_index "recommendations", ["location_id", "new"], :name => "recommendations_location_new"
+  add_index "recommendations", ["user_id", "new"], :name => "recommendations_uid_new"
 
   create_table "revisions", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location",                              :null => false
+    t.integer  "location_id",                           :null => false
     t.string   "primary_category"
     t.string   "secondary_category"
-    t.integer  "uid",                                   :null => false
+    t.integer  "user_id",                               :null => false
     t.string   "title"
     t.text     "text"
     t.text     "best"
@@ -158,30 +144,14 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
     t.binary   "schemaless"
   end
 
-  add_index "revisions", ["location"], :name => "revisions_location"
+  add_index "revisions", ["location_id"], :name => "revisions_location"
   add_index "revisions", ["primary_category"], :name => "revisions_primary_category"
   add_index "revisions", ["secondary_category"], :name => "revisions_secondary_category"
-
-  create_table "searches", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location",   :null => false
-    t.string   "title"
-    t.string   "address"
-    t.string   "city"
-    t.string   "tags"
-    t.text     "text"
-    t.binary   "schemaless"
-  end
-
-  add_index "searches", ["location"], :name => "searches_location", :unique => true
-  add_index "searches", ["title", "address", "city"], :name => "searches_title_address_city"
-  add_index "searches", ["title", "tags"], :name => "searches_title_tags"
 
   create_table "statistics", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location",                                          :null => false
+    t.integer  "location_id",                                       :null => false
     t.integer  "recommendations"
     t.integer  "recommends_count"
     t.integer  "rrr"
@@ -211,18 +181,18 @@ ActiveRecord::Schema.define(:version => 20111024150946) do
     t.binary   "schemaless"
   end
 
-  add_index "statistics", ["location"], :name => "statistics_location", :unique => true
+  add_index "statistics", ["location_id"], :name => "statistics_location", :unique => true
   add_index "statistics", ["rrr", "rrt"], :name => "statistics_rrr_rrt"
 
   create_table "tags", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location",   :null => false
+    t.integer  "location_id", :null => false
     t.string   "text"
   end
 
-  add_index "tags", ["text", "location"], :name => "sc_tags_bId", :unique => true
-  add_index "tags", ["text", "location"], :name => "text_location"
+  add_index "tags", ["text", "location_id"], :name => "sc_tags_bId", :unique => true
+  add_index "tags", ["text", "location_id"], :name => "text_location"
 
   create_table "users", :force => true do |t|
     t.datetime "created_at"

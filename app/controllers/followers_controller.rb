@@ -6,11 +6,11 @@ class FollowersController < ApplicationController
   
   before_filter :parse_params,            :only => [:create,:destroy,:followers,:who_follows_id]
   before_filter :check_params,            :only => [:create,:destroy,:followers,:who_follows_id]
+  before_filter :follow_params,           :only => [:create,:destroy]
   before_filter :authentication_required, :only => [:create,:destroy]
   before_filter :validate_ids,            :only => [:followers,:who_follows_id]
   
   def create
-    follow_params
     follower  = Follower.find_or_create(@id,@identifier,@items)
     condition = !follower.blank?
     response  = ok_or_not(condition,{:follower=>follower,:follow=>true})
@@ -18,8 +18,7 @@ class FollowersController < ApplicationController
   end
   
   def destroy
-    follow_params
-    response = if Follower.destroy(@id,@identifier)
+    response = if Follower.unfollow(@id,@identifier)
       Status.unfollowed
     else
       Status.couldnt_follow_or_unfollow
@@ -27,22 +26,26 @@ class FollowersController < ApplicationController
     respond_with response
   end
   
+  def 
+  
   # ids of the people who I follow.
   def followers
     ids = Follower.followers_ids(@id)
-    respond_with response_from_ids(ids)
+    respond_with response_from_ids(ids,:to_user)
   end
   
   # ids of the people who follow some `id`
   def who_follows_id
-    puts "BITCH id #{@id}"
     ids = Follower.follows_id_ids(@id)
-    respond_with response_from_ids(ids)
+    respond_with response_from_ids(ids,:user)
   end
   
-  def response_from_ids(ids)
+  def response_from_ids(ids,key)
     list = []
-    ids.each do |i| list << i[:follower] end
+    ids.each do |i| 
+      list << i[key] 
+    end
+    list.uniq!
     condition = !list.empty?
     ok_or_not(condition,{:follower=>list,:none=>true})
   end

@@ -6,7 +6,7 @@ class Geolocation < ActiveRecord::Base
   MIN_ENTRIES = 5
   
   scope :find_by_distance, lambda {|lat,lng,dist|
-    select("location").
+    select("location_id").
     where(["DEGREES(ACOS(SIN(RADIANS(?))*SIN(RADIANS(lat))+COS(RADIANS(?))*COS(RADIANS(lat))*COS(RADIANS(?-lng))))*60*1.1515<?",lat,lat,lng,dist])
   }
   scope :search_by_category, lambda {|lat,lng,dist,category|

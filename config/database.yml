@@ -25,3 +25,6 @@ production:
   username: root
   password: "%planb56b6!"
   # <<: *login
+
+LightMongo:
+  database: "test"

@@ -26,10 +26,12 @@ NomIt::Application.routes.draw do
   
   get "/recommendation/create"        => "recommendations#create"    ### POST
   get "/recommendation/destroy"       => "recommendations#destroy"   ### POST
-  get "/recommendation/update"        => "recommendations#update"   ### POST
+  get "/recommendation/update"        => "recommendations#update"    ### POST
   
   get "/user/:id/recommendations"     => "recommendations#user"
   get "/location/:id/recommendations" => "recommendations#location"
+  
+  
   
   root :to => "detail#index"
 
