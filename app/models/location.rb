@@ -36,7 +36,7 @@ class Location < ActiveRecord::Base
   def self.parse_ids(search)
     locations = []
     search.each do |locid|
-      locations << locid.location
+      locations << locid.location_id
     end
     locations.join(',')
   end

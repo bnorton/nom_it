@@ -26,8 +26,6 @@ class FollowersController < ApplicationController
     respond_with response
   end
   
-  def 
-  
   # ids of the people who I follow.
   def followers
     ids = Follower.followers_ids(@id)
