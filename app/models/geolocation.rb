@@ -35,7 +35,7 @@ class Geolocation < ActiveRecord::Base
   end
   
   def self.search_by_geolocation(lat,lng,dist)
-    return "search_by_geolocation went wrong" unless lat && lng && lat.to_s =~ NUM && lng.to_s =~ NUM
+    return "search_by_geolocation didn't have the correct input values" unless lat && lng && lat.to_s =~ NUM && lng.to_s =~ NUM
     Geolocation.search(lat,lng,dist) 
   end
   

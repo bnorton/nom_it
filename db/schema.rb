@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026033410) do
+ActiveRecord::Schema.define(:version => 20111026034518) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -18,15 +18,15 @@ ActiveRecord::Schema.define(:version => 20111026033410) do
     t.integer  "user_id",                       :null => false
     t.string   "user_name"
     t.string   "user_city"
-    t.integer  "to_user",                       :null => false
+    t.integer  "to_user_id",                    :null => false
     t.string   "to_name"
     t.boolean  "approved",   :default => true,  :null => false
     t.boolean  "undirected", :default => false, :null => false
     t.binary   "schemaless"
   end
 
-  add_index "followers", ["to_user", "user_id"], :name => "followers_to_from", :unique => true
-  add_index "followers", ["user_id", "to_user"], :name => "followers_from_to", :unique => true
+  add_index "followers", ["to_user_id", "user_id"], :name => "followers_to_from", :unique => true
+  add_index "followers", ["user_id", "to_user_id"], :name => "followers_from_to", :unique => true
 
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"

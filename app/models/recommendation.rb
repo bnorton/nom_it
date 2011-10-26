@@ -1,13 +1,13 @@
 class Recommendation < ActiveRecord::Base
   require 'base64'
   
-  COMPACT = "id,user,lat,lng,token,location,location_name,location_city,title,text,created_at,image"
+  COMPACT = "id,user_id,lat,lng,token,location_id,location_name,location_city,title,text,created_at,image"
   
   scope :compact, lambda {
     Recommendation.select(COMPACT)
   }
   scope :for_user, lambda {|id|
-    compact.where(["user=?",id])
+    compact.where(["user_id=?",id])
   }
   scope :for_location, lambda {|id|
     compact.where(["location_id=?",id])
@@ -19,7 +19,7 @@ class Recommendation < ActiveRecord::Base
     recommendation = Recommendation.new do |r|
       r.lat      = this[:lat]
       r.lng      = this[:lng]
-      r.user     = this[:user_id]
+      r.user_id  = this[:user_id]
       r.user_name= this[:user_name]
       r.location_id = this[:location_id]
       r.title    = this[:title]
@@ -41,7 +41,7 @@ class Recommendation < ActiveRecord::Base
   def self.defaults(this)
     location = {}
     
-    result = Location.detail_for_id(this[:location]).try(:first)
+    result = Location.detail_for_id(this[:location_id]).try(:first)
     return location if result.blank?
     location[:text] = this[:text] || "#{result.name || this} is a great spot and I recommend it...Nom Away!"
     location[:name] = result.name
