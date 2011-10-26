@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026034518) do
+ActiveRecord::Schema.define(:version => 20111026065421) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.integer  "location_id",                  :null => false
     t.float    "lat",         :default => 0.0
     t.float    "lng",         :default => 0.0
+    t.string   "nid"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
@@ -53,6 +54,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.string   "description"
     t.boolean  "is_valid",    :default => false, :null => false
     t.binary   "schemaless"
+    t.string   "nid"
   end
 
   add_index "images", ["location_id", "link"], :name => "images_link"
@@ -80,6 +82,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.binary   "schemaless"
     t.string   "primary"
     t.string   "secondary"
+    t.string   "nid"
   end
 
   add_index "locations", ["code"], :name => "locations_code"
@@ -93,6 +96,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.integer  "user_id",                  :null => false
     t.integer  "value",       :limit => 8
     t.binary   "schemaless"
+    t.string   "nid"
   end
 
   add_index "rankings", ["location_id", "user_id"], :name => "rankings_location_uid", :unique => true
@@ -117,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.boolean  "is_valid",      :default => true
     t.string   "image"
     t.string   "user_name"
+    t.string   "nid"
   end
 
   add_index "recommendations", ["location_id", "new"], :name => "recommendations_location_new"
@@ -142,6 +147,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.string   "url"
     t.integer  "walkability"
     t.binary   "schemaless"
+    t.string   "nid"
   end
 
   add_index "revisions", ["location_id"], :name => "revisions_location"
@@ -179,6 +185,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.integer  "view_count"
     t.string   "json_encode",        :limit => 1022
     t.binary   "schemaless"
+    t.string   "nid"
   end
 
   add_index "statistics", ["location_id"], :name => "statistics_location", :unique => true
@@ -189,6 +196,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.datetime "updated_at"
     t.integer  "location_id", :null => false
     t.string   "text"
+    t.string   "nid"
   end
 
   add_index "tags", ["text", "location_id"], :name => "sc_tags_bId", :unique => true
@@ -231,6 +239,7 @@ ActiveRecord::Schema.define(:version => 20111026034518) do
     t.binary   "facebook_hash"
     t.binary   "twitter_hash"
     t.boolean  "has_joined",                     :default => true
+    t.string   "nid"
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true
