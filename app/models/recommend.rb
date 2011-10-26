@@ -1,5 +1,4 @@
 class Recommend
-  # include LightMongo::Document
   
   attr_accessor :id,    :user_id,:user_name, :to_user_id
   attr_accessor :token, :name,   :city

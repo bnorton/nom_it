@@ -30,6 +30,10 @@ module Status
       message -1, "it appears that user dont { have any followers, follow anyone }"
     end
     
+    def comments_not_found
+      message -1, 'no comments were found for the specified item'
+    end
+    
     def recommendation_not(options={})
       word = options[:word] || "made"
       message -1, "The recommendation was not #{word}"

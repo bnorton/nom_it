@@ -24,6 +24,12 @@ NomIt::Application.routes.draw do
   get "/locations/search"   => "geolocations#search"
   get "/locations/here"     => "geolocations#here"
   
+  get "/recommendation/:id/comments"  => "comments#recommendation"
+  get "/location/:id/comments"        => "comments#location"
+  get "/user/:id/comments"            => "comments#user"
+  
+  get "/comments/search"              => "comments#search"
+  
   get "/recommendation/create"        => "recommendations#create"    ### POST
   get "/recommendation/destroy"       => "recommendations#destroy"   ### POST
   get "/recommendation/update"        => "recommendations#update"    ### POST

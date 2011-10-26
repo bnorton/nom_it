@@ -1,6 +1,7 @@
 class RecommendationsController < ApplicationController
-  DOUBLE = /[\d]+.[\d]+/
   
+  DOUBLE = /[\d]+.[\d]+/
+
   respond_to :json
   
   before_filter :required_for_creation,  :only => [:create ]
@@ -8,6 +9,7 @@ class RecommendationsController < ApplicationController
   before_filter :required_for_update,    :only => [:update ]
   before_filter :optional,               :only => [:create,:update]
   before_filter :user_or_location,       :only => [:create,:user,:location]
+  before_filter :id_only,                :only => [:comments]
   before_filter :authentication_required,:only => [:user,:location]
   
   def create
@@ -51,9 +53,9 @@ class RecommendationsController < ApplicationController
       if token = options[:token]
         Status.TOKEN(token)
       elsif recommends = options[:recommends]
-        Status.OK(recommends)
+        Status.OK(recommends,options)
       else
-        STATUS.OK
+        Status.OK
       end
     elsif options[:empty]
       Status.no_recommendations
@@ -94,6 +96,11 @@ class RecommendationsController < ApplicationController
     if @user.blank?
       respond_with Status.no_recommendations
     end
+  end
+  
+  def id_only
+    @id = params[:id]
+    respond_with Status.comments_not_found if @id.blank?
   end
   
   def optional
