@@ -79,5 +79,7 @@ mkdir -p /var/www
 cd /var/www
 
 ## make sure to have the right keys for this to work
-
+gem instal mysql -- --with-mysql-config=/usr/local/mysql/bin/mysql_config
 git clone git@github.com:bnorton/nom_it.git 
+cd nom_it
+bundle install

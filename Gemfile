@@ -5,6 +5,8 @@ gem 'rails', '3.1.1'
 gem 'sqlite3'
 
 gem 'mysql'
+gem 'mysql2'
+gem 'ruby-mysql' 
 
 gem 'memcache-client'
 
