@@ -118,9 +118,9 @@ class User < ActiveRecord::Base
   end
     
   def self.new_or_hasnt_joined(email)
-    user = User.find_by_not_yet_joined(email)
+    user = User.find_by_not_yet_joined(email).first
     if user.blank?
-      user = User.find_by_email(email)
+      user = User.find_by_email(email).first
       if user.blank?
         user = User.new
       end
