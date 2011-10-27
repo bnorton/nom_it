@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.register(email, pass, username='')
+  def self.register(email, pass, username)
     new_user = new_or_hasnt_joined(email)
     nuser = new_user do |user|
       user.email    = email
