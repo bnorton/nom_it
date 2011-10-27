@@ -73,16 +73,18 @@ class User < ActiveRecord::Base
   end
   
   def self.register(email, pass, username)
-    new_user = new_or_hasnt_joined(email)
-    nuser = new_user do |user|
-      user.email    = email
-      user.salt     = rand(1<<32).to_s
-      user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
-      user.last_seen= Time.now
-      user.has_joined= true
-      user.screen_name=username
+    user = new_or_hasnt_joined(email)
+    user.email    = email
+    user.salt     = rand(1<<32).to_s
+    user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
+    user.last_seen= Time.now
+    user.has_joined= true
+    user.screen_name=username
+    begin
+      user.save!
+    rescue ActiveRecord::RecordNotUnique
     end
-    nuser.save!
+    user
   end
   
   def self.register_with_facebook(fbHash,username='')
@@ -116,24 +118,30 @@ class User < ActiveRecord::Base
   end
     
   def self.new_or_hasnt_joined(email)
-    User.find_by_not_yet_joined(email) || User.new
+    user = User.find_by_not_yet_joined(email)
+    if user.blank?
+      user = User.find_by_email(email)
+      if user.blank?
+        user = User.new
+      end
+    end
+    user
   end
   
   def self.create_should_join(items)
-    new_user = User.new do |user|
-      user.email        = items[:email]
-      user.twitter      = items[:twid]
-      user.facebook     = items[:fbid]
-      user.token        = email_token
-      user.token_expires= email_token_expires
-      ## - warning   #####################################################
-      ## - make sure that we know this is not a valid user as they      ##
-      ##    are here because someone followed them via some identifier  ##
-      user.has_joined = false                                           ##
-      ## end warning #####################################################
-    end
-    if new_user.save!
-      new_user
+    user = User.new
+    user.email        = items[:email]
+    user.twitter      = items[:twid]
+    user.facebook     = items[:fbid]
+    user.token        = email_token
+    user.token_expires= email_token_expires
+    ## - warning   #####################################################
+    ## - make sure that we know this is not a valid user as they      ##
+    ##    are here because someone followed them via some identifier  ##
+    user.has_joined = false                                           ##
+    ## end warning #####################################################
+    if user.save!
+      user
     end
   end
   
