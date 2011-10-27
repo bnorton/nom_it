@@ -28,7 +28,7 @@ class User < ActiveRecord::Base
     items = [id,id,id,id,id]
     public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items]).has_joined
   }
-  scope :find_by_not_yet_joined, lambda {|eamil|
+  scope :find_by_not_yet_joined, lambda {|email|
     public_fields.where(["email=? and has_joined=0", email])
   }
   scope :detail, lambda {|id|
