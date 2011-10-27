@@ -79,7 +79,7 @@ class User < ActiveRecord::Base
       user.salt     = rand(1<<32).to_s
       user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
       user.last_seen= Time.now
-      user.va
+      user.has_joined= true
       user.screen_name=username
     end
     nuser.save!
@@ -96,6 +96,7 @@ class User < ActiveRecord::Base
     location      = fbHash['locaton']
     user.city, user.state = parse_location(location)
     user.token_expires = Time.now + 14.days
+    user.has_joined= true
     user.save!
   end
   
@@ -110,6 +111,7 @@ class User < ActiveRecord::Base
     user.last_seen= Time.now
     user.city, user.state = parse_location(twHash['location'])
     user.token_expires = Time.now + 14.days
+    user.has_joined= true
     user.save!
   end
     
