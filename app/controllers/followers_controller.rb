@@ -12,6 +12,7 @@ class FollowersController < ApplicationController
   
   def create
     follower  = Follower.find_or_create(@id,@identifier,@items)
+    puts "follower #{follower.inspect}"
     condition = !follower.blank?
     response  = ok_or_not(condition,{:follower=>follower,:follow=>true})
     respond_with response
@@ -63,7 +64,7 @@ class FollowersController < ApplicationController
   
   def parse_params
     @id    = params[:id]
-    @new   = params[:follower] || params[:other]
+    @new   = params[:follower] || params[:other] || params[:new]
     @email = params[:email]
     @fbid  = params[:fbid]
     @twid  = params[:twid]

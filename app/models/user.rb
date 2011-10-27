@@ -24,7 +24,7 @@ class User < ActiveRecord::Base
   scope :find_by_id_or_email, lambda {|id|
     public_fields.where(["id=? or email=?", id, id]).has_joined
   }
-  scope :find_by_any_means_necessary, lambda {|id|
+  scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id,id]
     public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items]).has_joined
   }
@@ -56,7 +56,12 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.login(email,vname='',password)
+  def self.find_by_any_means_necessary(id)
+    user = User.find_by_any_means(id)
+    user.first unless user.blank?
+  end
+  
+  def self.login(email,password,vname='')
     unless email.blank?
       user = User.find_by_email(email)
       if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)

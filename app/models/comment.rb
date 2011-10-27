@@ -39,27 +39,23 @@ class Comment < MongoRuby
   end
   
   def self.create_comment_for_location(opt={})
-    puts "create_comment_for_location #{opt.inspect}"
     return false unless Comment.check_params(opt) && opt[:text]
     self.create(opt)
   end
   
   def self.create_comment_for_recommendation(opt={})
-    puts "create_comment_for_recommendation #{opt.inspect}"
     return false unless Comment.check_params_full(opt) && opt[:text]
     self.create(opt)
   end
   
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
-    puts "destroy_id #{opt.inspect}"
     return false if id.blank?
     Comment.remove({:_id => id})
   end
   
   # removes all comments (could be more than one) for a content item
   def self.destroy(opt={})
-    puts "destroy #{opt.inspect}"
     return false unless Comment.check_params(opt)
     Comment.remove({
       :uid => opt[:uid],
@@ -69,34 +65,25 @@ class Comment < MongoRuby
   end
   
   def self.text_search(opt={})
-    puts "text_search #{opt.inspect}"
     false
   end
   
   # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid
   #
   def self.search(opt={})
-    puts "Comment search #{opt.inspect}"
     if fn = opt[:nid]
-      puts "opt nid"
       Comment.search_id(fn)
     elsif fn = opt[:text]
-      puts "opt text"
       Comment.text_search(fn)
     elsif check_params_full(opt)
-      puts "check_params_full"
       Comment.search_by_uid_lid_rid(opt[:uid],opt[:lid],opt[:rid])
     elsif check_params(opt)
-      puts "check_params"
       Comment.search_by_uid_lid(opt[:uid],opt[:lid])
     elsif val = opt[:uid]
-      puts "opt uid"
       Comment.for_user_id(val)
     elsif val = opt[:lid]
-      puts "opt lid"
       Comment.for_location_id(val)
     elsif val = opt[:rid]
-      puts "opt rid"
       Comment.for_recommendation_id(val)
     else
       false

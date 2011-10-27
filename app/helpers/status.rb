@@ -89,19 +89,18 @@ module Status
       else
         result_name = options[:result_name] || :results
       end
-      
       {
-        :status  => status,
-        :message => message,
+        :status      => status,
+        :message     => message,
          result_name => results
       }
     end
     
     def location_not_properly_formatted(options={})
-      example = 'id=locationid'
+      example = 'id=lid'
       if options[:plural]
         s      = 's'
-        example='ids=id1,id2,id3'
+        example='ids=lid1,lid2,lid3'
       end
       message(-1, "The specified location#{s} were not properly formatted eg. #{example}")
     end

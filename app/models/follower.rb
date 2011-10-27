@@ -50,11 +50,13 @@ class Follower < ActiveRecord::Base
   
   def self.find_or_create(id,their_identifier,items)
     other = User.find_by_any_means_necessary(their_identifier)
+    puts "other find_or_create #{other.inspect} #{their_identifier}"
     if other.blank?
-      other = User.create_should_join(items)
-      return false if other.blank?
+      should = User.create_should_join(items)
+      return false if (other.blank? || should.id == other.id)
+      other = Follower.new_follower(id,should)
     end
-    Follower.new_follower(id,other.first)
+    other
   end
   
   private
@@ -74,11 +76,12 @@ class Follower < ActiveRecord::Base
     end
     begin
       if nfollower.save!
-        raise "OK"
+        flag = true
       end
-    rescue ActiveRecord::RecordNotUnique, "OK"
-      User.detail(other.id)
+    rescue ActiveRecord::RecordNotUnique
+      flag = true
     end
+    User.detail(other.id) if flag
   end
   
   def self.unfollow(me,them)
@@ -98,7 +101,7 @@ class Follower < ActiveRecord::Base
   
   def self.users_that_follow_me(me)
     return if me.blank?
-    Follower.follows_id_ids(me)
+    Follower.follows_id_ids(me.to_s)
   end
   
 end

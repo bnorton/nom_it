@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111026142035) do
+ActiveRecord::Schema.define(:version => 20111027024301) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 20111026142035) do
     t.boolean  "approved",   :default => true,  :null => false
     t.boolean  "undirected", :default => false, :null => false
     t.binary   "schemaless"
+    t.string   "nid"
   end
 
   add_index "followers", ["to_user_id", "user_id"], :name => "followers_to_from", :unique => true

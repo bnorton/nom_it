@@ -9,14 +9,15 @@ class RecommendationsController < ApplicationController
   before_filter :required_for_update,    :only => [:update ]
   before_filter :optional,               :only => [:create,:update]
   before_filter :user_or_location,       :only => [:create,:user,:location]
-  before_filter :id_only,                :only => [:comments]
+  before_filter :id_only,                :only => [:comments,:to_user,:about_location]
   before_filter :authentication_required,:only => [:user,:location]
   
   def create
     token,item = Recommendation.create(@all_params)
     followers  = Follower.users_that_follow_me(@user)
     recommends = Recommend.create(item,followers)
-    condition  = !token.blank? && recommends
+    puts "STUFF f #{followers.inspect} t #{token} i #{item.inspect}  recommends #{recommends.inspect}"
+    condition  = !token.blank?
     respond_with ok_or_not(condition,{
       :token  =>token,
       :action =>'create'})
@@ -33,31 +34,36 @@ class RecommendationsController < ApplicationController
   
   # the recommendations made by some user
   def user
-    wrapper(Recommendation.for_user(@user),
-             {:empty => "user"})
+    recommendations 'user'
   end
   
   # the recommendations made about some location
   def location
-     wrapper(Recommendation.for_location(@user),
-             {:empty => "location"})
+     recommendations 'location'
+  end
+  
+  def recommendations(method_name)
+    recs = Recommendation.send("for_#{method_name}".to_sym, @user)
+    recs = Util.prepare(recs)
+    condition = !recs.blank?
+    respond_with ok_or_not(condition,{
+      :recommends => recs,
+      :action     =>'lookup',
+      :empty      => method_name })
   end
   
   def to_user
-    recommendations = Recommend.for_user_id(@id)
-    respond_with ok_or_not(Util.prepare(recommendations),{
-      :recommends=>r})
+    recommend 'user'
   end
   
   def about_location
-    respond_with "{\"status\": 1}"
+    recommend 'location'
   end
   
-  def wrapper(recommendations,options={})
-    condition = !recommendations.blank?
-    respond_with ok_or_not(condition,{
-      :recommends =>recommendations,
-      :action     =>'lookup',}.merge(options))
+  def recommend(method_name)
+    recs = Recommend.send("for_#{method_name}_id".to_sym, @id)
+    recs = Util.prepare(recs)
+    respond_with ok_or_not(!recs.blank?,{:recommends=>recs})
   end
   
   def ok_or_not(condition,options={})

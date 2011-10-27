@@ -66,7 +66,6 @@ class Geolocation < ActiveRecord::Base
   
 end
 
-
   # The schema for the geolocations model
   # create_table "geolocations", :force => true do |t|
   #   t.datetime "created_at"

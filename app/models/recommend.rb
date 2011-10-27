@@ -2,10 +2,10 @@ require 'mongo_ruby'
 
 class Recommend < MongoRuby
   
-  attr_accessor :id,    :user_id,:user_name, :to_user_id
+  attr_accessor :rid,   :uid,    :uname,     :to_uid
   attr_accessor :token, :name,   :city
   attr_accessor :text,  :title,  :lat,       :lng
-  attr_accessor :time,  :image,  :location_id
+  attr_accessor :time,  :iid,  :lid
     
   def self.dbcollection
     "recommends"
@@ -16,20 +16,20 @@ class Recommend < MongoRuby
     r = recommendation
     followers.each do |follower|
       self.save({
-        :id        => r['id'],
-        :user_id   => r['user_id'],
-        :user_name => r['user_name'],
-        :to_user_id=> follower.user_id,
-        :token     => r['token'],
-        :location_id => r['location_id'],
-        :name      => r['name'],
-        :city      => r['city'],
-        :text      => r['text'],
-        :title     => r['title'],
-        :lat       => r['lat'],
-        :lng       => r['lng'],
-        :time      => r['time'] || Time.now,
-        :image_id  => r['image_id']
+        :rid    => r['id'],
+        :uid    => r['user_id'],
+        :uname  => r['user_name'],
+        :to_uid => follower.user_id,
+        :token  => r['token'],
+        :lid    => r['location_id'],
+        :name   => r['name'],
+        :city   => r['city'],
+        :text   => r['text'],
+        :title  => r['title'],
+        :lat    => r['lat'],
+        :lng    => r['lng'],
+        :time   => r['time'] || Time.now,
+        :iid    => r['image_id']
       })
     end
   end
@@ -39,15 +39,15 @@ class Recommend < MongoRuby
   end
   
   def self.by_user_id(id)
-    self.collection.find({:user_id => id})
+    self.collection.find({:uid => id.to_i})
   end
   
   def self.for_user_id(id)
-    self.collection.find({:to_user_id => id})
+    self.collection.find({:to_uid => id.to_i})
   end
   
-  def self.about_location_id(id)
-    self.collection.find({:location_id => id})
+  def self.for_location_id(id)
+    self.collection.find({:lid => id.to_i})
   end
   
   def self.for_token(token)
