@@ -18,5 +18,5 @@ users  = [['brian.nort@gmail.com' ,'password','nort'],
           ['test4@gmail.com' ,'password','test4'],['test5@gmail.com' ,'password','test5'],['test6@gmail.com' ,'password','test6'],]
           
 users.each do |user|
-  User.create(*user)
+  User.register(*user)
 end

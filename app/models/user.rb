@@ -73,16 +73,15 @@ class User < ActiveRecord::Base
   end
   
   def self.register(email, pass, username)
-    new_user = new_or_hasnt_joined(email)
-    nuser = new_user do |user|
+    new_or_hasnt_joined(email) do |user|
       user.email    = email
       user.salt     = rand(1<<32).to_s
       user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
       user.last_seen= Time.now
       user.has_joined= true
       user.screen_name=username
+      user.save!
     end
-    nuser.save!
   end
   
   def self.register_with_facebook(fbHash,username='')
