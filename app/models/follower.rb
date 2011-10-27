@@ -50,7 +50,6 @@ class Follower < ActiveRecord::Base
   
   def self.find_or_create(id,their_identifier,items)
     other = User.find_by_any_means_necessary(their_identifier)
-    puts "other find_or_create #{other.inspect} #{their_identifier}"
     if other.blank?
       should = User.create_should_join(items)
       return false if (other.blank? || should.id == other.id)

@@ -12,7 +12,6 @@ class FollowersController < ApplicationController
   
   def create
     follower  = Follower.find_or_create(@id,@identifier,@items)
-    puts "follower #{follower.inspect}"
     condition = !follower.blank?
     response  = ok_or_not(condition,{:follower=>follower,:follow=>true})
     respond_with response

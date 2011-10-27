@@ -16,7 +16,6 @@ class RecommendationsController < ApplicationController
     token,item = Recommendation.create(@all_params)
     followers  = Follower.users_that_follow_me(@user)
     recommends = Recommend.create(item,followers)
-    puts "STUFF f #{followers.inspect} t #{token} i #{item.inspect}  recommends #{recommends.inspect}"
     condition  = !token.blank?
     respond_with ok_or_not(condition,{
       :token  =>token,
