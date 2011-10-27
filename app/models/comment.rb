@@ -4,7 +4,7 @@ class Comment < MongoRuby
   
   ############ user_id  |  location_id  |  recommendation_id  |  parent_comment_id
   attr_accessor :uid,         :lid,              :rid,                 :pcid
-  attr_accessor :text, :time, :hash
+  attr_accessor :text, :hash
   
   def self.dbcollection
     "comments"

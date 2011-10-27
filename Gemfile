@@ -36,6 +36,10 @@ gem 'rspec-rails'
 
 gem 'factory_girl_rails'
 
+group :development do
+  gem 'capistrano-unicorn'
+end
+
 group :test do
   # Pretty printed test output
   gem 'turn', :require => false
