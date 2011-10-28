@@ -1,0 +1,2 @@
+Ranking.add_new_ranking
+Ranking.add_update_ranking

@@ -21,7 +21,7 @@ worker_processes 4
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
-APP_PATH = "/var/www/nom_it"
+APP_PATH = "~/Dropbox/git/nom_it"
 working_directory APP_PATH
 
 # listen on both a Unix domain socket and a TCP port,
@@ -38,8 +38,8 @@ pid APP_PATH + "/tmp/pids/unicorn.pid"
 # By default, the Unicorn logger will write to stderr.
 # Additionally, ome applications/frameworks log to stderr or stdout,
 # so prevent them from going to /dev/null when daemonized here:
-# stderr_path APP_PATH + "/log/unicorn.stderr.log"
-# stdout_path APP_PATH + "/log/unicorn.stderr.log"
+stderr_path APP_PATH + "/log/unicorn.stderr.log"
+stdout_path APP_PATH + "/log/unicorn.stderr.log"
 
 # combine REE with "preload_app true" for memory savings
 # http://rubyenterpriseedition.com/faq.html#adapt_apps_for_cow
