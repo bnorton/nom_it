@@ -10,17 +10,18 @@ class GeolocationsController < ApplicationController
   before_filter :authentication_required, :only => []
   
   def here
-    @search = Geolocation.search_by_geolocation(@lat,@lng,@dist)
+    @search = Geolocation.search_by_geolocation(@options)
     self.details
   end
   
   def search
-    @search = Geolocation.category_search(@lat,@lng,@dist,@primary,@secondary)
+    @search = Geolocation.category_search(@options)
     self.details
   end
   
   def details
-    details= Location.details_from_search(@search)
+    details = Location.full_details_from_search(@search)
+    # details= Location.full_details_from_search(@search)
     response = unless details
       Status.unknown_error
     else
@@ -30,20 +31,26 @@ class GeolocationsController < ApplicationController
   end
   
   def lat_lng_dist
-    @lat  = params[:lat]
-    @lng  = params[:lng]
-    @dist = params[:dist] || DEFAULT_DISTANCE
-    unless @lat && @lng && @dist
+    unless (lat = params[:lat] && lng = params[:lng])
       respond_with Status.insufficient_arguments({:message => 'needs lat and lng by default'})
+    end
+    @options = { 
+      :lat   => lat,
+      :lng   => lng,
+      :dist  => params[:dist] || DEFAULT_DISTANCE,
+      :start => params[:start],
+      :limit => params[:limit]}
+    unless @lat && @lng
+      
     end
   end
   
   def primary
-    @primary   = params[:primary]
+    @options.merge!({:primary   => params[:primary]})
   end
   
   def secondary
-    @secondary = params[:secondary]
+    @options.merge!({:secondary => params[:secondary]})
   end
   
   def authentication_required

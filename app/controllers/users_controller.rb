@@ -54,6 +54,20 @@ class UsersController < ApplicationController
     respond_with response
   end
   
+  def check
+    @screen_name = params[:screen_name]
+    response = if @screen_name.blank?
+      Status.insufficient_arguments
+    else
+      if User.find_by_screen_name(@screen_name).bank?
+        ok_or_not(true,{:results => {:detail => 'screen_name is valid and has been reserved for 5 minutes'}})
+      else
+        ok_or_not(false)
+      end
+    end
+    respond_with response
+  end
+  
   private
   
   def ok_or_not(condition,options={})
