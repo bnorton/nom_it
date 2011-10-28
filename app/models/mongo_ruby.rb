@@ -1,8 +1,5 @@
 class MongoRuby
-  
-  ASC  = 'ascending'
-  DESC = 'descending'
-  
+    
   #####################################################################
   ### Ruby MongoDB Driver Wrapper
   def self.dbdatabase
@@ -34,6 +31,10 @@ class MongoRuby
   
   def self.find_one(*args)
     self.collection.find_one(*args)
+  end
+  
+  def self.ensure_index(*args)
+    self.collection.ensure_index(*args)
   end
   
   def self.connect()

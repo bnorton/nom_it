@@ -2,6 +2,11 @@ class Statistic < ActiveRecord::Base
   
   belongs_to :location
   
+  def self.join_fields
+    "statistics.rrr,statistics.rrt,statistics.quarter,statistics.half,statistics.mile,statistics.two,
+     statistics.quarter_total,statistics.halmile_total"
+  end
+  
 end
 
   # create_table "statistics", :force => true do |t|

@@ -1,11 +1,13 @@
 require 'mongo_ruby'
 
 class Recommend < MongoRuby
-  
+  # rid => recommendation_id
+  # uid => user_id
+  # 
   attr_accessor :rid,   :uid,    :uname,     :to_uid
   attr_accessor :token, :name,   :city
   attr_accessor :text,  :title,  :lat,       :lng
-  attr_accessor :time,  :iid,  :lid
+  attr_accessor :time,  :iid,    :lid
     
   def self.dbcollection
     "recommends"
@@ -39,19 +41,19 @@ class Recommend < MongoRuby
   end
   
   def self.by_user_id(id)
-    self.collection.find({:uid => id.to_i})
+    Recommend.find({:uid => id.to_i})
   end
   
   def self.for_user_id(id)
-    self.collection.find({:to_uid => id.to_i})
+    Recommend.find({:to_uid => id.to_i})
   end
   
   def self.for_location_id(id)
-    self.collection.find({:lid => id.to_i})
+    Recommend.find({:lid => id.to_i})
   end
   
   def self.for_token(token)
-    self.collection.find({:token => token})
+    Recommend.find({:token => token})
   end
 
   

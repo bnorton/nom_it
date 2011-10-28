@@ -2,9 +2,10 @@ class Location < ActiveRecord::Base
   
   COMPACT = "id,nid,name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
   
-  has_many :revisions
+  has_one  :revision
   has_many :images
   has_one  :geolocation
+  has_one  :statistic
   
   scope :compact, lambda {
     Location.select(COMPACT)
@@ -19,8 +20,12 @@ class Location < ActiveRecord::Base
     fields = "#{Location.join_fields},#{Revision.join_fields}"
     select(fields).joins(:revisions).where(["locations.id in (?)", ids.split(',')])
   }
+  scope :full_statistics_detail_for_ids, lambda {|ids|
+    fields = "#{Location.join_fields},#{Revision.join_fields},#{Statistic.join_fields}"
+    select(fields).joins(:revision).joins(:statistic).where(["locations.id in (?)", ids.split(',')])
+  }
   scope :find_by_name, lambda {|name|
-    compact.where(["name like ?", "%#{name}%"])
+    compact.where(["name like ?","%#{name}%"])
   }
   scope :find_by_address_parts, lambda {|street,city|
     unless city.blank?
@@ -31,8 +36,13 @@ class Location < ActiveRecord::Base
   }
   
   def self.details_from_search(search)
+      locations = Location.parse_ids search
+      details   = Location.detail_for_ids(locations)
+    end
+    
+  def self.full_details_from_search(search)
     locations = Location.parse_ids search
-    details   = Location.detail_for_ids(locations)
+    details   = Location.full_statistics_detail_for_ids(locations)
   end
   
   def self.parse_ids(search)
@@ -43,16 +53,11 @@ class Location < ActiveRecord::Base
     locations.join(',')
   end
   
-  def self.full(ids)
-    
-  end
-  
   def self.join_fields
     "locations.name,locations.revision,locations.address,locations.cross_street,
      locations.street,locations.city,locations.state,locations.fsq_id,locations.gowalla_url
     "
   end
-  
 end
 
   # create_table "locations", :force => true do |t|
@@ -82,6 +87,4 @@ end
   #   t.string   "nid"
   # end
   #
-  
-  
   

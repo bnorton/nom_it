@@ -9,57 +9,56 @@ class RankingAverage < MongoRuby
   
   ## methods called from initializers/ratings.rb and are thus
   ##   defined into the mongo db instance.
-  def self.add_new_rating
-    collection.db.add_stored_function('new_rating', "function(feature_id,content_item_id,rating) {
-      try {
-        item = db.#{dbcollection}.findOne({f:feature_id,c:content_item_id});
-        if (item == null) {
-          db.#{dbcollection}.save({f:feature_id,c:content_item_id,t:1,r:rating});
+  def self.add_new_ranking
+    collection.db.add_stored_function('new_rating', "function(nid,rating) {
+      try { item = db.#{dbcollection}.findOne({ nid:nid });
+        if ( item == null ) {
+          db.#{dbcollection}.save({ nid:nid, c:1, r:rating });
         } else {
-          item.r = item.r + (( rating - item.r) / ++item.t );
-          db.#{dbcollection}.save(item); }
+          item.r = item.r + (( rating - item.r) / ++item.c );
+          db.#{dbcollection}.save( item ); }
         return true;
-      } catch (ex) {
-        return false } }")
+      } catch ( ex ) {
+        return false; } }")
   end
   
-  def self.add_update_rating
-    collection.db.add_stored_function('update_rating', "function(feature_id,content_item_id,old_r,new_r) {
+  def self.add_update_ranking
+    collection.db.add_stored_function('update_rating', "function(nid,old_r,new_r) {
       try {
-        item = db.#{dbcollection}.findOne({ f:feature_id,c:content_item_id });
-        item.r = item.r + (( new_r - old_r ) / item.t);
-        db.#{dbcollection}.save(item);
+        item = db.#{dbcollection}.findOne({ nid:nid });
+        item.r = item.r + (( new_r - old_r ) / item.c);
+        db.#{dbcollection}.save( item );
         return true;
-      } catch (ex) {
+      } catch ( ex ) {
         return false; } }")
   end
   
   ## methods that add new data
-  def self.new_rating(feature_id,content_item_id,rating)
-    collection.db.eval("new_rating(#{feature_id},#{content_item_id},#{rating})")
+  def self.new_rating(nid,rating)
+    collection.db.eval("new_rating(#{nid},#{rating})")
   end
   
-  def self.update_rating(feature_id,content_item_id,old_r,new_r)
-    collection.db.eval("update_rating(#{feature_id},#{content_item_id},#{old_r},#{new_r})")
+  def self.update_rating(nid,old_r,new_r)
+    collection.db.eval("update_rating(#{nid},#{old_r},#{new_r})")
   end
   
   ## methods that find ratings or totals
-  def self.find_by_fid_cid(feature_id,content_item_id,key,options={})
-    item = collection.db.eval("return db.#{dbcollection}.findOne({f:#{feature_id},c:#{content_item_id}})")
+  def self.find_by_nid(nid,key,options={})
+    item = RankingAverage.find_one({ :nid => nid })
     return 0 if item.nil?
-    options[:rating_total] ? [item['r'], item['t']] : item[key]
+    options[:total] ? [item['r'], item['c']] : item[key]
   end
   
-  def self.rating(feature_id,content_item_id)
-    find_by_fid_cid(feature_id,content_item_id,'r')
+  def self.rating(nid)
+    find_by_nid(nid,'r')
   end
   
-  def self.total(feature_id,content_item_id)
-    find_by_fid_cid(feature_id,content_item_id,'t')
+  def self.total(nid)
+    find_by_nid(nid,'c')
   end
   
-  def self.rating_total(feature_id,content_item_id)
-    find_by_fid_cid(feature_id,content_item_id,'',{:rating_total=>true})
+  def self.rating_total(nid)
+    find_by_nid(nid,'',{:total=>true})
   end
 end
 

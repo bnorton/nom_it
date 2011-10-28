@@ -10,6 +10,65 @@ class Comment < MongoRuby
     "comments"
   end
   
+  def self.create_comment_for_location(opt={})
+    return false unless Comment.check_params(opt) && opt[:text]
+    self.create(opt)
+  end
+  
+  def self.create_comment_for_recommendation(opt={})
+    return false unless Comment.check_params_full(opt) && opt[:text]
+    self.create(opt)
+  end
+  
+  # can only destroy one since the id is globally unique
+  def self.destroy_id(id)
+    return false if id.blank?
+    Comment.remove({:_id => id})
+  end
+  
+  # removes all comments (could be more than one)
+  def self.destroy(opt={})
+    return false unless Comment.check_params(opt)
+    Comment.remove({
+      :uid => opt[:uid],
+      :lid => opt[:lid],
+      :rid => opt[:rid]
+    })
+  end
+  
+  def self.text_search(opt={})
+    false
+  end
+  
+  # find all my comments on a specific item
+  def self.search_by_uid_lid_rid(uid,lid,rid)
+    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i, :rid => rid.to_i })
+  end
+  
+  def self.search_by_uid_lid(uid,lid)
+    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i })
+  end
+  
+  # simply find a comments id
+  def self.search_id(_id)
+    return false if (_id = _id.to_s).blank?
+    Comment.collection.find({ :_id => BSON::ObjectId.from_string(_id)})
+  end
+  
+  def self.for_user_id(uid,options={})
+    Comment.for_all({:uid => uid.to_i},options)
+  end
+  
+  def self.for_location_id(lid,options={})
+    Comment.for_all({:lid => lid.to_i},options)
+  end
+  
+  def self.for_recommendation_id(rid,options={})
+    Comment.for_all({:rid => rid.to_i},options)
+  end
+  
+  private
+  
   # The most granular can only be user comments on a recommendation about a location
   def self.check_params_full(opt)
     return false if ((uid = opt[:uid]).blank?  ||
@@ -38,34 +97,9 @@ class Comment < MongoRuby
     end
   end
   
-  def self.create_comment_for_location(opt={})
-    return false unless Comment.check_params(opt) && opt[:text]
-    self.create(opt)
-  end
-  
-  def self.create_comment_for_recommendation(opt={})
-    return false unless Comment.check_params_full(opt) && opt[:text]
-    self.create(opt)
-  end
-  
-  # can only destroy one since the id is globally unique
-  def self.destroy_id(id)
-    return false if id.blank?
-    Comment.remove({:_id => id})
-  end
-  
-  # removes all comments (could be more than one) for a content item
-  def self.destroy(opt={})
-    return false unless Comment.check_params(opt)
-    Comment.remove({
-      :uid => opt[:uid],
-      :lid => opt[:lid],
-      :rid => opt[:rid]
-    })
-  end
-  
-  def self.text_search(opt={})
-    false
+  def self.for_all(finder,options={})
+    the_limit = options[:limit] || 20
+    Comment.collection.find(finder).sort([[ :_id, MONGO_ASC ]]).limit(the_limit)
   end
   
   # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid
@@ -90,36 +124,4 @@ class Comment < MongoRuby
     end
   end
   
-  # find all my comments on a specific item
-  def self.search_by_uid_lid_rid(uid,lid,rid)
-    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i, :rid => rid.to_i })
-  end
-  
-  def self.search_by_uid_lid_rid(uid,lid)
-    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i })
-  end
-  
-  # simply find a comments id
-  def self.search_id(_id)
-    return false if (_id = _id.to_s).blank?
-    Comment.collection.find({ :_id => BSON::ObjectId.from_string(_id)})
-  end
-  
-  def self.for_all(finder,options={})
-    the_limit = options[:limit] || 20
-    Comment.collection.find(finder).sort([[ :_id, ASC ]]).limit(the_limit)
-  end
-  
-  def self.for_user_id(uid,options={})
-    Comment.for_all({:uid => uid.to_i},options)
-  end
-  
-  def self.for_location_id(lid,options={})
-    Comment.for_all({:lid => lid.to_i},options)
-  end
-  
-  def self.for_recommendation_id(rid,options={})
-    Comment.for_all({:rid => rid.to_i},options)
-  end
-
 end
