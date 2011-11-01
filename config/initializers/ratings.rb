@@ -1,2 +1,0 @@
-RankingAverage::add_new_rating
-RankingAverage::add_update_rating

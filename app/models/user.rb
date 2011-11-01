@@ -21,15 +21,21 @@ class User < ActiveRecord::Base
   scope :has_joined, lambda {
     where(["has_joined=1"])
   }
+  scope :hasnt_joined, lambda {
+    where(["has_joined=0"])
+  }
   scope :find_by_id_or_email, lambda {|id|
     public_fields.where(["id=? or email=?", id, id]).has_joined
   }
+  scope :login_with_id_or_email, lambda {|i|
+    select("salt,password").where(["id=? or email=?",i,i]).has_joined
+  }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id,id]
-    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items]).has_joined
+    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
   }
-  scope :find_by_not_yet_joined, lambda {|email|
-    public_fields.where(["email=? and has_joined=0", email])
+  scope :find_by_not_yet_joined, lambda {|identifier|
+    find_by_any_means(identifier).hasnt_joined
   }
   scope :detail, lambda {|id|
     find_by_id_or_email(id)
@@ -57,13 +63,13 @@ class User < ActiveRecord::Base
   end
   
   def self.find_by_any_means_necessary(id)
-    user = User.find_by_any_means(id)
+    user = User.find_by_any_means(id).has_joined
     user.first unless user.blank?
   end
   
-  def self.login(email,password,vname='')
-    unless email.blank?
-      user = User.find_by_email(email)
+  def self.login(id_or_email,password,vname='')
+    unless id_or_email.blank?
+      user = User.login_with_id_or_email(id_or_email).first
       if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
         user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
         user.last_seen  = Time.now
@@ -88,7 +94,7 @@ class User < ActiveRecord::Base
   end
   
   def self.register_with_facebook(fbHash,username='')
-    user = new_or_hasnt_joined(fbHash['email'])
+    user = new_or_hasnt_joined(fbHash['id'])
     user.screen_name = username
     user.facebook = fbHash['id']
     user.name     = fbHash['name']
@@ -96,14 +102,14 @@ class User < ActiveRecord::Base
     user.url      = "https://graph.facebook.com/#{user.facebook}/picture"
     user.last_seen= Time.now
     location      = fbHash['locaton']
-    user.city, user.state = parse_location(location)
+    user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
     user.has_joined= true
     user.save!
   end
   
   def self.register_with_twitter(twHash,username='',email='')
-    user = new_or_hasnt_joined(twHash['email'])
+    user = new_or_hasnt_joined(twHash['id'])
     user.screen_name = username
     user.email    = email
     user.twitter  = twHash['id']
@@ -111,19 +117,21 @@ class User < ActiveRecord::Base
     user.url      = twHash['profile_image_url']
     user.token    = email_token
     user.last_seen= Time.now
-    user.city, user.state = parse_location(twHash['location'])
+    user.city, user.state = Util.parse_location(twHash['location'])
     user.token_expires = Time.now + 14.days
     user.has_joined= true
     user.save!
   end
     
-  def self.new_or_hasnt_joined(email)
-    user = User.find_by_not_yet_joined(email)
+  def self.new_or_hasnt_joined(identifier)
+    user = User.find_by_not_yet_joined(identifier).try(:first)
     if user.blank?
-      user = User.find_by_email(email)
+      user = User.find_by_email(identifier)
       if user.blank?
         user = User.new
       end
+    else
+      Follower.user_has_joined(user.id)
     end
     user
   end
@@ -133,7 +141,8 @@ class User < ActiveRecord::Base
     user.email        = items[:email]
     user.twitter      = items[:twid]
     user.facebook     = items[:fbid]
-    user.token        = email_token
+    token = email_token
+    user.token        = token
     user.token_expires= email_token_expires
     ## - warning   #####################################################
     ## - make sure that we know this is not a valid user as they      ##
@@ -141,18 +150,7 @@ class User < ActiveRecord::Base
     user.has_joined = false                                           ##
     ## end warning #####################################################
     if user.save!
-      user
-    end
-  end
-  
-  def self.parse_location(location)
-    city_state = location['name']
-    unless city_state.nil?
-      parts = city_state.split
-      if parts.length > 1
-        return [parts[0].strip, parts[1].strip]
-      end
-      city_state
+      User.find_by_token(token)
     end
   end
   

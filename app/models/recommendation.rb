@@ -19,26 +19,25 @@ class Recommendation < ActiveRecord::Base
   def self.create(this)
     this.merge!(self.defaults(this))
     
-    recommendation = Recommendation.new do |r|
-      r.lat      = this[:lat]
-      r.lng      = this[:lng]
-      r.user_id  = this[:user_id]
-      r.user_name= this[:user_name]
-      r.location_id = this[:location_id]
-      r.title    = this[:title]
-      r.text     = this[:text]
-      r.facebook = this[:facebook] || false
-      r.facebook = this[:twitter]  || false
-      r.location_name = this[:name]
-      r.location_city = this[:city]
-      r.nid      = Util.ID
-    end
-    if recommendation.save!
-      token = Base64.encode64(recommendation.id.to_s)
+    r = Recommendation.new
+    r.lat      = this[:lat]
+    r.lng      = this[:lng]
+    r.user_id  = this[:user_id]
+    r.user_name= this[:user_name]
+    r.location_id = this[:location_id]
+    r.title    = this[:title]
+    r.text     = this[:text]
+    r.facebook = this[:facebook] || false
+    r.facebook = this[:twitter]  || false
+    r.location_name = this[:name]
+    r.location_city = this[:city]
+    r.nid      = Util.ID
+    if r.save!
+      token = Base64.encode64(r.id.to_s)
       token = token.gsub("=","").gsub("\n","")
-      recommendation.token = token
-      recommendation.save!
-      [token,recommendation]
+      r.token = token
+      r.save!
+      [token,r]
     end
   end
   

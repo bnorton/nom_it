@@ -1,0 +1,188 @@
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+
+describe "follower" do
+  before do
+    @brian = {
+      :name => 'Brian Norton',
+      :email => '__brian.nort@gmail.com',
+      :screen_name => 'nort',
+      :password => 'password'
+    }
+    @mark = {
+      :name => 'Mark Parker',
+      :email => '__parker.mark@gmail.com',
+      :screen_name => 'parkermark',
+      :password => 'password'
+    }
+  end
+  describe "create" do
+    before :each do
+      User.register(@brian[:email],@brian[:password],@brian[:screen_name])
+      @brian_id = User.find_by_email(@brian[:email]).id
+      User.register(@mark[:email], @mark[:password] ,@mark[:screen_name])
+      @mark_id  = User.find_by_email(@mark[:email]).id
+    end
+    it "should create a new follow relationship based on ID" do
+      Follower.find_or_create(@brian_id,@mark_id,@mark)
+      fbrian = Follower.find_by_user_id(@brian_id)
+      fbrian.to_user_id.should == @mark_id
+      
+      fmark  = Follower.find_by_user_id(@mark_id)
+      fmark.should be_blank
+    end
+    it "should create the inverse follow relationship" do
+      Follower.find_or_create(@brian_id,@mark_id,@mark)
+      fbrian = Follower.find_by_user_id(@brian_id)
+      Follower.find_or_create(@mark_id,@brian_id,@brian)
+      fmark  = Follower.find_by_user_id(@mark_id)
+      
+      fbrian.should_not be_blank
+      fbrian.to_user_id.should == @mark_id
+      fmark.should_not be_blank
+      fmark.to_user_id.should == @brian_id
+    end
+    it "should be undirected if both users follow each other" do
+    end
+  end
+  describe "not joined" do
+    before :each do
+      User.register(@brian[:email],@brian[:password],@brian[:screen_name])
+      @brian_id = User.find_by_email(@brian[:email]).id
+      @random_email = 'some_random_email@gmail.com'
+      Follower.find_or_create(@brian_id,@random_email,{:email => @random_email})
+    end
+    it "should make an unjoined user to point to when the followed user has not registered" do
+      brian = User.find_by_email(@brian[:email])
+      newu   = User.find_by_email(@random_email)
+      
+      brian.should_not be_blank
+      brian.has_joined.should == true
+      
+      newu.should_not be_blank
+      newu.has_joined.should == false
+    end
+    it "should find an unjoined user when said use actually registers sometime later via EMAIL" do
+      newu   = User.find_by_email(@random_email)
+      newu.should_not be_blank
+      newu.has_joined.should == false
+      
+      User.register(@random_email,'password','random')
+      newu   = User.find_by_email(@random_email)
+      newu.should_not be_blank
+      newu.has_joined.should == true  # shoud now have joined
+    end
+    it "should find an unjoined user when said use actually registers sometime later via FACEBOOK ID" do
+      _FBID = 12345
+      newu   = User.find_by_email(@random_email)
+      newu.facebook = _FBID
+      newu.save!
+      fbuser = User.find_by_facebook(_FBID)
+      fbuser.should_not be_blank
+      fbuser.has_joined.should == false
+      
+      fb_user = {
+        'email' => 'brian_FB_email@gmail.com',
+        'id'    => _FBID,
+        'name'  => 'brian fb name'
+      }
+      User.register_with_facebook(fb_user)
+      fbuser = User.find_by_facebook(_FBID)
+      fbuser.should_not be_blank
+      fbuser.has_joined.should == true
+    end
+  end
+  describe "followers listing" do
+    before do
+      User.register(@brian[:email],@brian[:password],@brian[:screen_name])
+      @one = User.find_by_email(@brian[:email])
+      User.register(@mark[:email],@mark[:password],@mark[:screen_name])
+      @two = User.find_by_email(@mark[:email])
+      User.register('some_email@gmail.com','password','samplename')
+      @thr = User.find_by_email('some_email@gmail.com')
+    end
+    it "should find followers that have followed a user" do
+      Follower.find_or_create(@one.id,@two.id,@mark)
+      ones_followers = Follower.users_that_i_follow(@one.id)
+      ones_followers.length.should == 1
+      
+      Follower.find_or_create(@one.id,@thr.id,@brian)
+      
+      @ones_followers = Follower.users_that_i_follow(@one.id)
+      @ones_followers.length.should == 2
+      valid, i = [], 0
+      while i < @ones_followers.length
+        o = @ones_followers[i]
+        if o.to_user_id == @two.id
+          valid << true
+        elsif o.to_user_id == @thr.id
+          valid << true
+        end
+        i += 1
+      end
+      valid.length.should == 2
+      valid[0].should == true
+      valid[1].should == true
+      
+      # users that follow me should not have followers
+      twos_followers = Follower.users_that_i_follow(@two.id)
+      twos_followers.length.should == 0
+      
+      thrs_followers = Follower.users_that_i_follow(@thr.id)
+      thrs_followers.length.should == 0
+    end
+    it "should find followers that a user follows" do
+      Follower.find_or_create(@two.id,@one.id,@mark)
+      Follower.find_or_create(@two.id,@thr.id,@brian)
+      
+      Follower.users_that_i_follow(@two.id).length.should  == 2
+      Follower.users_that_follow_me(@one.id).length.should == 1
+      Follower.users_that_follow_me(@thr.id).length.should == 1
+    end
+    it "should not find users that have not yet joined" do
+      sR = 'some_random_email2@gmail.com'
+      Follower.find_or_create(@two.id,sR,{:screen_name=>'random_user',:email=>sR})
+      
+      some = User.find_by_email('some_random_email2@gmail.com')
+      some.should_not be_blank
+      some.has_joined.should == false
+      
+      Follower.users_that_i_follow(@two.id).length.should  == 0
+      Follower.users_that_follow_me(@two.id).length.should == 0
+    end
+    it "should find users that were not joined and that are now members" do
+      sR = 'some_random_email2@gmail.com'
+      random_user = {:screen_name=>'random_user',:email=>sR}
+      Follower.find_or_create(@two.id,random_user[:email],random_user)
+      Follower.users_that_i_follow(@two.id).length.should  == 0
+      Follower.users_that_follow_me(@two.id).length.should == 0
+      
+      User.register(random_user[:email],'password',random_user[:screen_name])
+      Follower.users_that_i_follow(@two.id).length.should  == 1
+      Follower.users_that_follow_me(@two.id).length.should == 0
+    end
+    after do
+      @one.destroy
+      @two.destroy
+      @thr.destroy
+    end
+  end
+  describe "unfollow" do
+    it "should unfollow a user" do
+      
+    end
+    it "should not list users that were unfollowed" do
+      
+    end
+    it "should not remove that user record when unfollowed" do
+      
+    end
+  end
+  describe "block" do
+    it "should block users" do
+      
+    end
+    it "should not list users that were blocked" do
+      
+    end
+  end
+end

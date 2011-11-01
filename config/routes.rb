@@ -8,9 +8,11 @@ NomIt::Application.routes.draw do
   
   get "/user/login"         => "users#login"              ### POST
   get "/user/register"      => "users#register"           ### POST
-  
+  get "/user/check"         => "users#check"
+    
   get "/users/search"       => "users#search"
   get "/users/detail"       => "users#detail"
+
   
   get "/follow/create"      => "followers#create"         ### POST
   get "/follow/destroy"     => "followers#destroy"        ### POST

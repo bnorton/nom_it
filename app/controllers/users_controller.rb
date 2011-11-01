@@ -59,10 +59,10 @@ class UsersController < ApplicationController
     response = if @screen_name.blank?
       Status.insufficient_arguments
     else
-      if User.find_by_screen_name(@screen_name).bank?
-        ok_or_not(true,{:results => {:detail => 'screen_name is valid and has been reserved for 5 minutes'}})
+      if User.find_by_screen_name(@screen_name).blank?
+        ok_or_not(true,{:results => [{:detail => 'That name is valid and has been reserved for 5 minutes'}]})
       else
-        ok_or_not(false)
+        ok_or_not(true,{:not_found=>true})
       end
     end
     respond_with response
@@ -71,10 +71,10 @@ class UsersController < ApplicationController
   private
   
   def ok_or_not(condition,options={})
-    if condition && detail = options[:results] || User.detail(@email)
+    if condition && (detail = options[:results])
       Status.OK(detail)
     elsif options[:not_found]
-      Status.user_not_found
+      Status.user_found
     else
       Status.user_not_authorized
     end

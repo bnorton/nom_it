@@ -49,38 +49,51 @@ class Follower < ActiveRecord::Base
   }
   
   def self.find_or_create(id,their_identifier,items)
+    options = {}
     other = User.find_by_any_means_necessary(their_identifier)
     if other.blank?
-      should = User.create_should_join(items)
-      return false if (other.blank? || should.id == other.id)
-      other = Follower.new_follower(id,should)
+      other = User.create_should_join(items)
+      options.merge!({:hasnt_joined=>true})
+      return if other.blank?
     end
-    other
+    Follower.new_follower(id,other,options)
   end
   
   private
   
-  def self.new_follower(myid,other)
+  def self.new_follower(myid,other,options={})
     me = User.private_id(myid).try(:first)
-    return false if me.blank? || other.blank?
-    my_name    = me.name || me.screen_name
-    other_name = other.name || other.screen_name
-    nfollower  = Follower.new do |f|
-      f.user_id      = me.id
-      f.user_name    = my_name
-      f.user_city    = me.city
-      f.to_user_id   = other.id
-      f.to_name      = other_name
-      f.nid          = Util.ID
+    return if me.blank? || other.blank?
+    my_name   = me.name || me.screen_name
+    other_name= other.name || other.screen_name
+    f = Follower.new_or_old(other.id)
+    f.user_id      = me.id
+    f.user_name    = my_name
+    f.user_city    = me.city
+    f.to_user_id   = other.id
+    f.to_name      = other_name
+    f.nid          = Util.ID
+    if options[:hasnt_joined]
+      f.approved = false
+    else
+      f.approved = true
     end
     begin
-      if nfollower.save!
+      if f.save!
         flag = true
       end
     rescue ActiveRecord::RecordNotUnique
       flag = true
     end
     User.detail(other.id) if flag
+  end
+  
+  def self.user_has_joined(to_id)
+    return if (to = Follower.find_by_to_user_id(to_id)).blank?
+    Array(to).each do |t|
+      t.approved = true
+      t.save!
+    end
   end
   
   def self.unfollow(me,them)
@@ -103,6 +116,14 @@ class Follower < ActiveRecord::Base
     Follower.follows_id_ids(me.to_s)
   end
   
+  def self.users_that_i_follow(me)
+    return if me.blank?
+    Follower.followers_ids(me.to_s)
+  end
+  
+  def self.new_or_old(id)
+    Follower.find_by_user_id(id) || Follower.new
+  end
 end
 
   # The schema for Follower

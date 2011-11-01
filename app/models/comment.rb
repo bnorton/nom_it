@@ -20,6 +20,11 @@ class Comment < MongoRuby
     self.create(opt)
   end
   
+  def self.create_comment_for_nid(opt={})
+    return false unless opt[:nid]
+    self.create(opt)
+  end
+  
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
     return false if id.blank?
@@ -71,8 +76,7 @@ class Comment < MongoRuby
   
   # The most granular can only be user comments on a recommendation about a location
   def self.check_params_full(opt)
-    return false if ((uid = opt[:uid]).blank?  ||
-                     (lid = opt[:lid]).blank?  || (rid = opt[:rid]).blank?)
+    return false if ((uid = opt[:uid]).blank?  || (lid = opt[:lid]).blank?  || (rid = opt[:rid]).blank?)
     true
   end
   
@@ -84,15 +88,23 @@ class Comment < MongoRuby
   
   # parent_comment_id is for threadding (hit the reply button)
   def self.create(opt={})
-   unless Comment.search_id(opt[:nomid])
+    unless (nid = opt[:nid]) && (Comment.search_id(opt[:nid]).count > 0)
       hash = {
-        :uid  => opt[:uid],
-        :lid  => opt[:lid],
-        :pcid => opt[:pcid] || nil,
         :text => opt[:text],
         :hash => opt[:hash]
       }
-      hash.merge!({:rid  => opt[:rid]}) if opt[:rid]
+      if nid
+        hash.merge!({
+          :nid => nid
+        })
+      else
+        hash.merge!({
+          :uid  => opt[:uid],
+          :lid  => opt[:lid]
+        })
+      end
+      hash.merge!({:pcid => opt[:pcid]}) if opt[:pcid]
+      hash.merge!({:rid  => opt[:rid]})  if opt[:rid]
       Comment.save(hash)
     end
   end

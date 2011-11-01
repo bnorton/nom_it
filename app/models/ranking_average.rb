@@ -34,12 +34,12 @@ class RankingAverage < MongoRuby
   end
   
   ## methods that add new data
-  def self.new_rating(nid,rating)
-    collection.db.eval("new_rating(#{nid},#{rating})")
+  def self.new_ranking(nid,rating)
+    collection.db.eval("new_ranking(#{nid},#{rating})")
   end
   
-  def self.update_rating(nid,old_r,new_r)
-    collection.db.eval("update_rating(#{nid},#{old_r},#{new_r})")
+  def self.update_ranking(nid,old_r,new_r)
+    collection.db.eval("update_ranking(#{nid},#{old_r},#{new_r})")
   end
   
   ## methods that find ratings or totals
@@ -49,7 +49,7 @@ class RankingAverage < MongoRuby
     options[:total] ? [item['r'], item['c']] : item[key]
   end
   
-  def self.rating(nid)
+  def self.ranking(nid)
     find_by_nid(nid,'r')
   end
   
@@ -57,7 +57,7 @@ class RankingAverage < MongoRuby
     find_by_nid(nid,'c')
   end
   
-  def self.rating_total(nid)
+  def self.ranking_total(nid)
     find_by_nid(nid,'',{:total=>true})
   end
 end

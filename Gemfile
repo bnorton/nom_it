@@ -31,15 +31,11 @@ gem 'unicorn'
 
 gem 'capistrano'
 
-#testing the codez
-gem 'rspec'
-gem 'rspec-rails'
-
-
-gem 'factory_girl_rails'
-
-group :development do
-  gem 'capistrano-unicorn'
+group :development, :test do
+    gem 'factory_girl_rails'
+    gem 'rspec'
+    gem 'capistrano-unicorn'
+    gem "rspec-rails"
 end
 
 group :test do

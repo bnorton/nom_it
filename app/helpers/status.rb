@@ -18,8 +18,8 @@ module Status
       message -1, "you are not authorized to view that user"
     end
     
-    def user_not_found
-      message -1, "the user you were looking for was not found"
+    def user_found
+      message -1, "the screen_name you were looking for is not available"
     end
     
     def couldnt_follow_or_unfollow

@@ -7,6 +7,8 @@ class Ranking < MongoRuby
     "rankings"
   end
   
-  def self.new
+  def self.new_ranking(nid,uid,value,text='')
+    
+  end
   
 end

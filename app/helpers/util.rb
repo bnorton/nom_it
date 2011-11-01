@@ -23,8 +23,23 @@ class Util
       ii
     end
     
+    def parse_location(location)
+      begin
+        city_state = location['name']
+        unless city_state.nil?
+          parts = city_state.split
+          if parts.length > 1
+            return [parts[0].strip, parts[1].strip]
+          end
+          city_state
+        end
+      rescue Exception
+        nil
+      end
+    end
+    
     def ID
-      BSON::ObjectId.new
+      BSON::ObjectId.new.to_s
     end
     
   end
