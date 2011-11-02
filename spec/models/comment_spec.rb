@@ -52,8 +52,8 @@ describe "comments" do
     # create_comment_for_location(options) => must include lid, uid, text
     describe "location" do
       before do
-        @location1 = {:lid=>10,:uid=>1,:text=>'sample comment'}
-        @location2 = {:lid=>10,:uid=>3,:text=>'sample comment2'}
+        @location1 = {:lid=>10,:uid=>1,:text=>'sample comment'  }
+        @location2 = {:lid=>10,:uid=>3,:text=>'sample comment2' }
         @location3 = {:lid=>12,:uid=>5,:text=>'sample comment17'}
         @location4 = {:lid=>12,:uid=>7,:text=>'sample comment23'}
       end
@@ -116,14 +116,47 @@ describe "comments" do
   describe "destroy" do
     before do
       Comment.collection.remove
+      @recommendation1 = {:rid=>2,:lid=>10,:uid=>1,:text=>'sample comment'}
+      @recommendation2 = {:rid=>2,:lid=>10,:uid=>3,:text=>'sample comment2 from user 3'}
+    end
+    before :each do
+      @before = Comment.collection.count
+      @id1 = Comment.create_comment_for_recommendation(@recommendation1)
+      @id2 = Comment.create_comment_for_recommendation(@recommendation2)
+      @after = Comment.collection.count
+      (@after - @before).should == 2
     end
     it "should remove any comemnts that were specified for delete" do
-      
+      Comment.destroy_id(@id1.to_s)
+      Comment.destroy_id(@id2.to_s)
+      (Comment.collection.count - @after).should == 0
     end
     it "should remove all comments that match the uid, lid (all of a users comments about a location)" do
+      r = @recommendation1
+      finder = {:uid => r[:uid], :lid => r[:lid]}
+      Comment.destroy(finder)
+      (Comment.collection.count - @after).should == 0
+      comment = Comment.search_by_uid_lid(r[:uid],r[:lid]).first
+      comment['text'].should == Comment.removed_content_message
       
+      r = @recommendation2
+      finder = {:uid => r[:uid], :lid => r[:lid]}
+      Comment.destroy(finder)
+      (Comment.collection.count - @after).should == 0
+      comment = Comment.search_by_uid_lid(r[:uid],r[:lid]).first
+      comment['text'].should == Comment.removed_content_message
+    end
+    it "should remove all comments that match the rid, uid, lid (all of a users comments about a location)" do
+      r = @recommendation1
+      Comment.destroy({:rid => r[:rid], :uid => r[:uid], :lid => r[:lid]})
+      (Comment.collection.count - @after).should == 0
+      
+      r = @recommendation2
+      Comment.destroy({:rid => r[:rid], :uid => r[:uid], :lid => r[:lid]})
+      (Comment.collection.count - @after).should == 0
     end
     it "should have the common verbage for a deleted comment with user data still attached" do
+      msg = Comment.removed_content_message
       
     end
     it "should remove a single comment if the nid is specified" do
@@ -133,34 +166,71 @@ describe "comments" do
   describe "search" do
     before do
       Comment.collection.remove
+      # create some comments
+      @uid   = rand(1<<8)
+      @uid2  = rand(1<<8)
+      @lid   = rand(1<<8)
+      @text1 = 'sample text1'
+      @text2 = 'example text2'
+      @text3 = 'text3 text'
+      r = {:lid=>@lid,:uid=>@uid,:text=>@text1}
+      Comment.create_comment_for_location(r)
+      r[:text]=@text2
+      Comment.create_comment_for_location(r)
+      r[:text]=@text3
+      r[:uid] =@uid2
+      Comment.create_comment_for_location(r)
+      @uID = 99
+      Comment.create_comment_for_location({:uid=>@uID,:lid=>12,:text=>'sample text 3'})
+        
+    end
+    before :each do
+      @before= Comment.collection.count
     end
     # for_user_id(uid,options={})
     describe "user" do
       it "should find all comments by a certain user" do
-        
+        Comment.for_user_id(@uid).count.should == 2
       end
       it "should find all comments by multiple users" do
-        
+        Comment.for_user_id(@uid2).count.should == 1
+        Comment.for_user_id(@uID).count.should == 1
       end
     end
     # search_by_uid_lid(uid,lid)
     # for_location_id(lid,options={})
     describe "location" do
       it "should find the comments about a certain location" do
-        
+        Comment.for_location_id(@lid).count.should == 3
       end
       it "should find the comments about multiple locations" do
-        
+        Comment.for_location_id(12).count.should == 1
       end
     end
     # search_by_uid_lid_rid(uid,lid,rid)
     # for_recommendation_id(rid,options={})
     describe "recommendation" do
+      before do
+        @rid   = rand(1<<8)
+        @rid2  = rand(1<<8)
+        @uid   = 8
+        @lid   = rand(1<<8)
+        @text1 = 'sample text1'
+        @text2 = 'example text2'
+        @text3 = 'text3 text'
+        r = {:rid=>@rid,:lid=>@lid,:uid=>@uid,:text=>@text1}
+        Comment.create_comment_for_location(r)
+        r[:text]=@text2
+        Comment.create_comment_for_location(r)
+        r[:text]=@text3
+        r[:rid] =@rid2
+        Comment.create_comment_for_location(r)
+      end
       it "should find the comments about a certain recommendation" do
-        
+        Comment.for_recommendation_id(@rid).count.should == 2
       end
       it "should find the comments by multiple recomemndations" do
-        
+        Comment.for_recommendation_id(@rid2).count.should == 1
       end
     end
   end

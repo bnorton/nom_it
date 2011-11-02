@@ -32,8 +32,8 @@ describe "user" do
       user.has_joined.should == true
     end
     it "should create two new users that are the correct details" do
-      User.register(@brian[:email],@brian[:password],@brian[:screen_name])
-      User.register(@mark[:email], @mark[:password], @mark[:screen_name])
+      User.register(@brian[:email],@brian[:password],@brian[:screen_name]).class.should == User
+      User.register(@mark[:email], @mark[:password], @mark[:screen_name]).class.should == User
       
       new_brian = User.find_by_email(@brian[:email])
       new_brian.email.should == @brian[:email]
@@ -43,7 +43,7 @@ describe "user" do
     end
     
     it "should login a user via email or ID after that user been registerd into the system" do
-      User.register(@brian[:email],@brian[:password],@brian[:screen_name]).should_not == nil
+      User.register(@brian[:email],@brian[:password],@brian[:screen_name]).class.should == User
       User.login(@brian[:email],@brian[:password]).should == true
     
       brian = User.find_by_email(@brian[:email])
