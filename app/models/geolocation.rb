@@ -12,7 +12,7 @@ class Geolocation < ActiveRecord::Base
   
   scope :find_by_distance, lambda {|lat,lng,dist|
     select("location_id").
-    where(["DEGREES(ACOS(SIN(RADIANS(?))*SIN(RADIANS(lat))+COS(RADIANS(?))*COS(RADIANS(lat))*COS(RADIANS(?-lng))))*60*1.1515<?",lat,lat,lng,dist])
+    where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<?",dist])
   }
   scope :search_by_category, lambda {|lat,lng,dist,category|
     Geolocation.find_by_distance(lat,lng,dist) # .where(["primary=? or secondary=?",category, category])
@@ -22,7 +22,7 @@ class Geolocation < ActiveRecord::Base
   }
   
   def self.category_search(options,retries=3)
-    if @lat.blank?
+    if @lat.blank? || @lng.blank?
       params options
     end
     return false unless retries >= 0 && @primary =~ TAG
@@ -43,7 +43,7 @@ class Geolocation < ActiveRecord::Base
   
   def self.search_by_geolocation(options)
     params options
-    return "search_by_geolocation didn't have the correct input values" unless lat && lng && lat.to_s =~ NUM && lng.to_s =~ NUM
+    return "search_by_geolocation didn't have the correct input values" unless @lat && @lng && @lat.to_s =~ NUM && @lng.to_s =~ NUM
     Geolocation.search(@lat,@lng,@dist) 
   end
   

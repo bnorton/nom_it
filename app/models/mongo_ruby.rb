@@ -33,6 +33,10 @@ class MongoRuby
     self.collection.find_one(*args)
   end
   
+  def self.update(*args)
+    self.collection.update(*args)
+  end
+  
   def self.ensure_index(*args)
     self.collection.ensure_index(*args)
   end

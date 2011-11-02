@@ -10,6 +10,10 @@ class Comment < MongoRuby
     "comments"
   end
   
+  def self.removed_content_message
+    "the user has removed this comment."
+  end
+  
   def self.create_comment_for_location(opt={})
     return false unless Comment.check_params(opt) && opt[:text]
     self.create(opt)
@@ -28,17 +32,18 @@ class Comment < MongoRuby
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
     return false if id.blank?
-    Comment.remove({:_id => id})
+    return false unless ((id = BSON::ObjectId.from_string(id.to_s) unless id.class == BSON::ObjectId) rescue nil)
+    Comment.update({:_id => id},{'$set' => {:text => Comment.removed_content_message}})
   end
   
-  # removes all comments (could be more than one)
-  def self.destroy(opt={})
+  def self.destroy_uid_lid_rid(opt)
+    return false unless Comment.check_params_full(opt)
+    self.destroy(opt)
+  end
+  
+  def self.destroy_uid_lid(opt)
     return false unless Comment.check_params(opt)
-    Comment.remove({
-      :uid => opt[:uid],
-      :lid => opt[:lid],
-      :rid => opt[:rid]
-    })
+    self.destroy(opt)
   end
   
   def self.text_search(opt={})
@@ -107,6 +112,16 @@ class Comment < MongoRuby
       hash.merge!({:rid  => opt[:rid]})  if opt[:rid]
       Comment.save(hash)
     end
+  end
+  
+  # removes all comments (could be more than one)
+  def self.destroy(opt={})
+    return false unless Comment.check_params(opt)
+    finder = {
+      :uid => opt[:uid],
+      :lid => opt[:lid] }
+    finder.merge!({:rid => opt[:rid]}) if opt[:rid]
+    Comment.update(finder,{'$set'=>{:text => Comment.removed_content_message}})
   end
   
   def self.for_all(finder,options={})

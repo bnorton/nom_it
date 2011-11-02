@@ -7,6 +7,10 @@ class Ranking < MongoRuby
     "rankings"
   end
   
+  def self.removed_content_message
+    "the user has removed this rating."
+  end
+
   def self.new_ranking(nid,uid,value,text='')
     
   end

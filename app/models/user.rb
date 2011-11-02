@@ -1,4 +1,3 @@
-
 class User < ActiveRecord::Base
   
   has_many :revisions
@@ -73,7 +72,7 @@ class User < ActiveRecord::Base
       if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
         user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
         user.last_seen  = Time.now
-        user.save!
+        return true if user.save!
       end
     end
   end
@@ -86,11 +85,12 @@ class User < ActiveRecord::Base
     user.last_seen= Time.now
     user.has_joined= true
     user.screen_name=username
+    user.nid      = Util.ID
     begin
       user.save!
     rescue ActiveRecord::RecordNotUnique
     end
-    user
+    User.find_by_email(email)
   end
   
   def self.register_with_facebook(fbHash,username='')
@@ -144,6 +144,7 @@ class User < ActiveRecord::Base
     token = email_token
     user.token        = token
     user.token_expires= email_token_expires
+    user.nid          = Util.ID
     ## - warning   #####################################################
     ## - make sure that we know this is not a valid user as they      ##
     ##    are here because someone followed them via some identifier  ##
@@ -163,7 +164,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "id,name,last_seen,city,screen_name,follower_count,description,created_at"
+    fields = "id,nid,name,last_seen,city,screen_name,follower_count,description,created_at"
     if opt == :private
       fields << ",street,country,email,phone,facebook,twitter"
     end

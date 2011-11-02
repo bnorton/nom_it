@@ -12,6 +12,10 @@ class Recommend < MongoRuby
   def self.dbcollection
     "recommends"
   end
+
+  def self.removed_content_message
+    "the user has removed this recommendation."
+  end
   
   def self.create(recommendation,followers)
     return false if recommendation.blank? || followers.blank?
@@ -60,7 +64,9 @@ class Recommend < MongoRuby
 end
 
   # the Schema for the Recommendation model 
+  
 ### This object is the `each individual item` table
+  
   # create_table "recommendations", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
