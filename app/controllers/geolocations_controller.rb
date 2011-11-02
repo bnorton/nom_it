@@ -21,7 +21,6 @@ class GeolocationsController < ApplicationController
   
   def details
     details = Location.full_details_from_search(@search)
-    # details= Location.full_details_from_search(@search)
     response = unless details
       Status.unknown_error
     else
@@ -31,7 +30,9 @@ class GeolocationsController < ApplicationController
   end
   
   def lat_lng_dist
-    unless (lat = params[:lat] && lng = params[:lng])
+    lat = params[:lat]
+    lng = params[:lng]
+    unless lat && lng
       respond_with Status.insufficient_arguments({:message => 'needs lat and lng by default'})
     end
     @options = { 
@@ -40,9 +41,6 @@ class GeolocationsController < ApplicationController
       :dist  => params[:dist] || DEFAULT_DISTANCE,
       :start => params[:start],
       :limit => params[:limit]}
-    unless @lat && @lng
-      
-    end
   end
   
   def primary

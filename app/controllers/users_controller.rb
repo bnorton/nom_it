@@ -20,8 +20,8 @@ class UsersController < ApplicationController
   end
   
   def login
-    condition = User.login(@email, @password)
-    response  = ok_or_not(condition)
+    condition = User.login(@email,@password)
+    response  = ok_or_not(condition,{:results=>[{:logged_in=>true}]})
     respond_with response
   end
   
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
       end
       
     condition = !registration.blank?
-    response  = ok_or_not(condition)
+    response  = ok_or_not(condition,{:results=>response})
     respond_with response
   end
   
@@ -88,7 +88,7 @@ class UsersController < ApplicationController
   
   def user_params
     @id     = params[:id]
-    @email  = params[:email]
+    @email  = params[:email] || params[:id]
     @vname  = params[:vanme]
     @FBHash = params[:fbhash]
     @TWHash = params[:twhash]
