@@ -3,6 +3,8 @@ set :repository,  "git@github.com:bnorton/nom_it.git"
 
 set :scm, :git
 
+set :user, :root
+
 role :web, "li90-14.members.linode.com"                          # Your HTTP server, Apache/etc
 role :app, "li90-14.members.linode.com"                          # This may be the same as your `Web` server
 role :db,  "li90-14.members.linode.com", :primary => true # This is where Rails migrations will run
