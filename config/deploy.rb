@@ -5,9 +5,9 @@ set :scm, :git
 
 set :user, :root
 
-role :web, "li90-14.members.linode.com"                          # Your HTTP server, Apache/etc
-role :app, "li90-14.members.linode.com"                          # This may be the same as your `Web` server
-role :db,  "li90-14.members.linode.com", :primary => true        # This is where Rails migrations will run
+role :web, "justnom.it"                          # Your HTTP server, Apache/etc
+role :app, "justnom.it"                          # This may be the same as your `Web` server
+role :db,  "justnom.it", :primary => true        # This is where Rails migrations will run
 
 set :rails_env, :production
 set :unicorn_binary, "/usr/bin/unicorn"

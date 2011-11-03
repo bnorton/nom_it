@@ -21,7 +21,7 @@ worker_processes 4
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
-APP_PATH = "~/Dropbox/git/nom_it"
+APP_PATH = "/u/apps/justnom.it/current"
 working_directory APP_PATH
 
 # listen on both a Unix domain socket and a TCP port,
