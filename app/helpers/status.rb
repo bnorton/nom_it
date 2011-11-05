@@ -40,7 +40,7 @@ module Status
     end
     
     def couldnt_complete_recommendation(action)
-      message -1, "Your request to #{action} the recommendation couldn't be completed"
+      message -1, "Your request to #{action} the recommendation couldn't be completed :/"
     end
     
     def no_recommendations(options={})
@@ -48,8 +48,8 @@ module Status
       message -1, msg
     end
     
-    def no_ranks_for_location(options={})
-      msg = options[:message] || "There are no rankings for that location yet."
+    def no_ranks_for(options={})
+      msg = options[:message] || "There are no rankings for that #{options[:what]} yet :("
       message -1, msg
     end
     
@@ -84,7 +84,24 @@ module Status
         response
       end
     end
-    
+
+    def location_ranks(location,ranks)
+      {
+        :status => 1,
+        :message => 'OK',
+        :location => location,
+        :ranks => ranks
+      }
+    end
+
+    def ranks(ranks)
+      {
+        :status => 1,
+        :message => 'OK',
+        :ranks => ranks
+      }
+    end
+
     private
     
     def status_message_results(status,message,results,options)
@@ -98,23 +115,6 @@ module Status
         :status      => status,
         :message     => message,
          result_name => results
-      }
-    end
-    
-    def location_ranks(status,location,ranks)
-      {
-        :status => status,
-        :message => 'OK',
-        :location => location,
-        :ranks => ranks
-      }
-    end
-
-    def user_ranks(status,locations,ranks)
-      {
-        :status => status,
-        :message => 'OK',
-        :ranks => ranks
       }
     end
     
