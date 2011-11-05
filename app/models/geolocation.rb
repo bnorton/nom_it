@@ -9,7 +9,9 @@ class Geolocation < ActiveRecord::Base
   
   scope :default_distance, lambda { limit(10) }
   scope :distance, lambda { |lim| limit(lim)  }
-  
+  scope :compact, lambda  {
+    select("lat,lng")
+  }
   scope :find_by_distance, lambda {|lat,lng,dist|
     select("location_id").
     where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<?",dist])
@@ -21,6 +23,9 @@ class Geolocation < ActiveRecord::Base
     Geolocation.search_by_category(lat,lng,dist,primary) # .search_by_category(lat,lng,dist,secondary)
   }
   
+  def self.find_by_location(id)
+    Geolocation.compact.find_by_location_id(id)
+  end
   def self.category_search(options,retries=3)
     if @lat.blank? || @lng.blank?
       params options

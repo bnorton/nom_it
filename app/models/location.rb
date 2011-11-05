@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
   
-  COMPACT = "id,nid,name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "id,nid,updated_at,name,revision,address,cross_street,street,city,state,fsq_id,gowalla_url"
   
   has_many :revisions
   has_many :images
@@ -18,7 +18,6 @@ class Location < ActiveRecord::Base
   }
   scope :detail_for_nid_, lambda {|nid| 
     fields = "#{Location.join_fields},#{Revision.join_fields}"
-    puts "fields #{fields.inspect}"
     select(fields).joins(:revisions).where(["locations.nid=?", nid])
   }
   scope :detail_for_nids_, lambda {|nids| 
@@ -45,12 +44,13 @@ class Location < ActiveRecord::Base
   }
   
   def self.detail_for_nid(nid)
-    detail = detail_for_nid_(nid)
-    if detail.respond_to? :first
-      detail.first
-    else
-      detail
-    end
+    detail = detail_for_nid_(nid).try(:first).try(:attributes)
+    thumb = ThumbCount.find_by_nid(nid)
+    geolocation = Geolocation.find_by_location(detail['location_id'])
+    detail.merge({
+      :thumbs => thumb,
+      :geolocation => geolocation
+    })
   end
   
   def self.details_from_search(search)
@@ -77,7 +77,6 @@ class Location < ActiveRecord::Base
   end
 end
 
-  # create_table "locations", :force => true do |t|
   # create_table "locations", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
