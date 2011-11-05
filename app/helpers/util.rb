@@ -1,8 +1,8 @@
 class Util
   class << self
     
-    def nidify(item)
-      item[:nid] = item['_id'].to_s
+    def nidify(item, key)
+      item[key] = item['_id'].to_s
       item.delete('_id')
       item
     end
@@ -15,10 +15,22 @@ class Util
       end
     end
     
-    def prepare(items,opt={})
+    # a mongo cursor
+    def parse(cursor,opt={})
+      key = opt[:key] || :nid
       ii = []
+      cursor.count.times do
+        it = cursor.next
+        ii << Util.nidify(it,key)
+      end
+      ii
+    end
+    
+    def prepare(items,opt={})
+      key = opt[:key] || :nid
+      ii  = []
       items.each do |it|
-        ii << Util.nidify(it)
+        ii << Util.nidify(it,)
       end
       ii
     end

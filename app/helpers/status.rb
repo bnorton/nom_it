@@ -48,6 +48,11 @@ module Status
       message -1, msg
     end
     
+    def no_ranks_for_location(options={})
+      msg = options[:message] || "There are no rankings for that location yet."
+      message -1, msg
+    end
+    
     def insufficient_arguments(options={})
       msg = options[:message] || "insufficient or malformed arguments"
       message -1, msg
@@ -93,6 +98,23 @@ module Status
         :status      => status,
         :message     => message,
          result_name => results
+      }
+    end
+    
+    def location_ranks(status,location,ranks)
+      {
+        :status => status,
+        :message => 'OK',
+        :location => location,
+        :ranks => ranks
+      }
+    end
+
+    def user_ranks(status,locations,ranks)
+      {
+        :status => status,
+        :message => 'OK',
+        :ranks => ranks
       }
     end
     
