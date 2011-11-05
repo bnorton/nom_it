@@ -16,14 +16,14 @@ class Location < ActiveRecord::Base
   scope :detail_for_ids, lambda {|ids| 
     compact.where(["id in (?)", ids.split(',')])
   }
-  scope :detail_for_nid, lambda {|nid| 
+  scope :detail_for_nid_, lambda {|nid| 
     fields = "#{Location.join_fields},#{Revision.join_fields}"
     puts "fields #{fields.inspect}"
-    select(fields).joins(:revisions).where(["nid=?", nid])
+    select(fields).joins(:revisions).where(["locations.nid=?", nid])
   }
-  scope :detail_for_nids, lambda {|nids| 
+  scope :detail_for_nids_, lambda {|nids| 
     fields = "#{Location.join_fields},#{Revision.join_fields}"
-    select(fields).joins(:revisions).where(["nid in (?)", nids.join(',')])
+    select(fields).joins(:revisions).where(["locations.nid in (?)", nids.join(',')])
   }
   scope :full_detail_for_ids, lambda {|ids| 
     fields = "#{Location.join_fields},#{Revision.join_fields}"
@@ -44,6 +44,15 @@ class Location < ActiveRecord::Base
     end
   }
   
+  def self.detail_for_nid(nid)
+    detail = detail_for_nid_(nid)
+    if detail.respond_to? :first
+      detail.first
+    else
+      detail
+    end
+  end
+  
   def self.details_from_search(search)
       locations = Location.parse_ids search
       details   = Location.detail_for_ids(locations)
@@ -63,7 +72,7 @@ class Location < ActiveRecord::Base
   end
   
   def self.join_fields
-    "locations.name,locations.revision,locations.address,locations.cross_street,
+    "locations.name,locations.nid,locations.revision,locations.address,locations.cross_street,
      locations.street,locations.city,locations.state,locations.fsq_id,locations.gowalla_url"
   end
 end

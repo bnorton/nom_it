@@ -70,7 +70,7 @@ class Ranking < MongoRuby
     RankingAverage.remove_ranking(nid, old_value)
   end
   
-  def self.for_uid(uid,lim,key=:ranking_id)
+  def self.for_uid(uid,lim=10,key=:ranking_id)
     lim = Ranking.valid_limit(lim)
     unless (uid = uid.to_s).blank?
       found = Ranking.find({:uid => uid, :cur => true}).limit(lim)
@@ -80,7 +80,7 @@ class Ranking < MongoRuby
     end
   end
   
-  def self.for_nid(nid,lim,key=:location_id)
+  def self.for_nid(nid,lim=10,key=:location_id)
     lim = Ranking.valid_limit(lim)
     found = Ranking.find({:nid => nid, :cur => true}).limit(lim)
     Util.parse(found,{:key => key})
@@ -100,17 +100,19 @@ class Ranking < MongoRuby
   end
   
     # returns the nids of the items passed to it (an array)
-  def self.build_list(rankings, key)
+  def self.build_list(rankings, options={})
     rankings = [rankings] if (rankings.is_a? Hash)
     loc_rank = []
     rankings.each do |rank|
-      nid = rank[key]
+      nid = rank['nid'] || rank[:nid]
       loc = Location.detail_for_nid(nid)
+      raise loc.inspect
       loc_rank << {
         :rank => rank,
         :location => loc
       }
     end
+    return loc_rank[0] if (options[:one] && loc_rank.length == 1)
     loc_rank
   end
 
