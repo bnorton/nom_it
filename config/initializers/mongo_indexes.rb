@@ -8,8 +8,10 @@ Comment.ensure_index([[:lid, MONGO_INDEX_ASC]])
 
 RankingAverage.ensure_index([[:nid, MONGO_INDEX_ASC]])
 
-Recommend.ensure_index([[:uid,    MONGO_INDEX_ASC]])
+Recommend.ensure_index([[:uid, MONGO_INDEX_ASC]])
 Recommend.ensure_index([[:to_uid, MONGO_INDEX_ASC]])
-Recommend.ensure_index([[:lid,    MONGO_INDEX_ASC]])
+Recommend.ensure_index([[:lid, MONGO_INDEX_ASC]])
 
+
+Detail.ensure_index([[:r, MONGO_INDEX_ASC]])
 # Like.ensure_index([[]])
