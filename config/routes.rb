@@ -42,6 +42,30 @@ NomIt::Application.routes.draw do
   
   get "/location/:id/recommends"     => "recommendations#location"
   
+  get "/rank/create"  => "rankings#create"                         ## POST
+  get "/rank/update"  => "rankings#create"                         ## POST
+  get "/rank/destory" => "rankings#destory"                        ## POST
+  
+  get "user/:user_id/ranked"         => "rankings#user"
+  get "location/:location_id/ranks"  => "rankings#location"
+  
+  def create
+    Ranking.new_rank(@nid,@uid,@rank)
+    respond_with Status.OK
+  end
+  
+  def destroy
+    Ranking.new_rank(@nid,@uid,@rank)
+    respond_with Status.OK
+  end
+  
+  def user
+    
+  end
+  
+  def location
+    
+  end
   
   
   root :to => "detail#index"
