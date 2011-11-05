@@ -14,6 +14,9 @@ gem 'dalli'
 
 gem "bson_ext", "~> 1.4.1"
 
+gem 'json'
+gem 'httparty'
+
 gem 'mongo'
 gem 'light_mongo'
 

@@ -61,6 +61,9 @@ GEM
       railties (>= 3.0.0)
     highline (1.6.2)
     hike (1.2.1)
+    httparty (0.8.1)
+      multi_json
+      multi_xml
     i18n (0.6.0)
     jquery-rails (1.0.16)
       railties (~> 3.0)
@@ -77,6 +80,7 @@ GEM
     mongo (1.4.1)
       bson (= 1.4.1)
     multi_json (1.0.3)
+    multi_xml (0.4.1)
     mysql (2.8.1)
     mysql2 (0.3.7)
     net-scp (1.0.4)
@@ -167,7 +171,9 @@ DEPENDENCIES
   coffee-rails (~> 3.1.1)
   dalli
   factory_girl_rails
+  httparty
   jquery-rails
+  json
   light_mongo
   memcache-client
   mongo
