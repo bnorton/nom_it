@@ -4,7 +4,7 @@ class Statistic < ActiveRecord::Base
   
   def self.join_fields
     "statistics.rrr,statistics.rrt,statistics.quarter,statistics.half,statistics.mile,statistics.two,
-     statistics.quarter_total,statistics.halmile_total"
+     statistics.quarter_total,statistics.halmile_total,statistics.updated_at"
   end
   
 end

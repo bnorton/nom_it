@@ -41,7 +41,7 @@ class RankingsController < ApplicationController
     @key = :rank_id
     @rankings = Ranking.for_nid(@nid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
     if @rankings.length > 0
-      @location = Location.detail_for_nid([@nid])
+      @location = Location.detail_for_nid(@nid)
       respond_with ok_or_not({
         :location=>@location,
         :ranks => @rankings,

@@ -4,7 +4,7 @@ class Recommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :location
   
-  COMPACT = "id,nid,user_id,lat,lng,token,location_id,location_name,location_city,title,text,created_at,image"
+  COMPACT = "id,nid,user_id,lat,lng,token,location_id,location_name,location_city,title,text,updated_at,image"
   
   scope :compact, lambda {
     Recommendation.select(COMPACT)

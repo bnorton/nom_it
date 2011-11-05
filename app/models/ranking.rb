@@ -104,9 +104,8 @@ class Ranking < MongoRuby
     rankings = [rankings] if (rankings.is_a? Hash)
     loc_rank = []
     rankings.each do |rank|
-      nid = rank['nid'] || rank[:nid]
+      nid = rank['nid']
       loc = Location.detail_for_nid(nid)
-      raise loc.inspect
       loc_rank << {
         :rank => rank,
         :location => loc
