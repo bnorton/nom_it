@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111105190402) do
+ActiveRecord::Schema.define(:version => 20111105230425) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -24,7 +24,6 @@ ActiveRecord::Schema.define(:version => 20111105190402) do
     t.boolean  "approved",   :default => true,  :null => false
     t.boolean  "undirected", :default => false, :null => false
     t.binary   "schemaless"
-    t.string   "nid"
   end
 
   add_index "followers", ["to_user_id", "user_id"], :name => "followers_to_from", :unique => true
@@ -36,7 +35,6 @@ ActiveRecord::Schema.define(:version => 20111105190402) do
     t.integer  "location_id",                  :null => false
     t.float    "lat",         :default => 0.0
     t.float    "lng",         :default => 0.0
-    t.string   "nid"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
@@ -138,7 +136,6 @@ ActiveRecord::Schema.define(:version => 20111105190402) do
     t.string   "url"
     t.integer  "walkability"
     t.binary   "schemaless"
-    t.string   "nid"
   end
 
   add_index "revisions", ["location_id"], :name => "revisions_location"
@@ -176,7 +173,6 @@ ActiveRecord::Schema.define(:version => 20111105190402) do
     t.integer  "view_count"
     t.string   "json_encode",        :limit => 1022
     t.binary   "schemaless"
-    t.string   "nid"
   end
 
   add_index "statistics", ["location_id"], :name => "statistics_location", :unique => true
