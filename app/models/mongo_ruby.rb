@@ -11,10 +11,7 @@ class MongoRuby
   end
   
   def self.collection
-    if @collection.nil?
-      self.connect
-    end
-    @collection
+    @collection ||= self.db[self.dbcollection]
   end
   
   def self.save(*args)
@@ -41,12 +38,19 @@ class MongoRuby
     self.collection.ensure_index(*args)
   end
   
-  def self.connect()
-    unless @collection
-      db = Mongo::Connection.new.db(self.dbdatabase)
-      @collection = db[self.dbcollection]
-    end
+  def self.eval(*args)
+    # logger.info("eval called directly on MongoDB >> #{args.inspect} <<")
+    self.db.eval(*args)
   end
+  
+  def self.store_function(name,function)
+    self.db.eval("db.system.js.save({ _id : '#{name.to_s}', value : #{function} })")
+  end
+  
+  def self.db
+    @db ||= Mongo::Connection.new.db(self.dbdatabase)
+  end
+  
   ### End Ruby MongoDB Driver Wrapper
   #####################################################################
 

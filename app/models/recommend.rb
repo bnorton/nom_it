@@ -21,7 +21,7 @@ class Recommend < MongoRuby
     return false if recommendation.blank? || followers.blank?
     r = recommendation
     followers.each do |follower|
-      self.save({
+      Recommend.save({
         :rid    => r['id'],
         :uid    => r['user_id'],
         :uname  => r['user_name'],
@@ -59,7 +59,6 @@ class Recommend < MongoRuby
   def self.for_token(token)
     Recommend.find({:token => token})
   end
-
   
 end
 

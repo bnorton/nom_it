@@ -7,58 +7,89 @@ class RankingAverage < MongoRuby
     "ranking_averages"
   end
   
-  ## methods called from initializers/ratings.rb and are thus
-  ##   defined into the mongo db instance.
+  def self.max
+    5
+  end
+  
+  def self.min
+    1
+  end
+  
+  ## methods called from initializers/mongo_stored_functions.rb
+  ##    and are thus defined into the mongo db instance.
   def self.add_new_ranking
-    collection.db.add_stored_function('new_rating', "function(nid,rating) {
-      try { item = db.#{dbcollection}.findOne({ nid:nid });
+    RankingAverage.store_function('new_average_rank', "function( nid,rating ) {
+      try { item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
         if ( item == null ) {
-          db.#{dbcollection}.save({ nid:nid, c:1, r:rating });
+          db.#{RankingAverage.dbcollection}.save({ nid:nid, c:1, a:rating });
+          return true;
         } else {
-          item.r = item.r + (( rating - item.r) / ++item.c );
-          db.#{dbcollection}.save( item ); }
+          item.a = item.a + (( rating - item.a) / ++item.c );
+          db.#{RankingAverage.dbcollection}.save( item ); }
         return true;
-      } catch ( ex ) {
-        return false; } }")
+      } catch ( ex ) { return false; } }")
   end
   
   def self.add_update_ranking
-    collection.db.add_stored_function('update_rating', "function(nid,old_r,new_r) {
+    RankingAverage.store_function('update_average_rank', "function( nid,old_r,new_r ) {
       try {
-        item = db.#{dbcollection}.findOne({ nid:nid });
-        item.r = item.r + (( new_r - old_r ) / item.c);
-        db.#{dbcollection}.save( item );
+        item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
+        item.a = item.a + (( new_r - old_r ) / item.c);
+        db.#{RankingAverage.dbcollection}.save( item );
         return true;
-      } catch ( ex ) {
-        return false; } }")
+      } catch ( ex ) { return false; } }")
+  end
+  
+  def self.add_remove_ranking
+    MongoRuby.store_function("remove_average_rank","function( nid,old_r ) {
+      try {
+        item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
+        item.a = item.a - (( old_r ) / item.c);
+        db.#{RankingAverage.dbcollection}.save( item );
+        return true;
+      } catch ( ex ) { return false; }
+    }")
   end
   
   ## methods that add new data
   def self.new_ranking(nid,rating)
-    collection.db.eval("new_ranking(#{nid},#{rating})")
+    RankingAverage.eval("new_average_rank('#{nid}',#{rating})")
   end
   
   def self.update_ranking(nid,old_r,new_r)
-    collection.db.eval("update_ranking(#{nid},#{old_r},#{new_r})")
+    old_r = self.valid(old_r); new_r = self.valid(new_r)
+    RankingAverage.eval("update_average_rank('#{nid}',#{old_r},#{new_r})")
+  end
+  
+  def self.remove_ranking(nid,old_value)
+    old_value = self.valid(old_value)
+    RankingAverage.eval("remove_average_rank('#{nid}',#{old_value})")
   end
   
   ## methods that find ratings or totals
-  def self.find_by_nid(nid,key,options={})
+  def self.find_by_nid(nid,key='',options={})
     item = RankingAverage.find_one({ :nid => nid })
     return 0 if item.nil?
-    options[:total] ? [item['r'], item['c']] : item[key]
+    options[:total] ? [item['a'], item['c']] : item[key]
   end
   
   def self.ranking(nid)
-    find_by_nid(nid,'r')
+    find_by_nid(nid,key='a')
   end
   
   def self.total(nid)
-    find_by_nid(nid,'c')
+    find_by_nid(nid,key='c')
   end
   
   def self.ranking_total(nid)
-    find_by_nid(nid,'',{:total=>true})
+    find_by_nid(nid,options={:total=>true})
   end
+  
+  def self.valid(value)
+    value = self.max if value > self.max
+    value = self.min if value < self.min
+    value.to_f
+  end
+
 end
 

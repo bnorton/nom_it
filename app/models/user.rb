@@ -85,7 +85,7 @@ class User < ActiveRecord::Base
     user.last_seen= Time.now
     user.has_joined= true
     user.screen_name=username
-    user.nid      = Util.ID
+    user.nid      ||= Util.ID
     begin
       user.save!
     rescue ActiveRecord::RecordNotUnique
@@ -105,6 +105,7 @@ class User < ActiveRecord::Base
     user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
     user.has_joined= true
+    user.nid    ||= Util.ID
     user.save!
   end
   
@@ -120,6 +121,7 @@ class User < ActiveRecord::Base
     user.city, user.state = Util.parse_location(twHash['location'])
     user.token_expires = Time.now + 14.days
     user.has_joined= true
+    user.nid     ||= Util.ID
     user.save!
   end
     

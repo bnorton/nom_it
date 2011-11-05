@@ -25,8 +25,7 @@ class Revision < ActiveRecord::Base
   def self.join_fields
     "revisions.updated_at,revisions.location_id,revisions.title,
      revisions.text,revisions.phone,revisions.url,
-     revisions.primary_category,revisions.secondary_category
-    "
+     revisions.primary_category,revisions.secondary_category"
   end
   
 end
