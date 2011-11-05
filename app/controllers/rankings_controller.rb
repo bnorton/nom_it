@@ -29,47 +29,46 @@ class RankingsController < ApplicationController
   end
   
   def user
-    @key = :ranking_id
+    @key = :rank_id
     @rankings = Ranking.for_uid(@uid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
-    # now just get the locations that are associated with these rankings
-    @rank_loc = Ranking.build_list @rankings, @key
-    respond_with ok_or_not(@rank_loc,{})
+    @rank_loc = Ranking.build_list @rankings      # now just get the locations that are associated with these rankings
+    respond_with ok_or_not({
+      :items => @rank_loc,
+      :what => 'user'})
   end
   
   def location
-    @key = :location_id
+    @key = :rank_id
     @rankings = Ranking.for_nid(@nid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
-    unless @rankings.length > 0
-      respond_with Status.no_ranks_for_location
+    if @rankings.length > 0
+      @location = Location.detail_for_nid([@nid])
+      respond_with ok_or_not({
+        :location=>@location,
+        :ranks => @rankings,
+        :what => 'location'})
+    else
+      respond_with Status.no_ranks_for({:what => 'location'})
     end
-    @location = Location.detail_for_nids([@nid])
-    respond_with ok_or_not(@location,options={
-      :location=>@location,
-      :ranks => @rankings})
   end
   
   private
   
-  def ok_or_not(items,wrapper={},options={})
-    unless items.blank?
-      if (loc = options[:location])
-        Status.location_ranks(1,loc,options[:ranks])
-      else
-        Status.user_ranks()
-      end
-    Status.
-  end
-  
-  def merge
-    
+  def ok_or_not(options={})
+    if ((loc = options[:location]) && (ranks = options[:ranks]))
+      Status.location_ranks(loc,ranks)
+    elsif (items = options[:items])
+      Status.ranks(items)
+    else
+      Status.no_ranks_for(options)
+    end
   end
   
   def render_insufficient
-    respind_with Status.insufficient_arguments
+    respond_with Status.insufficient_arguments
   end
   
   def user_params
-    render_insufficient unless (@uid = params[:user_id])
+    render_insufficient unless (@uid = params[:nid])
     @limit = params[:limit] || 20
   end
   
