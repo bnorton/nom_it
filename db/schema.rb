@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111027024301) do
+ActiveRecord::Schema.define(:version => 20111105190402) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -65,7 +65,7 @@ ActiveRecord::Schema.define(:version => 20111027024301) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
-    t.integer  "revision",                                     :null => false
+    t.integer  "revision"
     t.string   "fsq_name"
     t.string   "fsq_id"
     t.string   "gowalla_url"
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(:version => 20111027024301) do
   add_index "locations", ["code"], :name => "locations_code"
   add_index "locations", ["id", "revision"], :name => "locations_id_revision", :unique => true
   add_index "locations", ["name", "address"], :name => "locations_name_address", :unique => true
+  add_index "locations", ["nid"], :name => "index_locations_on_nid", :unique => true
 
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
@@ -114,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20111027024301) do
   end
 
   add_index "recommendations", ["location_id", "new"], :name => "recommendations_location_new"
+  add_index "recommendations", ["nid"], :name => "index_recommendations_on_nid", :unique => true
   add_index "recommendations", ["user_id", "new"], :name => "recommendations_uid_new"
 
   create_table "revisions", :force => true do |t|
@@ -222,6 +224,7 @@ ActiveRecord::Schema.define(:version => 20111027024301) do
 
   add_index "users", ["email"], :name => "users_email", :unique => true
   add_index "users", ["facebook"], :name => "users_facebook", :unique => true
+  add_index "users", ["nid"], :name => "index_users_on_nid", :unique => true
   add_index "users", ["screen_name"], :name => "users_screen_name", :unique => true
   add_index "users", ["token", "email"], :name => "users_token_email"
   add_index "users", ["twitter"], :name => "users_twitter", :unique => true
