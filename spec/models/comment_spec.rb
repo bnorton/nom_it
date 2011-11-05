@@ -182,7 +182,6 @@ describe "comments" do
       Comment.create_comment_for_location(r)
       @uID = 99
       Comment.create_comment_for_location({:uid=>@uID,:lid=>12,:text=>'sample text 3'})
-        
     end
     before :each do
       @before= Comment.collection.count
