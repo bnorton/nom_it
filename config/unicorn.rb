@@ -8,7 +8,7 @@ worker_processes 4
 
 # listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
-listen "/tmp/nom_it.socket", :backlog => 64
+listen "/tmp/unicorn.nom_it.socket", :backlog => 64
 
 # Preload our app for more speed
 preload_app true
@@ -22,7 +22,7 @@ pid "/tmp/unicorn.nom_it.pid"
 if env == "production"
   # Help ensure your application will always spawn in the symlinked
   # "current" directory that Capistrano sets up.
-  working_directory "/u/apps/justnom.it/current"
+  working_directory "/home/deployer/apps/justnom.it/current"
 
   # feel free to point this anywhere accessible on the filesystem
   user 'deployer', 'staff'
@@ -41,7 +41,7 @@ before_fork do |server, worker|
 
   # Before forking, kill the master process that belongs to the .oldbin PID.
   # This enables 0 downtime deploys.
-  old_pid = "/tmp/unicorn.my_site.pid.oldbin"
+  old_pid = "/tmp/unicorn.nom_it.pid.oldbin"
   if File.exists?(old_pid) && server.pid != old_pid
     begin
       Process.kill("QUIT", File.read(old_pid).to_i)

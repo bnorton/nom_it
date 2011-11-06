@@ -34,9 +34,10 @@ set :try_rvmsudo,     "rvmsudo"
 set :password,        "%planb56b6!"
 
 default_run_options[:pty] = true
-# role :web,    "justnom.it"
-# role :app,    "justnom.it"
-# role :db,     "justnom.it", :primary => true
+ssh_options[:paranoid] = false
+
+set :unicorn_pid,        "/tmp/unicorn.nom_it.pid"
+set :unicorn_socket,     "/tmp/unicorn.nom_it.socket"
 
 set(:latest_release)  { fetch(:current_path) }
 set(:release_path)    { fetch(:current_path) }
@@ -48,7 +49,7 @@ set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEA
 
 default_environment["RAILS_ENV"] = 'production'
 
-# Use our ruby-1.9.2-p290@my_site gemset
+# Use our ruby-1.9.2-p290@nom_it gemset
 default_environment["PATH"]         = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/rvm/bin:/usr/local/rvm/gems:/usr/local/rvm/gems/ree-1.8.7-2011.03@nom_it/bin"
 default_environment["GEM_HOME"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03"
 default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03"
@@ -124,7 +125,8 @@ namespace :deploy do
 
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
-    run "kill -s USR2 `cat /tmp/unicorn.my_site.pid`"
+    run "kill -s USR2 `cat /tmp/unicorn.nom_it.pid`"
+    
   end
 
   desc "Start unicorn"
@@ -134,7 +136,7 @@ namespace :deploy do
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
-    run "kill -s QUIT `cat /tmp/unicorn.my_site.pid`"
+    run "kill -s QUIT `cat /tmp/unicorn.nom_it.pid`"
   end  
 
   namespace :rollback do
