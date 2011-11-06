@@ -20,14 +20,14 @@ pid "/tmp/unicorn.nom_it.pid"
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
-working_directory "/home/deployer/apps/justnom.it/current"
+pwd = working_directory "/home/deployer/apps/justnom.it/current"
 
 # Production specific settings
 if env == "production"
 
   # feel free to point this anywhere accessible on the filesystem
   user 'deployer', 'staff'
-  shared_path = "#{working_directory}/tmp"
+  shared_path = "#{pwd}/tmp"
 
   stderr_path "#{shared_path}/log/unicorn.stderr.log"
   stdout_path "#{shared_path}/log/unicorn.stdout.log"
