@@ -12,7 +12,7 @@ gem 'memcache-client'
 
 gem 'dalli'
 
-gem "bson_ext", "~> 1.4.1"
+gem "bson_ext", "~> 1.4.0"
 
 gem 'json'
 gem 'httparty'

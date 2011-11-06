@@ -24,13 +24,16 @@ set :branch,          "origin/master"
 set :migrate_target,  :current
 set :ssh_options,     { :forward_agent => true }
 set :rails_env,       "production"
-set :deploy_to,       "/u/apps/justnom.it"
+set :deploy_to,       "/home/deployer/apps/justnom.it"
 set :normalize_asset_timestamps, false
 
 set :user,            "deployer"
 set :group,           "staff"
-set :use_sudo,        false
+set :use_sudo,        true
+set :try_rvmsudo,     "rvmsudo"
+set :password,        "%planb56b6!"
 
+default_run_options[:pty] = true
 # role :web,    "justnom.it"
 # role :app,    "justnom.it"
 # role :db,     "justnom.it", :primary => true
@@ -46,10 +49,10 @@ set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEA
 default_environment["RAILS_ENV"] = 'production'
 
 # Use our ruby-1.9.2-p290@my_site gemset
-default_environment["PATH"]         = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/rvm/bin"
-default_environment["GEM_HOME"]     = "/usr/local/rvm/gems"
-default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03@nom"
-default_environment["RUBY_VERSION"] = "ruby-1.8.7-p320"
+default_environment["PATH"]         = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/rvm/bin:/usr/local/rvm/gems:/usr/local/rvm/gems/ree-1.8.7-2011.03@nom_it/bin"
+default_environment["GEM_HOME"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03"
+default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03"
+default_environment["RUBY_VERSION"] = "ruby-1.8.7-p334"
 
 default_run_options[:shell] = 'bash'
 
@@ -64,6 +67,7 @@ namespace :deploy do
   task :setup, :except => { :no_release => true } do
     dirs = [deploy_to, shared_path]
     dirs += shared_children.map { |d| File.join(shared_path, d) }
+    run "rvm use ree@nom_it"
     run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}"
     run "git clone #{repository} #{current_path}"
   end
@@ -81,7 +85,8 @@ namespace :deploy do
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    run "cd #{current_path}; git fetch origin; git reset --hard #{branch}"
+    run "type -P bundle &>/dev/null || { #{try_rvmsudo} gem install bundler --no-rdoc --no-ri; }"
+    run "cd #{current_path}; rvm use ree@nom_it; git fetch origin; git reset --hard #{branch}"
     finalize_update
   end
 
@@ -96,7 +101,7 @@ namespace :deploy do
 
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-
+    run "rvm use ree@nom_it"
     # mkdir -p is making sure that the directories are there for some SCM's that don't
     # save empty folders
     run <<-CMD
@@ -114,6 +119,7 @@ namespace :deploy do
       asset_paths = fetch(:public_children, %w(images stylesheets javascripts)).map { |p| "#{latest_release}/public/#{p}" }.join(" ")
       run "find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
     end
+    run "rvm use ree@nom_it"
   end
 
   desc "Zero-downtime restart of Unicorn"
@@ -154,9 +160,6 @@ end
 def run_rake(cmd)
   run "cd #{current_path}; #{rake} #{cmd}"
 end
-
-
-
 
 
 # set :application, "justnom.it"
