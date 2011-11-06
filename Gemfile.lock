@@ -70,7 +70,6 @@ GEM
       thor (~> 0.14)
     json (1.6.1)
     kgio (2.6.0)
-    light_mongo (0.4.0)
     mail (2.3.0)
       i18n (>= 0.4.0)
       mime-types (~> 1.16)
@@ -144,7 +143,6 @@ GEM
       hike (~> 1.2)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
-    sqlite3 (1.3.4)
     thor (0.14.6)
     tilt (1.3.3)
     treetop (1.4.10)
@@ -175,7 +173,6 @@ DEPENDENCIES
   httparty
   jquery-rails
   json
-  light_mongo
   memcache-client
   mongo
   mysql
@@ -185,7 +182,6 @@ DEPENDENCIES
   rspec-rails
   ruby-mysql
   sass-rails (~> 3.1.4)
-  sqlite3
   turn
   uglifier (>= 1.0.3)
   unicorn
