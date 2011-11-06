@@ -18,11 +18,12 @@ timeout 30
 
 pid "/tmp/unicorn.nom_it.pid"
 
+# Help ensure your application will always spawn in the symlinked
+# "current" directory that Capistrano sets up.
+working_directory "/home/deployer/apps/justnom.it/current"
+
 # Production specific settings
 if env == "production"
-  # Help ensure your application will always spawn in the symlinked
-  # "current" directory that Capistrano sets up.
-  working_directory "/home/deployer/apps/justnom.it/current"
 
   # feel free to point this anywhere accessible on the filesystem
   user 'deployer', 'staff'
