@@ -101,7 +101,7 @@ namespace :deploy do
   end
 
   task :finalize_update, :except => { :no_release => true } do
-    run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    run "#{try_sudo} chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
     run "rvm use ree@nom_it"
     # mkdir -p is making sure that the directories are there for some SCM's that don't
     # save empty folders
