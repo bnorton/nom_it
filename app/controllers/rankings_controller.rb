@@ -12,7 +12,6 @@ class RankingsController < ApplicationController
   # Ranking.for_nid(nid)
   
   # RankingAverage.new_ranking(nid,rating)
-  # RankingAverage.update_ranking(nid,old_r,new_r)
   # RankingAverage.remove_ranking(nid,old_value)
   # RankingAverage.ranking(nid)
   # RankingAverage.total(nid)

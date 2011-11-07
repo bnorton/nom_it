@@ -28,13 +28,12 @@ gem 'jquery-rails'
 
 gem 'unicorn'
 
-gem 'capistrano'
-
 group :development, :test do
     gem 'factory_girl_rails'
     gem 'rspec'
     gem 'capistrano-unicorn'
     gem "rspec-rails"
+    gem 'capistrano'
 end
 
 group :test do

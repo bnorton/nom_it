@@ -72,7 +72,6 @@ class Follower < ActiveRecord::Base
     f.user_city    = me.city
     f.to_user_id   = other.id
     f.to_name      = other_name
-    f.nid          = Util.ID
     if options[:hasnt_joined]
       f.approved = false
     else
