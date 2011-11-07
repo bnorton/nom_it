@@ -1,4 +1,4 @@
-user deployer staff;
+user root root;
 
 # Change this depending on your hardware
 worker_processes 4;

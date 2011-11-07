@@ -82,7 +82,7 @@ NGINX_CONF
 
 sudo cat > /etc/nginx/sites-enabled/default <<DEFAULT
 upstream nom {
-  server unix:/apps/nom/sockets/unicorn.socket fail_timeout=0;
+  server unix:/apps/nom/shared/sockets/unicorn.socket fail_timeout=0;
 }
 
 server {

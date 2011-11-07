@@ -9,6 +9,7 @@ set :ssh_options,     { :forward_agent => true }
 set :rails_env,       "production"
 set :deploy_to,       "/apps/nom"
 set :normalize_asset_timestamps, false
+set :unicorn_pid,     "/apps/nom/shared/pids/unicorn.pid"
 
 set :user,            "root"
 set :group,           "root"
@@ -81,15 +82,13 @@ namespace :deploy do
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
-    # mkdir -p is making sure that the directories are there for some SCM's that don't
-    # save empty folders
     run <<-CMD
       rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids &&
       mkdir -p #{latest_release}/public &&
       mkdir -p #{latest_release}/tmp &&
       ln -s #{shared_path}/log #{latest_release}/log &&
       ln -s #{shared_path}/system #{latest_release}/public/system &&
-      ln -s #{shared_path}/pids #{latest_release}/tmp/pids #&&
+      ln -s #{shared_path}/pids #{latest_release}/tmp/pids &&
     CMD
     # ln -sf #{shared_path}/database.yml #{latest_release}/config/database.yml
 
@@ -102,17 +101,20 @@ namespace :deploy do
 
   desc "Zero-downtime restart of Unicorn"
   task :restart, :except => { :no_release => true } do
-    run "kill -s USR2 `cat /tmp/unicorn.my_site.pid`"
+    run "kill -s USR2 `cat #{unicorn_pid}`"
+    # run "`cat #{unicorn_pid}` > "
   end
 
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
+    run "echo starting unicorn_rails"
     run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+    # run "ps aux | grep -E 'unicorn.+master' | grep -v grep | awk '{print $2}' > #{unicorn_pid}"
   end
 
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
-    run "kill -s QUIT `cat /tmp/unicorn.my_site.pid`"
+    run "kill -s QUIT `cat #{unicorn_pid}`"
   end  
 
   namespace :rollback do
