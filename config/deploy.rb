@@ -84,7 +84,7 @@ namespace :deploy do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
     run <<-CMD
-      rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids &&
+      rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids && #{latest_release}/tmp/sockets
       mkdir -p #{latest_release}/public &&
       mkdir -p #{latest_release}/tmp &&
       ln -s #{shared_path}/log #{latest_release}/log &&
