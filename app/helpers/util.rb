@@ -30,7 +30,7 @@ class Util
       key = opt[:key] || :nid
       ii  = []
       items.each do |it|
-        ii << Util.nidify(it,)
+        ii << Util.nidify(it,key)
       end
       ii
     end
