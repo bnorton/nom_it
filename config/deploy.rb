@@ -9,7 +9,8 @@ set :ssh_options,     { :forward_agent => true }
 set :rails_env,       "production"
 set :deploy_to,       "/apps/nom"
 set :normalize_asset_timestamps, false
-set :unicorn_pid,     "/apps/nom/shared/pids/unicorn.pid"
+
+set :unicorn_pid,     "/apps/nom/current/tmp/pids/unicorn.pid"
 
 set :user,            "root"
 set :group,           "root"
@@ -88,7 +89,8 @@ namespace :deploy do
       mkdir -p #{latest_release}/tmp &&
       ln -s #{shared_path}/log #{latest_release}/log &&
       ln -s #{shared_path}/system #{latest_release}/public/system &&
-      ln -s #{shared_path}/pids #{latest_release}/tmp/pids
+      ln -s #{shared_path}/pids #{latest_release}/tmp/pids &&
+      ln -s #{shared_path}/sockets #{latest_release}/tmp/sockets
     CMD
     # ln -sf #{shared_path}/database.yml #{latest_release}/config/database.yml
 
