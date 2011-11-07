@@ -7,13 +7,13 @@ app_root_shared = ENV["NOM_ROOT_SHARED"] ||= "/apps/nom/shared"
 worker_processes 4
 
 
-listen "#{app_root_shared}/tmp/sockets/unicorn.sock", :backlog => 64
+listen "#{app_root_shared}/sockets/unicorn.sock", :backlog => 64
 
 preload_app true
 
 timeout 30
 
-pid "#{app_root_shared}/tmp/pids/unicorn.pid"
+pid "#{app_root_shared}/pids/unicorn.pid"
 
 # Production specific settings
 if env == "production"
@@ -33,7 +33,7 @@ before_fork do |server, worker|
 
   # Before forking, kill the master process that belongs to the .oldbin PID.
   # This enables 0 downtime deploys.
-  old_pid = "#{app_root_shared}/tmp/pids/unicorn.pid.oldbin"
+  old_pid = "#{app_root_shared}/pids/unicorn.pid.oldbin"
   if File.exists?(old_pid) && server.pid != old_pid
     begin
       Process.kill("QUIT", File.read(old_pid).to_i)
