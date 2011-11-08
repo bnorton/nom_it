@@ -2,20 +2,15 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "category" do
   describe "input validations" do
-    before do
+    before :each do
       Category.collection.remove
     end
     
     # METHODS AVAILABLE
     # find_by_name(name)
     # find_by_id(id)
-    # find_or_create_by_id(id,opt={}) # opt must have name and can have alias
     # find_or_create_by_name(name) # opt must have name and can have alias
     # destroy_by_id(id)
-
-    it "should reject an empty hash for create (since no primary name)" do
-      Category.find_or_create_by_id('4e223',{}).should be_false
-    end
     it "should reject a location Category if the text is not present" do
       Category.find_or_create_by_name('',{:odd=>'opts'}).should be_false
     end
@@ -28,10 +23,8 @@ describe "category" do
     end
   end
   describe "create" do
-    before do
-      Category.collection.remove
-    end
     before :each do
+      Category.collection.remove
       @before = Category.collection.count
     end
     it "should normalize all inputs downcase" do
@@ -41,12 +34,12 @@ describe "category" do
       item = 'Food Truck'
       Category.normalize!(item)
       item.should == 'food truck'
-      items = {:primary => 'Top Level Category',
-               :secondary => 'A non-Top lEveL'}
+      items = {:p => 'Top Level Category',
+               :s => 'A non-Top lEveL'}
       Category.normalize!(items)
       items.keys.length.should == 2
-      items[:primary].should == 'top level category'
-      items[:secondary].should == 'a non-top level'
+      items[:p].should == 'top level category'
+      items[:s].should == 'a non-top level'
     end
     it "should create a new top-level Category" do
       Category.find_or_create_by_name('food').class.should == BSON::ObjectId
@@ -59,13 +52,13 @@ describe "category" do
       (Category.collection.count - @before).should == 3
     end
     it "should create a new secondary-level Category" do
-      Category.find_or_create_by_name('food',{:secondary=>'pizza'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == BSON::ObjectId
       (Category.collection.count - @before).should == 1
     end
     it "should create multiple secondary-level Categories" do
-      Category.find_or_create_by_name('food',{:secondary=>'pizza'}).class.should == BSON::ObjectId
-      Category.find_or_create_by_name('food',{:secondary=>'sushi'}).class.should == BSON::ObjectId
-      Category.find_or_create_by_name('food',{:secondary=>'asian fusion'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'sushi'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'asian fusion'}).class.should == BSON::ObjectId
       (Category.collection.count - @before).should == 3
     end
     it "should create top level and secondery categories if needed" do
@@ -73,27 +66,10 @@ describe "category" do
       arr = ['Food Truck','Hot Dogs','Indian']
       Category.new_categories(top_level,arr).should == true
       (Category.collection.count - @before).should == 4
-      puts "++++++++++++++++++++++++++++!!!!!!!!!!!!!"
-      c = Category.collection.find()
-      while f = c.next
-        puts f.inspect
-      end
       top_level = 'Eat' # same as above
       arr = ['hot dogs','Crepes']
       Category.new_categories(top_level,arr).should == true
-      # (Category.collection.count - @before).should == 5 # only add 1 in this case
-      puts "++++++++++++++++++++++++++++"
-      c = Category.collection.find()
-      while f = c.next
-        puts f.inspect
-      end
-    end
-    it "should not create a new item if the ID is already present" do
-      iid = '4ergh9q39vm'
-      Category.find_or_create_by_id(iid,{:primary => 'eat'})
-      (Category.collection.count - @before).should == 1
-      Category.find_or_create_by_id(iid,{:primary => 'something random'})
-      (Category.collection.count - @before).should == 1 # stay the same
+      (Category.collection.count - @before).should == 5 # only add 1 in this case
     end
     it "should not create a new item if the NAME is already present" do
       iid = 'blah_blah'
@@ -101,10 +77,6 @@ describe "category" do
       (Category.collection.count - @before).should == 1
       Category.find_or_create_by_name(iid).should == false
       (Category.collection.count - @before).should == 1 # same as before
-      
-    end
-    it "should not create a new item if the NAME is already present as an alias" do
-      
     end
     it "should then find the created Categorys based on the criteria" do
       
@@ -114,7 +86,7 @@ describe "category" do
     end
   end
   describe "destroy" do
-    before do
+    before :each do
       Category.collection.remove
     end
     it "should remove any categories that were specified for delete" do
@@ -125,7 +97,7 @@ describe "category" do
     end
   end
   describe "search" do
-    before do
+    before :each do
       Category.collection.remove
     end
     describe "name" do
