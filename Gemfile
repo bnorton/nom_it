@@ -34,6 +34,7 @@ group :development, :test do
     gem 'capistrano-unicorn'
     gem "rspec-rails"
     gem 'capistrano'
+    gem 'placefinder'
 end
 
 group :test do

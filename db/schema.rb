@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111105230425) do
+ActiveRecord::Schema.define(:version => 20111107233928) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(:version => 20111105230425) do
     t.string   "primary"
     t.string   "secondary"
     t.string   "nid"
+    t.string   "hash"
   end
 
   add_index "locations", ["code"], :name => "locations_code"

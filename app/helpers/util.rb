@@ -54,5 +54,17 @@ class Util
       BSON::ObjectId.new.to_s
     end
     
+    def placefinder
+      @placefinder ||= Placefinder::Base.new(:api_key => YAHOO_API_KEY)
+    end
+    
+    def geocode_address(addr)
+      placefinder.get :q => addr, :gflags => YAHOO_GFLAGS
+    end
+    
+    def reverse_geocode_address(lat,lng)
+      placefinder.get :q => "#{lat,lng}", :gflags => YAHOO_GFLAGS_REV
+    end
+    
   end
 end
