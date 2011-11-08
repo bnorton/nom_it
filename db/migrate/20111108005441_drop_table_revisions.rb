@@ -1,16 +1,6 @@
 class DropTableRevisions < ActiveRecord::Migration
   def up
     drop_table :revisions
-    add_column :locations, :neighborhoods, :string
-    add_column :locations, :url, :string
-    add_column :locations, :revision_id, :string
-    add_column :locations, :twitter, :string
-    add_column :locations, :facebook, :string
-    add_column :locations, :phone, :string
-    add_column :locations, :cost, :string
-    add_column :locations, :timeofday, :string
-    add_column :locations, :metadata_id, :string
-    remove_column :locations, :revision
   end
 
   def down

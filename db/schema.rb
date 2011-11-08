@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111107233928) do
+ActiveRecord::Schema.define(:version => 20111108044508) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -35,6 +35,9 @@ ActiveRecord::Schema.define(:version => 20111107233928) do
     t.integer  "location_id",                  :null => false
     t.float    "lat",         :default => 0.0
     t.float    "lng",         :default => 0.0
+    t.integer  "cost"
+    t.string   "primary"
+    t.string   "secondary"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
@@ -63,7 +66,6 @@ ActiveRecord::Schema.define(:version => 20111107233928) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
-    t.integer  "revision"
     t.string   "fsq_name"
     t.string   "fsq_id"
     t.string   "gowalla_url"
@@ -74,20 +76,31 @@ ActiveRecord::Schema.define(:version => 20111107233928) do
     t.string   "street2"
     t.string   "city"
     t.string   "state"
-    t.string   "area_code",    :limit => 7
+    t.string   "area_code",     :limit => 7
     t.string   "country"
     t.text     "json_encode"
-    t.boolean  "is_new",                    :default => false, :null => false
+    t.boolean  "is_new",                     :default => false, :null => false
     t.string   "code"
     t.binary   "schemaless"
     t.string   "primary"
     t.string   "secondary"
     t.string   "nid"
     t.string   "hash"
+    t.string   "yid"
+    t.string   "woeid"
+    t.string   "neighborhoods"
+    t.string   "url"
+    t.string   "revision_id"
+    t.string   "twitter"
+    t.string   "facebook"
+    t.string   "phone"
+    t.string   "cost"
+    t.string   "timeofday"
+    t.string   "metadata_id"
   end
 
   add_index "locations", ["code"], :name => "locations_code"
-  add_index "locations", ["id", "revision"], :name => "locations_id_revision", :unique => true
+  add_index "locations", ["id"], :name => "locations_id_revision", :unique => true
   add_index "locations", ["name", "address"], :name => "locations_name_address", :unique => true
   add_index "locations", ["nid"], :name => "index_locations_on_nid", :unique => true
 
@@ -116,32 +129,6 @@ ActiveRecord::Schema.define(:version => 20111107233928) do
   add_index "recommendations", ["location_id", "new"], :name => "recommendations_location_new"
   add_index "recommendations", ["nid"], :name => "index_recommendations_on_nid", :unique => true
   add_index "recommendations", ["user_id", "new"], :name => "recommendations_uid_new"
-
-  create_table "revisions", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location_id",                           :null => false
-    t.string   "primary_category"
-    t.string   "secondary_category"
-    t.integer  "user_id",                               :null => false
-    t.string   "title"
-    t.text     "text"
-    t.text     "best"
-    t.text     "meh"
-    t.string   "comment"
-    t.boolean  "deleted",            :default => false, :null => false
-    t.string   "hours"
-    t.string   "phone"
-    t.string   "twitter"
-    t.string   "neighborhoods"
-    t.string   "url"
-    t.integer  "walkability"
-    t.binary   "schemaless"
-  end
-
-  add_index "revisions", ["location_id"], :name => "revisions_location"
-  add_index "revisions", ["primary_category"], :name => "revisions_primary_category"
-  add_index "revisions", ["secondary_category"], :name => "revisions_secondary_category"
 
   create_table "statistics", :force => true do |t|
     t.datetime "created_at"
