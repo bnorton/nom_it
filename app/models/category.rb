@@ -34,15 +34,16 @@ class Category < MongoRuby
   # @required_for_create primary
   # @optional secondary
   # @optional alias
-  def self.find_or_create_by_id(id,opt={})
-    unless Category.find_by_id(id)
-      options = Category.params(opt)
-      unless (options).blank? || options[:p].blank?
-        return Category.save({:_id => id}.merge(options))
-      end
-    end
-    false
-  end
+  # def self.find_or_create_by_id(id,opt={})
+  #   found = Category.find_by_id(id)
+  #   unless found
+  #     options = Category.params(opt)
+  #     unless (options).blank? || options[:p].blank?
+  #       return Category.save({:_id => id}.merge(options))
+  #     end
+  #   end
+  #   found
+  # end
   
   # @required_for_find primary
   # @required_for_create primary
@@ -50,10 +51,8 @@ class Category < MongoRuby
   # @optional alias
   def self.find_or_create_by_name(primary,opt={})
     return false if primary.blank?
-    puts "PRIMARY #{primary} and opt #{opt.inspect}"
     Category.normalize!(primary)
     Category.normalize!(opt)
-    puts "PRIMARY #{primary}"
     unless Category.find_by_name(primary,opt)
       items = Category.params(opt, primary)
       return Category.save(items)
@@ -66,12 +65,6 @@ class Category < MongoRuby
     Category.find_or_create_by_name(p,{ :s => s })
   end
   
-  # @required id
-  def self.destroy_by_id(id)
-    return false if id.blank?
-    Category.remove({ :_id => id })
-  end
-  
   def self.new_categories(top_level,cats=[])
     return false if cats.blank?
     Category.find_or_create_by_name(top_level)
@@ -81,7 +74,13 @@ class Category < MongoRuby
     true
   end
   
-  private 
+  private
+  # @required id
+  def self.destroy_by_id(id)
+    return false if id.blank?
+    Category.remove({ :_id => id })
+  end
+  
   def self.normalize!(denorm)
     if denorm.respond_to? :keys
       denorm.each do |k,v|
@@ -98,12 +97,12 @@ class Category < MongoRuby
   end
   
   def self.params(opt,primary=nil)
+    Category.normalize!(opt)
+    Category.normalize!(primary)
     op = {}
-    puts "OP primary #{opt.inspect}"
     op.merge!({:p => (primary || opt[:p])})
     op.merge!({:s => opt[:s]}) if opt[:s]
     op.merge!({:a => opt[:a]}) if opt[:a]
-    puts "OP after #{op.inspect}"
     op
   end
   

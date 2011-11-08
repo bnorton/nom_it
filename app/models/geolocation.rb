@@ -69,9 +69,9 @@ class Geolocation < ActiveRecord::Base
   def self.params(options)
     @lat = options[:lat]
     @lng = options[:lng]
-    @dist= options[:dist]
-    @primary  =options[:primary]
-    @secondary=options[:secondary]
+    @dist = options[:dist]
+    @primary = options[:primary]
+    @secondary = options[:secondary]
   end
   
   def self.new_distance(dist)

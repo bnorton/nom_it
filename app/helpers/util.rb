@@ -59,11 +59,19 @@ class Util
     end
     
     def geocode_address(addr)
-      placefinder.get(:q => addr, :gflags => YAHOO_GFLAGS)
+      begin
+        placefinder.get(:q => addr, :gflags => YAHOO_GFLAGS)
+      rescue Exception
+        {}
+      end
     end
     
     def reverse_geocode_address(lat,lng)
-      placefinder.get(:q => "#{lat},#{lng}", :gflags => YAHOO_GFLAGS_REV)
+      begin
+        placefinder.get(:q => "#{lat},#{lng}", :gflags => YAHOO_GFLAGS_REV)
+      rescue Exception
+        {}
+      end
     end
     
   end

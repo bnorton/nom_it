@@ -46,14 +46,14 @@ class Geocode
     def build_item(file)
       item = ""
       while true
-        line = file.gets
-        unless line =~ /^[=]+$/
+        line = file.gets         # happens at the end
+        unless line =~ /^[=]+$/ || line.nil?
           item << line
         else
           break
         end
       end
-      item.gsub('\n', DELIM)
+      item.gsub(/\n/,'<^&')
     end
     
     def fetch_yahoo_data(addr)
@@ -87,7 +87,10 @@ class Geocode
       Geolocation.find_or_create_by_location_id(
         :location_id => opt[:location_id],
         :lat => yahoo.latitude,
-        :lng => yahoo.longitude
+        :lng => yahoo.longitude,
+        :primary => opt[:primary],
+        :secordary => opt[:secordary],
+        :cost => opt[:cost]
       )
     end
     
@@ -104,7 +107,7 @@ class Geocode
       c0 = cats[0] rescue nil
       c1 = cats[1] rescue nil
       
-      Category.new_categories('eat',cats)
+      category_ids = Category.new_categories('eat',cats)
       
       _address = address(item)
       yahoo = fetch_yahoo_data(_address)
@@ -127,8 +130,13 @@ class Geocode
         :cost => _cost
       })
       
+      cid0 = category_ids[0] rescue nil
+      cid1 = category_ids[1] rescue nil
       store_geolocation(yahoo,{
-        :location_id => location_id
+        :location_id => location_id,
+        :primary => cid0,
+        :secondary => cid1,
+        :cost => Location.integer_cost(_cost)
       })
       
       store_metadata(yahoo,{

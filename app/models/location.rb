@@ -71,6 +71,12 @@ class Location < ActiveRecord::Base
     locations.join(',')
   end
   
+  def self.integer_cost(str)
+    return 0 unless str =~ /\$+/
+    return 4 if str.length > 3
+    str.length
+  end
+  
   def self.join_fields
     "locations.name,locations.nid,locations.revision,locations.address,locations.cross_street,
      locations.street,locations.city,locations.state,locations.fsq_id,locations.gowalla_url"
