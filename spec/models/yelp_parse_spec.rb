@@ -65,7 +65,6 @@ San Francisco, CA 94114
       File.stub!(:open).and_return(tmp)
       lines = File.open('blah')
       while (line = Geocode.build_item(lines)).present?
-        puts "LINE #{line}"
         Geocode.name(line).should_not be_blank
         Geocode.categories(line).should_not be_blank
         Geocode.neighborhood(line).should_not be_blank

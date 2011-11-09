@@ -64,19 +64,32 @@ describe "category" do
     it "should create top level and secondery categories if needed" do
       top_level = 'eat'
       arr = ['Food Truck','Hot Dogs','Indian']
-      Category.new_categories(top_level,arr).should == true
+      category_ids = Category.new_categories(top_level,arr)
+      category_ids.length.should == 4
       (Category.collection.count - @before).should == 4
+      category_ids.each do |c|
+        c.should_not be_blank
+        c.class.should == BSON::ObjectId
+      end
       top_level = 'Eat' # same as above
       arr = ['hot dogs','Crepes']
-      Category.new_categories(top_level,arr).should == true
+      category_ids = Category.new_categories(top_level,arr)
+      category_ids.each do |c|
+        c.should_not be_blank
+        c.class.should == BSON::ObjectId
+      end
+      category_ids.length.should == 3
       (Category.collection.count - @before).should == 5 # only add 1 in this case
     end
     it "should not create a new item if the NAME is already present" do
       iid = 'blah_blah'
       Category.find_or_create_by_name(iid).class.should == BSON::ObjectId
       (Category.collection.count - @before).should == 1
-      Category.find_or_create_by_name(iid).should == false
+      Category.find_or_create_by_name(iid).class.should == BSON::ObjectId
       (Category.collection.count - @before).should == 1 # same as before
+    end
+    it "should have the same parent when two child categories are of one parent" do
+      
     end
     it "should then find the created Categorys based on the criteria" do
       
