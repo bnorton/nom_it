@@ -6,7 +6,7 @@ class LocationsController < ApplicationController
   before_filter :authentication_required, :only => [:edit]
   
   def detail
-    response = if locations = Location.detail_for_ids(@locations)
+    response = if (locations = Location.detail_for_ids(@locations))
       Status.locations(locations)
     else
       Status.no_locations_found
@@ -21,7 +21,7 @@ class LocationsController < ApplicationController
   def validate_ids
     @locations  = params[:ids] || []
     @locations << params[:id]
-
+    @locations = @locations.respond_to?(:split) ? @locations.split(',') : @locations
     flag = false
     unless @locations.is_a?(Array) && @locations.length > 0
       flag = true

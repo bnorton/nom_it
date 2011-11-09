@@ -1,9 +1,10 @@
 class Util
   class << self
     
-    def nidify(item, key)
-      item[key] = item['_id'].to_s
-      item.delete('_id')
+    def nidify(item,key=:nid,id='_id')
+      return item unless item.respond_to?(:[])
+      item[key] = item[id].to_s
+      item.delete(id)
       item
     end
   
@@ -48,6 +49,19 @@ class Util
       rescue Exception
         nil
       end
+    end
+    
+    def BSONify(id)
+      return id if id.blank?
+      begin
+        return BSON::ObjectId(id)
+      rescue BSON::InvalidObjectId
+        id
+      end
+    end
+ 
+    def BSONID
+      BSON::ObjectId.new
     end
     
     def ID

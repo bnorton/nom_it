@@ -31,9 +31,8 @@ class Comment < MongoRuby
   
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
-    return false if id.blank?
-    return false unless ((id = BSON::ObjectId.from_string(id.to_s) unless id.class == BSON::ObjectId) rescue nil)
-    Comment.update({:_id => id},{'$set' => {:text => Comment.removed_content_message}})
+    return false unless (id = Util.BSONize(id))
+    Comment.set(id,:text,Comment.removed_content_message)
   end
   
   def self.destroy_uid_lid_rid(opt)
@@ -52,17 +51,17 @@ class Comment < MongoRuby
   
   # find all my comments on a specific item
   def self.search_by_uid_lid_rid(uid,lid,rid)
-    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i, :rid => rid.to_i })
+    Comment.find({ :uid => uid.to_i, :lid => lid.to_i, :rid => rid.to_i })
   end
   
   def self.search_by_uid_lid(uid,lid)
-    Comment.collection.find({ :uid => uid.to_i, :lid => lid.to_i })
+    Comment.find({ :uid => uid.to_i, :lid => lid.to_i })
   end
   
   # simply find a comments id
   def self.search_id(_id)
     return false if (_id = _id.to_s).blank?
-    Comment.collection.find({ :_id => BSON::ObjectId.from_string(_id)})
+    Comment.find({ :_id => BSON::ObjectId.from_string(_id)})
   end
   
   def self.for_user_id(uid,options={})
@@ -126,7 +125,7 @@ class Comment < MongoRuby
   
   def self.for_all(finder,options={})
     the_limit = options[:limit] || 20
-    Comment.collection.find(finder).sort([[ :_id, MONGO_ASC ]]).limit(the_limit)
+    Comment.find(finder).sort([[ :_id, MONGO_ASC ]]).limit(the_limit)
   end
   
   # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid

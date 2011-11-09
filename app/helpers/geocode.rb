@@ -63,7 +63,7 @@ class Geocode
     def store_location(yahoo,opt={})
       loc = Location.find_or_create_by_hash(opt[:hash])
       if loc.new_record?
-        loc.name = opt[:_name]
+        loc.name = opt[:name]
         loc.address = "#{yahoo.line1} #{yahoo.line2}" if yahoo.line2
         loc.address ||= "#{yahoo.line1}"
         loc.street = "#{yahoo.house} #{yahoo.street}"
@@ -80,7 +80,7 @@ class Geocode
         loc.nid = Util.ID
         loc.save
       end
-      loc.id
+      [loc.id, loc,nid]
     end
     
     def store_geolocation(yahoo,opt={})
@@ -95,17 +95,11 @@ class Geocode
     end
     
     def store_metadata(opt={})
-      Metadata.find_or_create_by_location_id({
-        :location_id => opt[:location_id],
-        :yelp_rating => opt[:yelp_rating],
-        :yelp_rating_count => opt[:yelp_rating_count]
-        })
+      Metadata.set_yelp_items(opt)
     end
     
     def build_and_store_location(item,cats,file_name)
       return false if item.blank?
-      c0 = cats[0] rescue nil
-      c1 = cats[1] rescue nil
       
       category_ids = Category.new_categories('eat',cats)
       
@@ -121,11 +115,13 @@ class Geocode
       _rating_count = rating_count(item)
       _digits = digits(item)
       
-      location_id = store_location(yahoo,{
+      c0 = cats[0] rescue nil
+      c1 = cats[1] rescue nil
+      location_id, _nid = store_location(yahoo,{
         :hash=>hash,
-        :c0=>c1,
-        :c1=>c1,
-        :_name=>_name,
+        :c0 => c1,
+        :c1 => c1,
+        :name => _name,
         :tod => _tod,
         :cost => _cost
       })
@@ -140,9 +136,10 @@ class Geocode
       })
       
       store_metadata(yahoo,{
-        :location_id => location_id
-        
-      })
+        :nid => _nid,
+        :yelp_rating => opt[:yelp_rating],
+        :yelp_count => opt[:yelp_count]
+        })
       
       {
         :name => _name,

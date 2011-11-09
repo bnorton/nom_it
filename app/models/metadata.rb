@@ -2,72 +2,85 @@ require 'mongo_ruby'
 
 class Metadata < MongoRuby
   
-  ############
-  attr_accessor  :_id
+  VALID_COUNTS = [:hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount]
+  VALID_YELP   = [:yelp_rating, :yelp_count]
+  VALID_FSQ    = [:fsq_checkins, :fsq_users]
+  
+  #                    view_count | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
+  attr_accessor :_id, :views,      :up,       :meh,       :rank,       :rank_count,  :rec_count
+  #              h == half    m == mile  tm == two mile
+  attr_accessor *VALID_COUNTS
+  #              misc checkins and reviews
+  attr_accessor *VALID_FSQ, *VALID_YELP
   
   def self.dbcollection
     "metadatas"
   end
   
-  # @required n
-  # @optional secondary
-  def self.find_by_name(primary,secondary=nil,ali=nil)
-    return false if primary.blank?
-    if secondary && ali
-      Category.find_one({ :p => primary, :s => secondary, :a => ali })
-    elsif secondary
-      Category.find_one({ :p => primary, :s => secondary })
-    else
-      Category.find_one({ :p => primary })
+  def self.create(nids)
+    nids = [nids] unless nids.respond_to?(:each)
+    nids.each do |nid|
+      nid = Util.BSONify(nid)  # TODO figure out how to incur on fields that may not be there in the document
+      Metadata.save({ :_id => nid, :views => 0, :up => 0, :meh => 0,:rank => 0, :rank_count => 0, :rec_count => 0 })
     end
   end
   
-  # @required id
   def self.find_by_nid(nid)
-    return false if nid.blank?
-    Category.find_one({:_id => nid})
+    nid = Util.BSONify(nid)
+    meta = Metadata.find_one({ :_id => nid })
+    Util.nidify(meta) unless meta.blank?
   end
   
-  # @required_for_find id
-  # @required_for_create primary
-  # @optional secondary
-  # @optional alias
-
-  def self.find_or_create_by_id(id,opt={})
-    unless found = Category.find_by_id(id)
-      if (options = Category.params(opt))
-        found = Category.save({:_id => id}.merge(options))
+  def self.set_attributes(attrs,valid_items)
+    return false unless (nid = Util.BSONify(attrs[:nid])) 
+    item = Metadata.for_nid(nid)
+    attrs do |k,v|
+      if valid_items.include?(k)
+        item.k = v
       end
     end
-    found
+    Metadata.save(item)
   end
   
-  # @required_for_find primary
-  # @required_for_create primary
-  # @optional secondary
-  # @optional alias
-  def self.find_or_create_by_name(primary,opt={})
-    unless found = Category.find_by_name(primary)
-      items = Category.params(opt)
-      found = Category.save(items)
-    end
-    found
+  def self.set_region_counts(attrs)
+    set_attributes(attrs,VALID_COUNTS)
   end
   
-  # @required id
-  def self.destroy_by_id(id)
-    return false if id.blank?
-    Category.remove({ :_id => id })
+  def self.set_yelp_items(attrs)
+    set_attributes(attrs,VALID_YELP)
   end
   
-  private 
-  def self.params(opt)
-    if p = opt[:primary]
-      op = {:p => p}
-      op.merge!(opt[:secondary] || {})
-      op.merge!(opt[:alias] || {})
-      op
-    end
+  def self.viewed(nid,by=1)
+    by = Metadata.gt_zero(by)
+    Metadata.incr(nid,:views,by)
+  end
+  
+  def self.upped(nid)
+    Metadata.incr(nid,:up)
+  end
+  
+  def self.mehed(nid)
+    Metadata.incr(nid,:meh)
+  end
+  
+  def self.ranked(nid)
+    Metadata.incr(nid,:rank_count)
+  end
+  
+  def self.recommended(nid)
+    Metadata.incr(nid,:rec_count)
+  end
+  
+  def self.new_fsq_checkins(nid,checkins)
+    Metadata.set(nid,:fsqcheckins,checkins)
+  end
+  
+  def self.new_fsq_users(nid,users)
+    Metadata.set(nid,:fsqusers,users)
+  end
+  
+  def self.gt_zero(chk)
+    chk < 1 ? 1 : chk
   end
   
 end

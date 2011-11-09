@@ -21,23 +21,23 @@ class ThumbCount < MongoRuby
           if (value == #{ThumbCount.up}) {
             db.#{ThumbCount.dbcollection}.save({ nid:nid, up:1, meh:0 });
           } else {
-            db.#{ThumbCount.dbcollection}.save({ nid:nid, up:0, meh:1 });
-          }
+            db.#{ThumbCount.dbcollection}.save({ nid:nid, up:0, meh:1 });}
         } else {
           if (value == #{ThumbCount.up}) {
             ++item.up;
           } else {
-            ++item.meh;
-          }
-          db.#{ThumbCount.dbcollection}.save( item ); 
-        }
+            ++item.meh; }
+          db.#{ThumbCount.dbcollection}.save( item ); }
       } catch ( ex ) { return false; }
       return true; }")
   end
     
   def self.update_thumb_count(nid,value)
     if value == ThumbCount.meh || value == ThumbCount.up
-      Thumb.eval("update_thumb_count('#{nid}',#{value})")
+      if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
+        Metadata.upped(nid) if value == ThumbCount.up
+        true
+      end
     else
       false
     end

@@ -2,8 +2,8 @@ require 'mongo_ruby'
 
 class Category < MongoRuby
   
-  ############    primary | secondary | alias
-  attr_accessor  :p,       :s,         :a
+  ############    primary | secondary | alias | the parent of this
+  attr_accessor  :p,       :s,         :a,         :parent
   
   def self.dbcollection
     "categories"
@@ -14,7 +14,6 @@ class Category < MongoRuby
   def self.find_by_name(primary,opt={})
     return false if primary.blank?
     secondary = opt[:s]
-    puts "what is secondary #{secondary}"
     if secondary && (ali = opt[:a])
       Category.find_one({ :p => primary, :s => secondary, :a => ali })
     elsif secondary
@@ -27,23 +26,24 @@ class Category < MongoRuby
   # @required id
   def self.find_by_id(id)
     return false if id.blank?
-    Category.find_one({:_id => id})
+    Category.find_one({ :_id => id })
   end
   
   # @required_for_find id
   # @required_for_create primary
   # @optional secondary
   # @optional alias
-  # def self.find_or_create_by_id(id,opt={})
-  #   found = Category.find_by_id(id)
-  #   unless found
-  #     options = Category.params(opt)
-  #     unless (options).blank? || options[:p].blank?
-  #       return Category.save({:_id => id}.merge(options))
-  #     end
-  #   end
-  #   found
-  # end
+  def self.find_or_create_by_id(id,opt={})
+    return false unless (id = Category.BSONize(id))
+    found = Category.find_by_id(id)
+    if found.blank?
+      options = Category.params(opt)
+      unless (options).blank? || options[:p].blank?
+        return Category.save({ :_id => id }.merge(options))
+      end
+    end
+    found
+  end
   
   # @required_for_find primary
   # @required_for_create primary
@@ -53,31 +53,39 @@ class Category < MongoRuby
     return false if primary.blank?
     Category.normalize!(primary)
     Category.normalize!(opt)
-    unless Category.find_by_name(primary,opt)
+    category = Category.find_by_name(primary,opt)
+    if category.blank?
       items = Category.params(opt, primary)
-      return Category.save(items)
+      Category.save(items)
+    else
+      category['_id']
     end
-    false
   end
   
-  def self.find_or_create_by_primary_and_secordary(p,s)
-    return false if s.blank?
-    Category.find_or_create_by_name(p,{ :s => s })
+  def self.find_or_create_by_primary_and_secordary(pid,s)
+    Category.normalize!(s)
+    return false if s.blank? || (top = Category.find_by_id(pid)).blank?
+    sec = Category.find_one({ :parent => top['_id'], :p => s })
+    return sec['_id'] unless sec.blank?
+    Category.save({ :p => s, :parent => top['_id']})
   end
   
   def self.new_categories(top_level,cats=[])
     return false if cats.blank?
-    Category.find_or_create_by_name(top_level)
+    ids = []
+    top = Category.find_or_create_by_name(top_level)
+    ids << top
     cats.each do |c|
-      Category.find_or_create_by_primary_and_secordary(top_level, c)
+      ids << Category.find_or_create_by_primary_and_secordary(top, c)
     end
-    true
+    ids
   end
   
   private
+  
   # @required id
   def self.destroy_by_id(id)
-    return false if id.blank?
+    return false unless (id = Util.BSONize(id))
     Category.remove({ :_id => id })
   end
   
@@ -99,8 +107,7 @@ class Category < MongoRuby
   def self.params(opt,primary=nil)
     Category.normalize!(opt)
     Category.normalize!(primary)
-    op = {}
-    op.merge!({:p => (primary || opt[:p])})
+    op = {:p => (primary || opt[:p])}
     op.merge!({:s => opt[:s]}) if opt[:s]
     op.merge!({:a => opt[:a]}) if opt[:a]
     op

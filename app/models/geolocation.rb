@@ -1,4 +1,4 @@
-
+require 'ostruct'
 class Geolocation < ActiveRecord::Base
   
   NUM = /^-?[0-9]+(\.[0-9]+)?$/
@@ -23,9 +23,15 @@ class Geolocation < ActiveRecord::Base
     Geolocation.search_by_category(lat,lng,dist,primary) # .search_by_category(lat,lng,dist,secondary)
   }
   
-  def self.find_by_location(id)
-    Geolocation.compact.find_by_location_id(id)
+  def self.for_nid(nid)
+    geo = find_by_nid(nid)
+    puts "GEO F #{geo.class} #{geo.respond_to? :attributes}"
+    puts "#{geo.inspect}"
+    g = OpenStruct.new(geo)
+    g = Util.nidify(g,:primary_category,'primary')
+    g = Util.nidify(g,:secondary_category,'secondary')
   end
+  
   def self.category_search(options,retries=3)
     if @lat.blank? || @lng.blank?
       params options
@@ -40,7 +46,7 @@ class Geolocation < ActiveRecord::Base
     len = locations.length
     unless len > MIN_ENTRIES || same?(len)
       @last = len
-      dist = Geolocation.new_distance(@dist)
+      @dist = Geolocation.new_distance(@dist)
       category_search(options,retries-1)
     end
     locations
@@ -86,14 +92,14 @@ class Geolocation < ActiveRecord::Base
   
 end
 
-  # The schema for the geolocations model
   # create_table "geolocations", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
   #   t.integer  "location_id",                  :null => false
   #   t.float    "lat",         :default => 0.0
   #   t.float    "lng",         :default => 0.0
-  #   t.string   "nid"
+  #   t.integer  "cost"
+  #   t.string   "primary"
+  #   t.string   "secondary"
   # end
-  
   

@@ -24,7 +24,6 @@ class Recommendation < ActiveRecord::Base
   
   def self.create(this)
     this.merge!(self.defaults(this))
-    
     r = Recommendation.new
     r.lat      = this[:lat]
     r.lng      = this[:lng]
@@ -39,6 +38,7 @@ class Recommendation < ActiveRecord::Base
     r.location_city = this[:city]
     r.nid      = Util.ID
     if r.save!
+      Metadata.recommended(r.nid) # for item analytics
       token = Base64.encode64(r.id.to_s)
       token = token.gsub('=','').gsub('\n','')
       r.token = token

@@ -38,8 +38,19 @@ class MongoRuby
     self.collection.ensure_index(*args)
   end
   
+  def self.incr(nid,what,ct=1)
+    return false unless nid && what
+    nid = Util.BSONify(nid)
+    self.collection.update({ :_id => nid }, { '$inc' => { what => ct }}, {:upsert => true})
+  end
+  
+  def self.set(nid,what,val)
+    return false unless nid && what && val
+    nid = Util.BSONify(nid)
+    self.collection.update({ :_id => nid }, {'$set' => { what => val }})
+  end
+  
   def self.eval(*args)
-    # logger.info("eval called directly on MongoDB >> #{args.inspect} <<")
     self.db.eval(*args)
   end
   
