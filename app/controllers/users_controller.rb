@@ -5,14 +5,19 @@ class UsersController < ApplicationController
   
   respond_to :json
   
-  before_filter :user_params,       :only => [:me, :login, :register]
+  before_filter :user_params,       :only => [:me, :login, :register,:thumbs,:thumbed]
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :force_email_passwd,:only => [:login]
   before_filter :search_params,     :only => [:search]
-  before_filter :validate_ids,      :only => [:detail]
+  before_filter :validate_ids,      :only => [:detail,:thumbs,:thumbed]
   before_filter :validate_token,    :only => []
   
-  before_filter :authentication_required, :only => [:me]
+  before_filter :authentication_required, :only => [:me,:thumb_create]
+  
+  # NEW
+  # get "user/:nid/thumb"      => "users#thumb_create"                    ## POST
+  # get "user/:nid/thumbs"     => "user#thumbs"                           ## POST
+
   
   def me
     me = User.me(@token)
@@ -54,6 +59,34 @@ class UsersController < ApplicationController
     respond_with response
   end
   
+  # thumb a user
+  def thumb_create
+    val = params[:value]
+    response = if val && Thumb.new_thumb(@nid,@nid_them,val)
+      Status.thumb_created
+    else
+      Status.couldnt_create_new_thumb
+    end
+    respond_with response
+  end
+  
+  # the users that have thumbed another user  (return people)
+  def thumbs
+    thumbz = Thumb.detail_for_nid(@nid,@limit,:user)
+    response = if thumbz.length > 0
+      Status.thumbs(thumbz)
+    else
+      Status.insufficient_arguments
+    end
+    
+    respond_with response
+  end
+  
+  # things that the user has thumbed (return locatons)
+  def thumbed
+    
+  end
+  
   def check
     @screen_name = params[:screen_name]
     response = if @screen_name.blank?
@@ -87,7 +120,9 @@ class UsersController < ApplicationController
   end
   
   def user_params
-    @nid     = params[:nid]
+    @nid    = params[:nid]
+    @nid_them=params[:their_nid]
+    @limit  = params[:limit]
     @email  = params[:email] || params[:id]
     @vname  = params[:vanme]
     @FBHash = params[:fbhash]
@@ -115,7 +150,7 @@ class UsersController < ApplicationController
   end
   
   def validate_token
-    unless @token && !@token.blank? && User.token_match?(@nid,@token)
+    unless @token.present? && User.token_match?(@nid,@token)
       respond_with Status.user_not_authorized
     end
   end

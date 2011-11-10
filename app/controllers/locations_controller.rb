@@ -18,6 +18,10 @@ class LocationsController < ApplicationController
     
   end
   
+  ## NEW
+  # get "location/:nid/thumb"  => "locations#thumb_create"                ## POST
+  # get "location/:nid/thumbs" => "locations#thumbs"                      ## POST
+  
   def validate_ids
     @locations  = params[:nids] || []
     @locations << params[:nid]
