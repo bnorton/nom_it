@@ -61,11 +61,11 @@ NomIt::Application.routes.draw do
   #####  THUMBS  ##############################################################
   #############################################################################
   get "location/:nid/thumb"  => "locations#thumb_create"                ## POST
-  get "location/:nid/thumbs" => "locations#thumbs"                      ## POST
+  get "location/:nid/thumbs" => "locations#thumbs"
   
-  get "user/:nid/thumb"      => "users#thumb_create"                    ## POST
-  get "user/:nid/thumbs"     => "user#thumbs"                           ## POST
-  
+  get "user/:nid/thumb/create"=> "users#thumb_create"                   ## POST
+  get "user/:nid/thumbs"      => "user#thumbs"
+  get "user/:nid/thumbed"     => "user#thumbed"                         ## POST
   #############################################################################
   #####  RANKING  #############################################################
   #############################################################################
