@@ -41,7 +41,7 @@ class UsersController < ApplicationController
   end
   
   def detail
-    results   = User.detail_for_ids(@ids)
+    results   = User.detail_for_ids(@nids)
     condition = !results.blank?
     response  = ok_or_not(condition,{:results=>results})
     respond_with response
@@ -87,7 +87,7 @@ class UsersController < ApplicationController
   end
   
   def user_params
-    @id     = params[:id]
+    @nid     = params[:nid]
     @email  = params[:email] || params[:id]
     @vname  = params[:vanme]
     @FBHash = params[:fbhash]
@@ -108,14 +108,14 @@ class UsersController < ApplicationController
   end
   
   def validate_ids
-    @ids = params[:ids]
-    if @ids.blank? || !(@ids =~ NUMBER_ARR)
+    @nids = params[:nids]
+    if @nids.blank? || !(@nids =~ NUMBER_ARR)
       respond_with Status.insufficient_arguments
     end
   end
   
   def validate_token
-    unless @token && !@token.blank? && User.token_match?(@id,@token)
+    unless @token && !@token.blank? && User.token_match?(@nid,@token)
       respond_with Status.user_not_authorized
     end
   end

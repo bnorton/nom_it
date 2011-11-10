@@ -25,7 +25,7 @@ class Category < MongoRuby
   
   # @required id
   def self.find_by_id(id)
-    return false if id.blank?
+    return false unless (id = Util.BSONify(id))
     Category.find_one({ :_id => id })
   end
   
@@ -34,7 +34,6 @@ class Category < MongoRuby
   # @optional secondary
   # @optional alias
   def self.find_or_create_by_id(id,opt={})
-    return false unless (id = Category.BSONize(id))
     found = Category.find_by_id(id)
     if found.blank?
       options = Category.params(opt)
@@ -85,7 +84,7 @@ class Category < MongoRuby
   
   # @required id
   def self.destroy_by_id(id)
-    return false unless (id = Util.BSONize(id))
+    return false unless (id = Util.BSONify(id))
     Category.remove({ :_id => id })
   end
   

@@ -19,8 +19,8 @@ class LocationsController < ApplicationController
   end
   
   def validate_ids
-    @locations  = params[:ids] || []
-    @locations << params[:id]
+    @locations  = params[:nids] || []
+    @locations << params[:nid]
     @locations = @locations.respond_to?(:split) ? @locations.split(',') : @locations
     flag = false
     unless @locations.is_a?(Array) && @locations.length > 0

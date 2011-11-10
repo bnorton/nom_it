@@ -45,12 +45,16 @@ class LocationsInit
         :lng => -122.2222,
         :nid => nid2
       })
-      Geolocation.create({:location_id => id3, :primary => cat3,:lat => 33.3333,:lng => -122.2233,:nid => nid3})
+      Geolocation.create({
+        :location_id => id3,
+        :primary => cat3,
+        :lat => 33.3333,
+        :lng => -122.2233,
+        :nid => nid3})
       
-      
-      ThumbCount.update_thumb_count(nid1,2) # up
-      ThumbCount.update_thumb_count(nid2,2) # up
-      ThumbCount.update_thumb_count(nid3,1) # meh
+      ThumbCount.update_thumb_count(nid1,2) # meh
+      ThumbCount.update_thumb_count(nid2,2) # meh
+      ThumbCount.update_thumb_count(nid3,1) # up
       
       Metadata.create([nid1,nid2,nid3])
       

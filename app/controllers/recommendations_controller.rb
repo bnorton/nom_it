@@ -60,7 +60,7 @@ class RecommendationsController < ApplicationController
   end
   
   def recommend(method_name)
-    recs = Recommend.send("for_#{method_name}_id".to_sym, @id)
+    recs = Recommend.send("for_#{method_name}_id".to_sym, @nid)
     recs = Util.prepare(recs)
     respond_with ok_or_not(!recs.blank?,{:recommends=>recs})
   end
@@ -93,7 +93,7 @@ class RecommendationsController < ApplicationController
   end
   
   def required_for_destroy
-    @recid = params[:id]  || params[:recommendation]
+    @recid = params[:nid] || params[:recommendation]
     @user  = params[:uid] || params[:user_id]
     if @recid.blank? || @user.blank?
       respond_with Status.recommendation_not({:word => "destroyed"})
@@ -116,8 +116,8 @@ class RecommendationsController < ApplicationController
   end
   
   def id_only
-    @id = params[:id]
-    respond_with Status.comments_not_found if @id.blank?
+    @nid = params[:nid]
+    respond_with Status.comments_not_found if @nid.blank?
   end
   
   def optional

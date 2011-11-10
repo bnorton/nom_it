@@ -36,7 +36,7 @@ class CommentsController < ApplicationController
   private 
   
   def comments(method_name)
-    comments = Comment.send("for_#{method_name}_id".to_sym, @id, {:start=>@start,:limit=>@limit})
+    comments = Comment.send("for_#{method_name}_id".to_sym, @nid, {:start=>@start,:limit=>@limit})
     prepared = Util.prepare(comments)
     respond_with ok_or_not(prepared)
   end
@@ -50,10 +50,10 @@ class CommentsController < ApplicationController
   end
   
   def check_params
-    @id    = params[:id]
+    @nid    = params[:nid]
     @start = params[:start]
     @limit = params[:limit]
-    unless (!@id.blank? && @id = @id.to_i)
+    unless (!@nid.blank? && @nid = @nid.to_i)
       respond_with Status.comments_not_found
     end
   end
