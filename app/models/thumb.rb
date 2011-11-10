@@ -39,10 +39,25 @@ class Thumb < MongoRuby
     Thumb.find_by({:nid => nid}, lim)
   end
   
+  def self.detail_for_nid(nid,lim=20)
+    result = []
+    thumbs = Thumb.for_nid(nid,lim)
+    while (thumb = thumbs.next).present?
+      result << {
+        :thumb => Util.nidify(thumb,:tid),
+        :thumb_count => ThumbCount.for_nid(thumb['nid'])
+      }
+    end
+    result
+  end
+  
   private
   
   def self.find_by(finder,lim)
     Thumb.find(finder).limit(lim)
   end
-
+  
+  def self.max_limit(lim)
+    lim > 50 ? 50 : lim < 5 ? 5 : lim
+  end
 end

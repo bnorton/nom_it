@@ -51,8 +51,13 @@ class Util
       end
     end
     
+    def STRINGify(s)
+      return s.to_s if s.respond_to? :to_s
+      s
+    end
+    
     def BSONify(id)
-      return id if id.blank?
+      return id if (id.blank? || id.is_a?(BSON::ObjectId))
       begin
         return BSON::ObjectId(id)
       rescue BSON::InvalidObjectId

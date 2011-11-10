@@ -22,6 +22,14 @@ module Status
       message -1, "the screen_name you were looking for is not available"
     end
     
+    def thumb_created
+      message 1, "the thumb was created succussfully"
+    end
+    
+    def couldnt_create_new_thumb
+      message -1, "the thumb you tried to create failed, make sure to include the :value param"
+    end
+    
     def couldnt_follow_or_unfollow
       message -1, "The specificed user couldn't be { followed, unfollowed }"
     end
@@ -54,7 +62,8 @@ module Status
     end
     
     def insufficient_arguments(options={})
-      msg = options[:message] || "insufficient or malformed arguments"
+      msg = "insufficient or malformed argument #{options[:which]}" if options[:which]
+      msg ||= options[:message] || "insufficient or malformed argument(s)"
       message -1, msg
     end
     
@@ -64,6 +73,10 @@ module Status
     
     def unknown_error
       message -1, "an unknown error has occurred"
+    end
+    
+    def thumbs(thmbs)success
+      status_message_results(1,"fetched thumbs successfully",thumbs {:result_name => :thumbs})
     end
     
     def user_detail(user)

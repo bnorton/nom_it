@@ -42,7 +42,7 @@ class User < ActiveRecord::Base
   scope :detail_for_ids, lambda {|ids|
     public_fields.where(["id in (?)", ids.split(',')])
   }
-  scope :find_by_name, lambda {|name|
+  scope :find_by_like_name, lambda {|name|
     public_fields.where(["name like ?", "%#{name}%"]).has_joined
   }
   scope :find_by_username, lambda {|username|
@@ -61,14 +61,14 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.find_by_any_means_necessary(id)
-    user = User.find_by_any_means(id).has_joined
+  def self.find_by_any_means_necessary(nid)
+    user = User.find_by_any_means(nid).has_joined
     user.first unless user.blank?
   end
   
-  def self.login(id_or_email,password,vname='')
-    unless id_or_email.blank?
-      user = User.login_with_id_or_email(id_or_email).first
+  def self.login(nid_or_email,password,vname='')
+    unless nid_or_email.blank?
+      user = User.login_with_id_or_email(nid_or_email).first
       if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
         user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
         user.last_seen  = Time.now

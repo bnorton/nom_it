@@ -34,7 +34,7 @@ class ThumbCount < MongoRuby
     
   def self.update_thumb_count(nid,value)
     if value == ThumbCount.meh || value == ThumbCount.up
-      if (nid = Util.BSONify(nid))
+      if (nid = Util.STRINGify(nid))
         if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
           Metadata.upped(nid) if value == ThumbCount.up
           return true
@@ -45,8 +45,8 @@ class ThumbCount < MongoRuby
   end
   
   ## methods that find ratings or totals
-  def self.find_by_nid(nid)
-    if (nid = Util.BSONify(nid))
+  def self.for_nid(nid)
+    if (nid = Util.STRINGify(nid))
       item = ThumbCount.find_one({ :_id => nid })
       return {} if item.nil?
       { :up => item['up'], :meh => item['meh'], :_id => nid }
