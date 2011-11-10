@@ -156,20 +156,29 @@ describe "comments" do
       (Comment.collection.count - @after).should == 0
     end
     it "should have the common verbage for a deleted comment with user data still attached" do
-      msg = Comment.removed_content_message
+      r = @recommendation2
+      Comment.destroy_uid_lid({:uid => r[:uid], :lid => r[:lid]})
+      c = Comment.for_recommendation_id(@recommendation2[:rid]).first
+      c['text'].should == Comment.removed_content_message
       
     end
     it "should remove a single comment if the nid is specified" do
-      
+      @recommendation1[:text] = 'ttext'
+      Comment.create_comment_for_recommendation(@recommendation1)
+      (Comment.collection.count - @after).should == 1
+      r = @recommendation2
+      finder = {:uid => r[:uid], :lid => r[:lid]}
+      Comment.destroy_uid_lid(finder)
+      Comment.search_by_uid_lid(r[:uid],r[:lid]).first['text'].should == Comment.removed_content_message
     end
   end
   describe "search" do
     before do
       Comment.collection.remove
       # create some comments
-      @uid   = rand(1<<8)
-      @uid2  = rand(1<<8)
-      @lid   = rand(1<<8)
+      @uid   = rand(1<<16)
+      @uid2  = rand(1<<16)
+      @lid   = rand(1<<16)
       @text1 = 'sample text1'
       @text2 = 'example text2'
       @text3 = 'text3 text'
