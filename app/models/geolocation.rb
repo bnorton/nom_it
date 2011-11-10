@@ -24,12 +24,9 @@ class Geolocation < ActiveRecord::Base
   }
   
   def self.for_nid(nid)
-    geo = find_by_nid(nid)
-    puts "GEO F #{geo.class} #{geo.respond_to? :attributes}"
-    puts "#{geo.inspect}"
-    g = OpenStruct.new(geo)
-    g = Util.nidify(g,:primary_category,'primary')
-    g = Util.nidify(g,:secondary_category,'secondary')
+    geo = find_by_nid(nid).as_json
+    geo = Util.nidify(geo,:primary,'primary')
+    Util.nidify(geo,:secondary,'secondary')
   end
   
   def self.category_search(options,retries=3)

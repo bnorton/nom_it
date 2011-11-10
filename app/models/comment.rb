@@ -31,7 +31,7 @@ class Comment < MongoRuby
   
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
-    return false unless (id = Util.BSONize(id))
+    return false unless (id = Util.BSONify(id))
     Comment.set(id,:text,Comment.removed_content_message)
   end
   
@@ -90,6 +90,7 @@ class Comment < MongoRuby
     true
   end
   
+  private
   # parent_comment_id is for threadding (hit the reply button)
   def self.create(opt={})
     unless (nid = opt[:nid]) && (Comment.search_id(opt[:nid]).count > 0)

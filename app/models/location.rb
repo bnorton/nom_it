@@ -54,16 +54,16 @@ class Location < ActiveRecord::Base
   
   def self.detail_for_nid(nid,location_id=nil,location=nil,geolocation=nil)
     if location_id.present?
-      detail = compact.find_by_id(location_id).attributes
+      detail = compact.find_by_id(location_id).as_json
     elsif location.present?
       detail = location
     else
-      detail = find_by_nid(nid).attributes
+      detail = find_by_nid(nid).as_json
     end
     nid = detail['nid']
     thumb = ThumbCount.find_by_nid(nid)
     meta = Metadata.find_by_nid(nid)
-    geo = geolocation || Geolocation.for_nid(nid).try(:attributes)
+    geo = geolocation || Geolocation.for_nid(nid).as_json
     detail.merge({
       :thumbs => thumb,
       :metadata => meta,
