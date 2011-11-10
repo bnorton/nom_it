@@ -56,7 +56,6 @@ describe "user" do
       @mark_id  = User.register(@mark[:email], @mark[:password], @mark[:screen_name] ).id
       @third_id = User.register(@third[:email],@third[:password],@third[:screen_name]).id
     end
-    
     it "should find the users by id" do
       User.find_by_any_means_necessary(@brian_id).should_not be_blank
       User.find_by_any_means_necessary(@mark_id).should_not be_blank

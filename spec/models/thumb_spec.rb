@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
   # Thumb.for_nid(nid,lim=20)
   # 
   # ThumbCount.update_thumb_count(nid,value)
-  # ThumbCount.find_by_nid(nid)   ==>   { :up => item['up'], :meh => item['meh'], :nid => nid }
+  # ThumbCount.for_nid(nid)   ==>   { :up => item['up'], :meh => item['meh'], :nid => nid }
 
 
 describe "thumbs" do
@@ -43,8 +43,9 @@ describe "thumbs" do
         Thumb.new_thumb(@nid2,@uid1,ThumbCount.meh).should == true
         Thumb.new_thumb(@nid2,@uid2,ThumbCount.meh).should == true
         (Thumb.collection.count - @before_t).should == 4
-        nid1 = ThumbCount.find_by_nid(@nid1)
-        nid2 = ThumbCount.find_by_nid(@nid2)
+        nid1 = ThumbCount.for_nid(@nid1)
+        nid2 = ThumbCount.for_nid(@nid2)
+        puts "NID1 #{nid1.inspect}"
         nid1[:up].should  == 2
         nid1[:meh].should == 0
         nid2[:up].should  == 0
@@ -55,17 +56,18 @@ describe "thumbs" do
       end
       it "should update the thumb when it is a different value from from the original" do
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
-        ThumbCount.find_by_nid(@nid1)[:up].should == 1
+        ThumbCount.for_nid(@nid1)[:up].should == 1
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == true
-        ThumbCount.find_by_nid(@nid1)[:meh].should == 1
+        ThumbCount.for_nid(@nid1)[:meh].should == 1
       end
       it "should reject the identical thumb and update to a new value" do
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == true
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == false
-        ThumbCount.find_by_nid(@nid1)[:up].should == 1
+        puts "ThumbCount #{ThumbCount.for_nid(@nid1).inspect}"
+        ThumbCount.for_nid(@nid1)[:up].should == 1
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == true
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == false
-        ThumbCount.find_by_nid(@nid1)[:meh].should == 1
+        ThumbCount.for_nid(@nid1)[:meh].should == 1
       end
     end
   end
