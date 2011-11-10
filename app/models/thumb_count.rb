@@ -16,12 +16,12 @@ class ThumbCount < MongoRuby
   
   def self.add_new_thumb_count
     ThumbCount.store_function("update_thumb_count", "function( nid, value ) {
-      try { item = db.#{ThumbCount.dbcollection}.findOne({ nid:nid });
+      try { item = db.#{ThumbCount.dbcollection}.findOne({ _id:nid });
         if ( item == null ) {
           if (value == #{ThumbCount.up}) {
-            db.#{ThumbCount.dbcollection}.save({ nid:nid, up:1, meh:0 });
+            db.#{ThumbCount.dbcollection}.save({ _id:nid, up:1, meh:0 });
           } else {
-            db.#{ThumbCount.dbcollection}.save({ nid:nid, up:0, meh:1 });}
+            db.#{ThumbCount.dbcollection}.save({ _id:nid, up:0, meh:1 });}
         } else {
           if (value == #{ThumbCount.up}) {
             ++item.up;
@@ -34,19 +34,25 @@ class ThumbCount < MongoRuby
     
   def self.update_thumb_count(nid,value)
     if value == ThumbCount.meh || value == ThumbCount.up
-      if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
-        Metadata.upped(nid) if value == ThumbCount.up
-        true
+      if (nid = Util.BSONify(nid))
+        if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
+          Metadata.upped(nid) if value == ThumbCount.up
+          return true
+        end
       end
-    else
-      false
     end
+    false
   end
   
   ## methods that find ratings or totals
   def self.find_by_nid(nid)
-    item = ThumbCount.find_one({ :nid => nid })
-    return {} if item.nil?
-    { :up => item['up'], :meh => item['meh'], :nid => nid }
+    if (nid = Util.BSONify(nid))
+      item = ThumbCount.find_one({ :_id => nid })
+      return {} if item.nil?
+      { :up => item['up'], :meh => item['meh'], :_id => nid }
+    else
+      {}
+    end
   end
+  
 end
