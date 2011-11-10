@@ -15,7 +15,7 @@ describe "category" do
       Category.find_or_create_by_name('',{:odd=>'opts'}).should be_false
     end
     it "should reject a search if none of the correct parameters are not specified" do
-      Category.find_by_id('').should == false
+      Category.find_by_id('').should == nil
     end
     it "should reject a search if the id cannot be parsed to a BSON::ObjectId" do
       id = BSON::ObjectId.new.to_s[0..10] # make it invalid

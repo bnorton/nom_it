@@ -10,10 +10,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "thumbs" do
   before do
-    @nid1 = '4e13456'
-    @nid2 = '4e23457'
-    @uid1 = '5f66'
-    @uid2 = '5f55'
+    @nid1 = Util.ID
+    @nid2 = Util.ID
+    @uid1 = Util.ID
+    @uid2 = Util.ID
   end
   describe "create" do
     before do
