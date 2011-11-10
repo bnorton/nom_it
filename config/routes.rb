@@ -4,51 +4,82 @@ NomIt::Application.routes.draw do
 
   get "/r/:hash"            => "details#detail"
   
-  get "/user/me"            => "users#me"                 ### POST
+  #############################################################################
+  #####  USERS  ###############################################################
+  #############################################################################
+  get "/user/me"            => "users#me"                              ### POST
   
-  get "/user/login"         => "users#login"              ### POST
-  get "/user/register"      => "users#register"           ### POST
+  get "/user/login"         => "users#login"                           ### POST
+  get "/user/register"      => "users#register"                        ### POST
   get "/user/check"         => "users#check"
     
   get "/users/search"       => "users#search"
-  get "/users/detail"       => "users#detail"
-
+  get "/users/detail"       => "users#detail"                         
   
-  get "/follow/create"      => "followers#create"         ### POST
-  get "/follow/destroy"     => "followers#destroy"        ### POST
+  #############################################################################
+  #####  FOLLOWERS  ###########################################################
+  #############################################################################
+  get "/follow/create"      => "followers#create"                      ### POST
+  get "/follow/destroy"     => "followers#destroy"                     ### POST
   
   get "/followers"          => "followers#who_follows_id"
   get "/follows"            => "followers#followers"
   
-  get "/user/:id/followers" => "followers#who_follows_id"
-  get "/user/:id/follows"   => "followers#followers"
+  get "/user/:nid/followers" => "followers#who_follows_id"
+  get "/user/:nid/follows"   => "followers#followers"
   
+  #############################################################################
+  #####  RECOMMENDATIONS  #####################################################
+  #############################################################################
+  get "/recommendation/create"       => "recommendations#create"       ### POST
+  get "/recommendation/destroy"      => "recommendations#destroy"      ### POST
+  get "/recommendation/update"       => "recommendations#update"       ### POST
+  
+  get "/recommendations/user/:nid"    => "recommendations#to_user"
+  get "/recommendations/location/:nid"=> "recommendations#about_location"
+  
+  get "/location/:nid/recommends"     => "recommendations#location"
+  
+  #############################################################################
+  #####  LOCATIONS  ###########################################################
+  #############################################################################
+  get "/locations/create"   => "locations#create"                       ## POST
   get "/locations/search"   => "geolocations#search"
   get "/locations/here"     => "geolocations#here"
   
-  get "/recommendation/:id/comments" => "comments#recommendation"
-  get "/location/:id/comments"       => "comments#location"
-  get "/user/:id/comments"           => "comments#user"
+  #############################################################################
+  #####  COMMENTS  ############################################################
+  #############################################################################
+  get "/recommendation/:nid/comments" => "comments#recommendation"
+  get "/location/:nid/comments"       => "comments#location"
+  get "/user/:nid/comments"           => "comments#user"
   
   get "/comments/search"             => "comments#search"
-  get "/comment/create"              => "comments#create"
+  get "/comment/create"              => "comments#create"               ## POST
   
-  get "/recommendation/create"       => "recommendations#create"    ### POST
-  get "/recommendation/destroy"      => "recommendations#destroy"   ### POST
-  get "/recommendation/update"       => "recommendations#update"    ### POST
+  #############################################################################
+  #####  THUMBS  ##############################################################
+  #############################################################################
+  get "location/:nid/thumb"  => "locations#thumb_create"                ## POST
+  get "location/:nid/thumbs" => "locations#thumbs"                      ## POST
   
-  get "/recommendations/user/:id"    => "recommendations#to_user"
-  get "/recommendations/location/:id"=> "recommendations#about_location"
+  get "user/:nid/thumb"      => "users#thumb_create"                    ## POST
+  get "user/:nid/thumbs"     => "user#thumbs"                           ## POST
   
-  get "/location/:id/recommends"     => "recommendations#location"
+  #############################################################################
+  #####  RANKING  #############################################################
+  #############################################################################
+  get "/rank/create"        => "rankings#create"                        ## POST
+  get "/rank/update"        => "rankings#create"                        ## POST
+  get "/rank/destory"       => "rankings#destory"                       ## POST
   
-  get "/rank/create"  => "rankings#create"                         ## POST
-  get "/rank/update"  => "rankings#create"                         ## POST
-  get "/rank/destory" => "rankings#destory"                        ## POST
+  get "user/:nid/ranked"    => "rankings#user"
+  get "location/:nid/ranks" => "rankings#location"
   
-  get "user/:nid/ranked"             => "rankings#user"
-  get "location/:nid/ranks"          => "rankings#location"
-  
+  #############################################################################
+  #####  USERS  ###############################################################
+  #############################################################################
+
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
   # Keep in mind you can assign values other than :controller and :action
