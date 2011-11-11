@@ -76,7 +76,7 @@ module Status
     end
     
     def thumbs(thmbs)success
-      status_message_results(1,"fetched thumbs successfully",thumbs {:result_name => :thumbs})
+      status_message_results(1,"fetched thumbs successfully",thumbs, {:result_name => :thumbs})
     end
     
     def user_detail(user)

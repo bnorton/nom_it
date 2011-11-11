@@ -84,8 +84,8 @@ class Geocode
     end
     
     def store_geolocation(yahoo,opt={})
-      Geolocation.find_or_create_by_location_id(
-        :location_id => opt[:location_id],
+      Geolocation.find_or_create_by_location_nid(
+        :location_nid => opt[:location_nid],
         :lat => yahoo.latitude,
         :lng => yahoo.longitude,
         :primary => opt[:primary],
@@ -117,7 +117,7 @@ class Geocode
       
       c0 = cats[0] rescue nil
       c1 = cats[1] rescue nil
-      location_id, _nid = store_location(yahoo,{
+      location_nid, _nid = store_location(yahoo,{
         :hash=>hash,
         :c0 => c1,
         :c1 => c1,
@@ -129,7 +129,7 @@ class Geocode
       cid0 = category_ids[0] rescue nil
       cid1 = category_ids[1] rescue nil
       store_geolocation(yahoo,{
-        :location_id => location_id,
+        :location_nid => location_nid,
         :primary => cid0,
         :secondary => cid1,
         :cost => Location.integer_cost(_cost)
