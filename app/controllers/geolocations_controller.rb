@@ -11,12 +11,12 @@ class GeolocationsController < ApplicationController
   
   def here
     @search = Geolocation.search_by_geolocation(@options)
-    self.details
+    details
   end
   
   def search
     @search = Geolocation.category_search(@options)
-    self.details
+    details
   end
   
   def details
@@ -44,7 +44,7 @@ class GeolocationsController < ApplicationController
   end
   
   def primary
-    @options.merge!({:primary   => params[:primary]})
+    @options.merge!({:primary => params[:primary]})
   end
   
   def secondary

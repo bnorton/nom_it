@@ -1,7 +1,7 @@
 
 class UsersController < ApplicationController
   
-  NUMBER_ARR = /^([0-9]+)(,[0-9]+)*$/  
+  NUMBER_ARR = /^([0-9A-Za-z]+)(,[0-9A-Za-z]+)*$/  
   
   respond_to :json
   
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
-        User.register(@email, @password, @vname)
+        User.register(@email, @password, @screen_name)
       end
       
     condition = !registration.blank?
@@ -124,7 +124,7 @@ class UsersController < ApplicationController
     @nid_them=params[:their_nid]
     @limit  = params[:limit]
     @email  = params[:email] || params[:id]
-    @vname  = params[:vanme]
+    @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
     @TWHash = params[:twhash]
   end
@@ -136,16 +136,20 @@ class UsersController < ApplicationController
   end
   
   def search_params
-    @query = params[:query] || params[:q] || params[:name] || params[:email]
+    @query = params[:query] || params[:q] || params[:screen_name] || params[:email]
     if @query.blank?
       respond_with Status.user_not_authorized
     end
   end
   
   def validate_ids
+    @nid  = params[:nid]
     @nids = params[:nids]
     if @nids.blank? || !(@nids =~ NUMBER_ARR)
       respond_with Status.insufficient_arguments
+    end
+    if @nid
+      @nids << @nid
     end
   end
   

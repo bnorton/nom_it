@@ -15,7 +15,7 @@ class ImagesComtroller < ApplicationController
   
   def check_args
     @nid       = params[:nid]
-    @location = params[:location_id]
+    @location = params[:location_nid]
     @iname    = params[:iname]
   end
   

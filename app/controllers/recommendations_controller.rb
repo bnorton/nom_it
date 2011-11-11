@@ -86,8 +86,8 @@ class RecommendationsController < ApplicationController
     @lat  = params[:lat]
     @lng  = params[:lng]
     @user = params[:user_id]
-    @location_id = params[:location_id]
-    if (@lat.blank? || @lng.blank? || @user.blank? || @location_id.blank?)
+    @location_nid = params[:location_nid]
+    if (@lat.blank? || @lng.blank? || @user.blank? || @location_nid.blank?)
       respond_with Status.recommendation_not({:word => "made"})
     end
   end
@@ -137,7 +137,7 @@ class RecommendationsController < ApplicationController
       :lng  => @lng,
       :user_id => @user,
       :text => @text,
-      :location_id => @location_id,
+      :location_nid => @location_nid,
       ## optional
       :title => @title,
       :name  => @name,
