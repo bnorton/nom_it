@@ -24,12 +24,16 @@ class LocationsController < ApplicationController
   # @token
   # @name
   # @primary
-  # (@lat AND @lng) OR @city
+  # (@lat AND @lng) OR (@addr AND @city)
   # # optional
   # @text
-  
   def create
-    Location.create
+    response = if (loc = Location.create_item(@creation,@optional))
+      Status.item_created(loc)
+    else
+      Status.item_not_created
+    end
+    respond_with response
   end
   
   ## NEW
@@ -51,6 +55,13 @@ class LocationsController < ApplicationController
     respond_with Status.location_not_properly_formatted({:plural=>true}) if flag
   end
   
+  def optional_for_create
+    @why = params[:why]
+    @optional = {
+      :why => @why
+    }
+  end
+  
   def needs_for_create
     @nid = params[:nid]
     @token = params[:token]
@@ -59,18 +70,31 @@ class LocationsController < ApplicationController
     @text = params[:text]
     @lat = params[:lat]
     @lng = parmas[:lng]
+    @addr = params[:addr]
     @city = parmas[:city]
     
+    r=nil
     unless (@nid && @token)
       r = Status.insufficient_arguments({:message => 'needs acting user and auth_token'})
     end
-    unless (@name && @primary)
+    unless r.nil? && (@name && @primary)
       r = Status.insufficient_arguments({:message => 'needs item name and primary category'})
     end
-    unless (@lat && @lng) || @city
-      r = Status.insufficient_arguments({:message => 'needs lat and lng by default'})
+    unless r.nil? && ((@lat && @lng) || (@addr && @city))
+      r = Status.insufficient_arguments({:message => 'needs lat/lng or addr/city by default'})
     end
-    respond_with r in r.present?
+    respond_with r if r.present?
+    @creation = {
+      :nid => @nid,
+      :token => @token,
+      :name => @name,
+      :primary => @primary,
+      :text => @text,
+      :lat => @lat,
+      :lng => @lng,
+      :addr => @addr,
+      :city => @city
+    }
   end
   
   def authentication_required
