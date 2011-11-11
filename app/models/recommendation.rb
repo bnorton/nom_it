@@ -4,7 +4,7 @@ class Recommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :location
   
-  COMPACT = "id,nid,user_id,lat,lng,token,location_id,location_name,location_city,title,text,updated_at,image"
+  COMPACT = "id,nid,user_id,lat,lng,token,location_nid,location_name,location_city,title,text,updated_at,image"
   
   scope :compact, lambda {
     Recommendation.select(COMPACT)
@@ -13,7 +13,7 @@ class Recommendation < ActiveRecord::Base
     compact.where(["user_id=?",id])
   }
   scope :for_location, lambda {|id|
-    compact.where(["location_id=?",id])
+    compact.where(["location_nid=?",id])
   }
   scope :for_nid, lambda {|nid|
     compact.where(["nid=?",nid])
@@ -29,7 +29,7 @@ class Recommendation < ActiveRecord::Base
     r.lng      = this[:lng]
     r.user_id  = this[:user_id]
     r.user_name= this[:user_name]
-    r.location_id = this[:location_id]
+    r.location_nid = this[:location_nid]
     r.title    = this[:title]
     r.text     = this[:text]
     r.facebook = this[:facebook] || false
@@ -49,7 +49,7 @@ class Recommendation < ActiveRecord::Base
   
   def self.defaults(this)
     location = {}
-    result = Location.detail_for_id(this[:location_id]).try(:first)
+    result = Location.detail_for_nid(this[:location_nid]).try(:first)
     return location if result.blank?
     location[:text] = this[:text] || "#{result.name || this} is a great spot and I recommend it...Nom Away!"
     location[:name] = result.name

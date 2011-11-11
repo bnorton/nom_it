@@ -27,7 +27,7 @@ class Recommend < MongoRuby
         :uname  => r['user_name'],
         :to_uid => follower.user_id,
         :token  => r['token'],
-        :lid    => r['location_id'],
+        :lid    => r['location_nid'],
         :name   => r['name'],
         :city   => r['city'],
         :text   => r['text'],
@@ -52,7 +52,7 @@ class Recommend < MongoRuby
     Recommend.find({:to_uid => id.to_i})
   end
   
-  def self.for_location_id(id)
+  def self.for_location_nid(id)
     Recommend.find({:lid => id.to_i})
   end
   

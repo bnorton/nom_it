@@ -13,7 +13,7 @@ class Geolocation < ActiveRecord::Base
     select("lat,lng")
   }
   scope :find_by_distance, lambda {|lat,lng,dist|
-    select("location_id").
+    select("location_nid").
     where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<?",dist])
   }
   scope :search_by_category, lambda {|lat,lng,dist,category|
@@ -22,6 +22,18 @@ class Geolocation < ActiveRecord::Base
   scope :search_by_categories, lambda {|lat,lng,dist,primary,secondary|
     Geolocation.search_by_category(lat,lng,dist,primary) # .search_by_category(lat,lng,dist,secondary)
   }
+  
+  def self.create_item(opt)
+    if ((nid = opt[:location_nid]) && (lat = opt[:lat]) && (lng = opt[:lng]))
+      Geolocation.find_or_create_by_nid_and_lat_and_lng(
+        :nid => nid,
+        :lat => lat,
+        :lng => lng,
+        :cost => opt[:cost],
+        :primary => opt[:primary],
+        :secondary => opt[:secondary])
+    end
+  end
   
   def self.for_nid(nid)
     geo = find_by_nid(nid).as_json
@@ -98,5 +110,6 @@ end
   #   t.integer  "cost"
   #   t.string   "primary"
   #   t.string   "secondary"
+  #   t.string  "location_nid"
   # end
   

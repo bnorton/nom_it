@@ -81,7 +81,7 @@ class Ranking < MongoRuby
     end
   end
   
-  def self.for_nid(nid,lim=10,key=:location_id)
+  def self.for_nid(nid,lim=10,key=:location_nid)
     lim = Ranking.valid_limit(lim)
     found = Ranking.find({:nid => nid, :cur => true}).limit(lim)
     Util.parse(found,{:key => key})

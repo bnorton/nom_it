@@ -27,26 +27,22 @@ class LocationsInit
         :address => '201 11th st',
         :primary => cat3})
         
-      id1 = Location.find_by_nid(nid1)['id']
-      id2 = Location.find_by_nid(nid2)['id']
-      id3 = Location.find_by_nid(nid3)['id']
-      
       Geolocation.create({
-        :location_id => id1,
+        :location_nid => nid1,
         :primary => cat1,
         :lat => 33.3311,
         :lng => -122.2211,
         :nid => nid1
       })
       Geolocation.create({
-        :location_id => id2,
+        :location_nid => nid2,
         :primary => cat2,
         :lat => 33.3322,
         :lng => -122.2222,
         :nid => nid2
       })
       Geolocation.create({
-        :location_id => id3,
+        :location_nid => nid3,
         :primary => cat3,
         :lat => 33.3333,
         :lng => -122.2233,
@@ -76,51 +72,3 @@ class LocationsInit
     end
   end
 end
-
-
-  # The schema for the geolocations model
-  # create_table "geolocations", :force => true do |t|
-  #   t.datetime "created_at"
-  #   t.datetime "updated_at"
-  #   t.integer  "location_id",                  :null => false
-  #   t.float    "lat",         :default => 0.0
-  #   t.float    "lng",         :default => 0.0
-  #   t.string   "nid"
-  # end
-  
-  # create_table "locations", :force => true do |t|
-  #   t.datetime "created_at"
-  #   t.datetime "updated_at"
-  #   t.string   "name"
-  #   t.string   "fsq_name"
-  #   t.string   "fsq_id"
-  #   t.string   "gowalla_url"
-  #   t.string   "gowalla_name"
-  #   t.string   "address"
-  #   t.string   "cross_street"
-  #   t.string   "street"
-  #   t.string   "street2"
-  #   t.string   "city"
-  #   t.string   "state"
-  #   t.string   "area_code",     :limit => 7
-  #   t.string   "country"
-  #   t.text     "json_encode"
-  #   t.boolean  "is_new",                     :default => false, :null => false
-  #   t.string   "code"
-  #   t.binary   "schemaless"
-  #   t.string   "primary"
-  #   t.string   "secondary"
-  #   t.string   "nid"
-  #   t.string   "hash"
-  #   t.string   "yid"
-  #   t.string   "woeid"
-  #   t.string   "neighborhoods"
-  #   t.string   "url"
-  #   t.string   "revision_id"
-  #   t.string   "twitter"
-  #   t.string   "facebook"
-  #   t.string   "phone"
-  #   t.string   "cost"
-  #   t.string   "timeofday"
-  #   t.string   "metadata_id"
-  # end

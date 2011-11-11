@@ -26,6 +26,23 @@ class Location < ActiveRecord::Base
     end
   }
   
+  def self.create_item(opt)
+    new_nid = Util.ID
+    created_loc = Location.find_or_create_by_name_and_creator(
+      :name => opt[:name],
+      :creator => opt[:nid],
+      :primary => opt[:primary],
+      :secondary => opt[:secondary],
+      :city => opt[:city],
+      :text => opt[:text],
+      :phone => opt[:phone],
+      :cost => opt[:cost],
+      :nid => new_nid)
+    opt.merge!({:location_nid => new_nid})
+    created_geo = Geolocation.create_item(opt)
+    return true if created_loc && created_geo
+  end
+  
   def self.search(opt,start=0,lim=10)
     nid = opt[:nid]
     name = opt[:name]
@@ -52,8 +69,8 @@ class Location < ActiveRecord::Base
     real_result
   end
   
-  def self.detail_for_nid(nid,location_id=nil,location=nil,geolocation=nil)
-    if location_id.present?
+  def self.detail_for_nid(nid,location_nid=nil,location=nil,geolocation=nil)
+    if location_nid.present?
       detail = compact.find_by_id(location_id).as_json
     elsif location.present?
       detail = location
@@ -92,7 +109,7 @@ class Location < ActiveRecord::Base
   def self.parse_ids(search)
     locations = []
     search.each do |locid|
-      locations << locid.location_id
+      locations << locid.location_nid
     end
     locations.join(',')
   end

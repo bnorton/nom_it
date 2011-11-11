@@ -2,7 +2,7 @@ require 'mongo_ruby'
 
 class Comment < MongoRuby
   
-  ############ user_id  |  location_id  |  recommendation_id  |  parent_comment_id
+  ############ user_nid  |  location_nid  |  recommendation_nid  |  parent_comment_nid
   attr_accessor :uid,         :lid,              :rid,                 :pcid
   attr_accessor :text, :hash
   

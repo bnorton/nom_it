@@ -1,7 +1,7 @@
 class Revision < ActiveRecord::Base
   
   CATEGORY = "primary_category,secondary_category"
-  BASIC = "id,nid,updated_at,location_id,#{CATEGORY},title,text,phone,url"
+  BASIC = "id,nid,updated_at,location_nid,#{CATEGORY},title,text,phone,url"
   
   belongs_to :user
   belongs_to :location
@@ -23,7 +23,7 @@ class Revision < ActiveRecord::Base
   end
   
   def self.join_fields
-    "revisions.updated_at,revisions.location_id,revisions.title,
+    "revisions.updated_at,revisions.location_nid,revisions.title,
      revisions.text,revisions.phone,revisions.url,
      revisions.primary_category,revisions.secondary_category"
   end

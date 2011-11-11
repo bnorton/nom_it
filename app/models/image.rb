@@ -19,7 +19,7 @@ end
   #   t.datetime "updated_at"
   #   t.string   "link"
   #   t.integer  "uid",                            :null => false
-  #   t.integer  "location_id",                    :null => false
+  #   t.integer  "location_nid",                    :null => false
   #   t.string   "name"
   #   t.integer  "size"
   #   t.integer  "width"
