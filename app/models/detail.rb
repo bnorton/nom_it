@@ -8,7 +8,7 @@ class Detail < MongoRuby
   end
   
   def self.new_token(token,recommendation_id)
-    Detail.save({:_id => token, :rnid => recommendation_id})
+    Detail.save({:_id => token, :rnid => recommendation_id})  
   end
   
   def self.for_whatever(key,item,lim)
@@ -31,7 +31,15 @@ class Detail < MongoRuby
     recommendation = Recommendation.for_nid(record['rnid'])
     nid = recommendation['nid']
     meta = Metadata.find_by_nid(nid)
-    [recommendation,meta]
+    if recommendation && meta
+      Metadata.viewed(nid)
+      {
+        :recommendation => recommendation,
+        :metadata => meta
+      }
+    else
+      {}
+    end
   end
   
 end

@@ -9,11 +9,11 @@ class Location < ActiveRecord::Base
   scope :compact, lambda {
     select(COMPACT)
   }
-  scope :detail_for_id, lambda {|id| 
-    detail_for_ids(id.to_s)
+  scope :detail_for_nid, lambda {|nid| 
+    detail_for_ids(nid)
   }
-  scope :detail_for_ids, lambda {|ids| 
-    compact.where(["id in (?)", ids.split(',')])
+  scope :detail_for_nids, lambda {|nids| 
+    compact.where(["nid in (?)", nids.split(',')])
   }
   scope :find_by_like_name, lambda {|name|
     compact.where(["name like ?","%#{name}%"])
@@ -26,7 +26,7 @@ class Location < ActiveRecord::Base
     end
   }
   
-  def self.create_item(opt)
+  def self.create_item(opt,optional={})
     new_nid = Util.ID
     created_loc = Location.find_or_create_by_name_and_creator(
       :name => opt[:name],
@@ -44,14 +44,13 @@ class Location < ActiveRecord::Base
   end
   
   def self.search(opt,start=0,lim=10)
-    nid = opt[:nid]
+    nid = Util.BSONify(opt[:nid])
     name = opt[:name]
     st = opt[:street]
     ci = opt[:city]
     
     if nid
       result = compact.find_by_nid(nid)
-      puts "result #{result.inspect}"
       real_result = [Location.detail_for_nid(result['nid'],location=result)]
     else
       result = if name && st && ci
@@ -69,15 +68,14 @@ class Location < ActiveRecord::Base
     real_result
   end
   
-  def self.detail_for_nid(nid,location_nid=nil,location=nil,geolocation=nil)
-    if location_nid.present?
-      detail = compact.find_by_id(location_id).as_json
-    elsif location.present?
-      detail = location
+  def self.detail_for_nid(nid,location=nil,geolocation=nil)
+    nid = Util.BSONify(nid)
+    if location.present?
+      detail = location      
     else
       detail = find_by_nid(nid).as_json
     end
-    nid = detail['nid']
+    Metadata.returned(nid)
     thumb = ThumbCount.find_by_nid(nid)
     meta = Metadata.find_by_nid(nid)
     geo = geolocation || Geolocation.for_nid(nid).as_json
@@ -88,22 +86,22 @@ class Location < ActiveRecord::Base
     })
   end
   
-  def self.full_detail_for_ids(ids)
+  def self.full_detail_for_ids(nids)
     locations = []
-    ids.each do |id|
-      locations << Location.detail_for_nid(nil,id)
+    nids.each do |nid|
+      locations << Location.detail_for_nid(nid)
     end
     locations
   end
   
   def self.details_from_search(search)
       locations = Location.parse_ids search
-      details   = Location.detail_for_ids(locations)
+      Location.detail_for_ids(locations)
     end
     
   def self.full_details_from_search(search)
     locations = Location.parse_ids search
-    details   = Location.full_detail_for_ids(locations)
+    Location.full_detail_for_ids(locations)
   end
   
   def self.parse_ids(search)
