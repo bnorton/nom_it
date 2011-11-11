@@ -15,10 +15,6 @@ class LocationsController < ApplicationController
     respond_with response
   end
   
-  def edit
-    
-  end
-  
   # # required
   # @nid
   # @token

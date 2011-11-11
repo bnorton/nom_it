@@ -47,7 +47,7 @@ class Category < MongoRuby
     if found.blank?
       options = Category.params(opt)
       unless (options).blank? || options[:p].blank?
-        return Category.save({ :_id => id }.merge(options))
+        return Category.save({ :_id => Util.BSONify(id) }.merge(options))
       end
     end
     found
