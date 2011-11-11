@@ -9,6 +9,15 @@ class Category < MongoRuby
     "categories"
   end
   
+  # try ID first
+  def self.find(id_or_name,opt={})
+    unless (result = Category.find_by_id(id_or_name))
+      Category.find_by_name(id_or_name,opt)
+    else
+      result
+    end
+  end
+  
   # @required n
   # @optional secondary
   def self.find_by_name(primary,opt={})
