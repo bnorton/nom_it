@@ -6,8 +6,8 @@ class Metadata < MongoRuby
   VALID_YELP   = [:yelp_rating, :yelp_count]
   VALID_FSQ    = [:fsq_checkins, :fsq_users]
   
-  #                    view_count | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
-  attr_accessor :_id, :views,      :up,       :meh,       :rank,       :rank_count,  :rec_count
+  #                    view_count | returned | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
+  attr_accessor :_id, :views,      :ret,      :up,       :meh,       :rank,     :rank_ct,        :rec_ct
   #              h == half    m == mile  tm == two mile
   attr_accessor *VALID_COUNTS
   #              misc checkins and reviews
@@ -21,7 +21,7 @@ class Metadata < MongoRuby
     nids = [nids] unless nids.respond_to?(:each)
     nids.each do |nid|
       nid = Util.BSONify(nid)  # TODO figure out how to incur on fields that may not be there in the document
-      Metadata.save({ :_id => nid, :views => 0, :up => 0, :meh => 0,:rank => 0, :rank_count => 0, :rec_count => 0 })
+      Metadata.save({ :_id => nid, :views => 0, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
     end
   end
   
@@ -55,6 +55,10 @@ class Metadata < MongoRuby
     Metadata.incr(nid,:views,by)
   end
   
+  def self.returned(nid)
+    Metadata.incr(nid,:ret)
+  end
+  
   def self.upped(nid)
     Metadata.incr(nid,:up)
   end
@@ -64,11 +68,11 @@ class Metadata < MongoRuby
   end
   
   def self.ranked(nid)
-    Metadata.incr(nid,:rank_count)
+    Metadata.incr(nid,:rank_ct)
   end
   
   def self.recommended(nid)
-    Metadata.incr(nid,:rec_count)
+    Metadata.incr(nid,:rec_ct)
   end
   
   def self.new_fsq_checkins(nid,checkins)

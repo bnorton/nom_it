@@ -37,6 +37,7 @@ class ThumbCount < MongoRuby
       if (nid = Util.STRINGify(nid))
         if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
           Metadata.upped(nid) if value == ThumbCount.up
+          Metadata.mehed(nid) if value == ThumbCount.meh
           return true
         end
       end
