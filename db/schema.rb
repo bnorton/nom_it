@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111109064244) do
+ActiveRecord::Schema.define(:version => 20111110212425) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -32,36 +32,16 @@ ActiveRecord::Schema.define(:version => 20111109064244) do
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "location_id",                  :null => false
-    t.float    "lat",         :default => 0.0
-    t.float    "lng",         :default => 0.0
+    t.float    "lat",          :default => 0.0
+    t.float    "lng",          :default => 0.0
     t.integer  "cost"
     t.string   "primary"
     t.string   "secondary"
-    t.string   "nid"
+    t.string   "location_nid"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
   add_index "geolocations", ["lng", "lat"], :name => "geolocations_long_lat"
-
-  create_table "images", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "link"
-    t.integer  "uid",                            :null => false
-    t.integer  "location_id",                    :null => false
-    t.string   "name"
-    t.integer  "size"
-    t.integer  "width"
-    t.integer  "height"
-    t.text     "metadata"
-    t.string   "description"
-    t.boolean  "is_valid",    :default => false, :null => false
-    t.binary   "schemaless"
-    t.string   "nid"
-  end
-
-  add_index "images", ["location_id", "link"], :name => "images_link"
 
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
@@ -91,13 +71,14 @@ ActiveRecord::Schema.define(:version => 20111109064244) do
     t.string   "woeid"
     t.string   "neighborhoods"
     t.string   "url"
-    t.string   "revision_id"
+    t.string   "revision_nid"
     t.string   "twitter"
     t.string   "facebook"
     t.string   "phone"
     t.string   "cost"
     t.string   "timeofday"
-    t.string   "metadata_id"
+    t.string   "metadata_nid"
+    t.string   "creator"
   end
 
   add_index "locations", ["nid"], :name => "index_locations_on_nid", :unique => true
@@ -105,9 +86,8 @@ ActiveRecord::Schema.define(:version => 20111109064244) do
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id",                          :null => false
+    t.integer  "user_nid",                         :null => false
     t.string   "token"
-    t.integer  "location_id",                      :null => false
     t.string   "location_name"
     t.string   "location_city"
     t.string   "title"
@@ -122,47 +102,12 @@ ActiveRecord::Schema.define(:version => 20111109064244) do
     t.string   "image"
     t.string   "user_name"
     t.string   "nid"
+    t.string   "location_nid"
   end
 
-  add_index "recommendations", ["location_id", "new"], :name => "recommendations_location_new"
+  add_index "recommendations", ["new"], :name => "recommendations_location_new"
   add_index "recommendations", ["nid"], :name => "index_recommendations_on_nid", :unique => true
-  add_index "recommendations", ["user_id", "new"], :name => "recommendations_uid_new"
-
-  create_table "statistics", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "location_id",                                       :null => false
-    t.integer  "recommendations"
-    t.integer  "recommends_count"
-    t.integer  "rrr"
-    t.integer  "rrt"
-    t.integer  "quarter"
-    t.integer  "half",                               :default => 0, :null => false
-    t.integer  "mile",                               :default => 0, :null => false
-    t.integer  "two"
-    t.integer  "quarter_total"
-    t.integer  "halmile_total"
-    t.integer  "mile_total"
-    t.integer  "two_mile_total"
-    t.date     "established"
-    t.integer  "yelp_reviews"
-    t.float    "yelp_rating"
-    t.integer  "opentable_reviews"
-    t.float    "opentable_rating"
-    t.integer  "gowalla_checkins"
-    t.integer  "gowalla_users"
-    t.integer  "fsq_checkins"
-    t.integer  "fsq_users"
-    t.integer  "fsq_tips"
-    t.integer  "tweets"
-    t.integer  "nom_facebook_posts"
-    t.integer  "view_count"
-    t.string   "json_encode",        :limit => 1022
-    t.binary   "schemaless"
-  end
-
-  add_index "statistics", ["location_id"], :name => "statistics_location", :unique => true
-  add_index "statistics", ["rrr", "rrt"], :name => "statistics_rrr_rrt"
+  add_index "recommendations", ["user_nid", "new"], :name => "recommendations_uid_new"
 
   create_table "users", :force => true do |t|
     t.datetime "created_at"

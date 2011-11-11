@@ -1,9 +1,9 @@
 class NidOntoGeolocation < ActiveRecord::Migration
   def up
-    add_column :geolocations, :nid, :string
+    add_column :geolocations, :location_nid, :string
   end
 
   def down
-    remove_column :geolocations, :nid
+    remove_column :geolocations, :location_nid
   end
 end
