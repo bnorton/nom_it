@@ -48,9 +48,8 @@ class User < ActiveRecord::Base
   scope :find_by_username, lambda {|username|
     public_fields.where(["screen_name=?", username]).has_joined
   }
-  scope :search_by_all, lambda {|query|
-    items = ["%#{query}%",query,query]
-    public_fields.where(["name like ? or email=? or screen_name=?", *items]).has_joined
+  scope :search_by_all, lambda {|name,email,screen_name|
+    public_fields.where(["name like ? or email=? or screen_name=?", name,email,screen_name]).has_joined
   }
   
   def self.token_match?(id, token)
@@ -95,6 +94,7 @@ class User < ActiveRecord::Base
   
   def self.register_with_facebook(fbHash,username='')
     user = new_or_hasnt_joined(fbHash['id'])
+    user.facebook_hash = fbHash
     user.screen_name = username
     user.facebook = fbHash['id']
     user.name     = fbHash['name']
@@ -111,6 +111,7 @@ class User < ActiveRecord::Base
   
   def self.register_with_twitter(twHash,username='',email='')
     user = new_or_hasnt_joined(twHash['id'])
+    user.twitter_hash = twHash
     user.screen_name = username
     user.email    = email
     user.twitter  = twHash['id']

@@ -53,7 +53,7 @@ class UsersController < ApplicationController
   end
   
   def search
-    results   = User.search_by_all(@query)
+    results   = User.search_by_all(@query,@email,@screen_name)
     condition = !results.blank?
     response  = ok_or_not(condition,{:results=>results,:not_found=>true})
     respond_with response
@@ -131,24 +131,24 @@ class UsersController < ApplicationController
   def auth_params
     @password = params[:password]
     @token = @oauth_token = params[:token]
-    @registration_type = params[:regtype]
+    @registration_type = params[:regtype] || 'nom'
   end
   
   def search_params
-    @query = params[:query] || params[:q] || params[:screen_name] || params[:email]
-    if @query.blank?
-      respond_with Status.user_not_authorized
+    @query = params[:query] || params[:q]
+    @screen_name = params[:screen_name]
+    @email = params[:email]
+    if !(@query.blank? || @screen_name.blank? || @email.blank?)
+      respond_with Status.insufficient_arguments
     end
   end
   
   def validate_ids
     @nid  = params[:nid]
-    @nids = params[:nids]
+    @nids = params[:nids] || []
+    @nids << @nid if @nid.present?
     if @nids.blank? || !(@nids =~ NUMBER_ARR)
       respond_with Status.insufficient_arguments
-    end
-    if @nid
-      @nids << @nid
     end
   end
   
