@@ -2,16 +2,13 @@ require 'mongo_ruby'
 
 class Metadata < MongoRuby
   
-  VALID_COUNTS = [:hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount]
-  VALID_YELP   = [:yelp_rating, :yelp_count]
-  VALID_FSQ    = [:fsq_checkins, :fsq_users]
-  
   #                    view_count | returned | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
   attr_accessor :_id, :views,      :ret,      :up,       :meh,       :rank,     :rank_ct,        :rec_ct
   #              h == half    m == mile  tm == two mile
-  attr_accessor *VALID_COUNTS
+  attr_accessor :hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount
   #              misc checkins and reviews
-  attr_accessor *VALID_FSQ, *VALID_YELP
+  attr_accessor :fsq_checkins, :fsq_users
+  attr_accessor :yelp_rating, :yelp_count
   
   def self.dbcollection
     "metadatas"
