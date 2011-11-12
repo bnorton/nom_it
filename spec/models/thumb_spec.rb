@@ -45,7 +45,6 @@ describe "thumbs" do
         (Thumb.collection.count - @before_t).should == 4
         nid1 = ThumbCount.for_nid(@nid1)
         nid2 = ThumbCount.for_nid(@nid2)
-        puts "NID1 #{nid1.inspect}"
         nid1[:up].should  == 2
         nid1[:meh].should == 0
         nid2[:up].should  == 0
@@ -63,7 +62,6 @@ describe "thumbs" do
       it "should reject the identical thumb and update to a new value" do
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == true
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == false
-        puts "ThumbCount #{ThumbCount.for_nid(@nid1).inspect}"
         ThumbCount.for_nid(@nid1)[:up].should == 1
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == true
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == false

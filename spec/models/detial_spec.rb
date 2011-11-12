@@ -12,8 +12,8 @@ describe "details" do
     @token1 = '4e13456'
     @token2 = '4e23457'
     @token3 = '4e234599'
-    @rid1 = '5f66jgw'
-    @rid2 = '5f55lbt'
+    @rid1 = Util.ID
+    @rid2 = Util.ID
   end
   describe "create" do
     before do

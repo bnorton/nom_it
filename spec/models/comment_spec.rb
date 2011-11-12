@@ -136,14 +136,14 @@ describe "comments" do
       finder = {:uid => r[:uid], :lid => r[:lid]}
       Comment.destroy(finder)
       (Comment.collection.count - @after).should == 0
-      comment = Comment.search_by_uid_lid(r[:uid],r[:lid]).first
+      comment = Comment.search(finder).first
       comment['text'].should == Comment.removed_content_message
       
       r = @recommendation2
       finder = {:uid => r[:uid], :lid => r[:lid]}
       Comment.destroy(finder)
       (Comment.collection.count - @after).should == 0
-      comment = Comment.search_by_uid_lid(r[:uid],r[:lid]).first
+      comment = Comment.search(finder).first
       comment['text'].should == Comment.removed_content_message
     end
     it "should remove all comments that match the rid, uid, lid (all of a users comments about a location)" do
@@ -157,10 +157,10 @@ describe "comments" do
     end
     it "should have the common verbage for a deleted comment with user data still attached" do
       r = @recommendation2
-      Comment.destroy_uid_lid({:uid => r[:uid], :lid => r[:lid]})
-      c = Comment.for_recommendation_id(@recommendation2[:rid]).first
+      finder = {:uid => r[:uid], :lid => r[:lid]}
+      Comment.destroy_uid_lid(finder)
+      c = Comment.search(finder).first
       c['text'].should == Comment.removed_content_message
-      
     end
     it "should remove a single comment if the nid is specified" do
       @recommendation1[:text] = 'ttext'
@@ -169,7 +169,7 @@ describe "comments" do
       r = @recommendation2
       finder = {:uid => r[:uid], :lid => r[:lid]}
       Comment.destroy_uid_lid(finder)
-      Comment.search_by_uid_lid(r[:uid],r[:lid]).first['text'].should == Comment.removed_content_message
+      Comment.search(finder).first['text'].should == Comment.removed_content_message
     end
   end
   describe "search" do
