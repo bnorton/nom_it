@@ -61,9 +61,9 @@ describe "details" do
         t2[:token].should == @token2
         t3[:token].should == @token3
         
-        t1['r'].should == @rid1
-        t2['r'].should == @rid2
-        t3['r'].should == @rid1
+        t1['rnid'].should == @rid1
+        t2['rnid'].should == @rid2
+        t3['rnid'].should == @rid1
       end
     end
     describe "recommendation" do

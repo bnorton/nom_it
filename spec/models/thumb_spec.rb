@@ -49,9 +49,6 @@ describe "thumbs" do
         nid1[:meh].should == 0
         nid2[:up].should  == 0
         nid2[:meh].should == 2
-        
-        nid1[:nid].should == @nid1
-        nid2[:nid].should == @nid2
       end
       it "should update the thumb when it is a different value from from the original" do
         Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
