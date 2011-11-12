@@ -72,13 +72,12 @@ class UsersController < ApplicationController
   
   # the users that have thumbed another user  (return people)
   def thumbs
-    thumbz = Thumb.detail_for_nid(@nid,@limit,:user)
+    thumbz,count = Thumb.detail_for_nid(@nid,@limit,:user)
     response = if thumbz.length > 0
-      Status.thumbs(thumbz)
+      Status.thumbs(thumbz).merge({:thumb_count => count})
     else
       Status.insufficient_arguments
     end
-    
     respond_with response
   end
   

@@ -23,6 +23,7 @@ class Thumb < MongoRuby
     
   ## methods that add new data
   def self.new_thumb(nid,uid,value)
+    nid = Util.STRINGify(nid)
     if Thumb.eval("new_thumb('#{nid}','#{uid}',#{value})")
       ThumbCount.update_thumb_count(nid,value)
     else
@@ -32,27 +33,28 @@ class Thumb < MongoRuby
   
   ## methods that find ratings or totals
   def self.for_uid(uid,lim=20)
-    Thumb.find_by({:uid => uid}, lim)
+    Thumb.find_by({ :uid => uid }, lim)
   end
   
-  def self.for_nid(nid,lim=20)
-    Thumb.find_by({:nid => nid}, lim)
-  end
-  
-  def self.detail_for_nid(nid,lim=20)
+  def self.detail_for_nid(nid,lim=10)
     result = []
     thumbs = Thumb.for_nid(nid,lim)
     while (thumb = thumbs.next).present?
-      result << {
-        :thumb => Util.nidify(thumb,:tid),
-        :thumb_count => ThumbCount.for_nid(thumb['nid'])
-      }
+      result << Util.nidify(thumb,:tid)
     end
-    result
+    {
+      :thumbs => result,
+      :thumb_count => ThumbCount.for_nid(nid)
+    }
   end
   
   private
   
+  def self.for_nid(nid,lim=20)
+    nid = Util.STRINGify(nid)
+    Thumb.find_by({ :nid => nid }, lim)
+  end
+
   def self.find_by(finder,lim)
     Thumb.find(finder).limit(lim)
   end

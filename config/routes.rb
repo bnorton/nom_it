@@ -1,20 +1,18 @@
 NomIt::Application.routes.draw do
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
-
+  
   get "/r/:hash"            => "details#detail"
   
   #############################################################################
   #####  USERS  ###############################################################
   #############################################################################
-  get "/user/me"            => "users#me"                              ### POST
+  get "/users/me"            => "users#me"                              ### POST
   
   get "/users/:nid/login"    => "users#login"                           ### POST
   get "/users/register"      => "users#register"                        ### POST
   get "/users/check"         => "users#check"
     
-  get "/users/search"       => "users#search"
-  get "/users/:nid/detail" => "users#detail"
+  get "/users/search"        => "users#search"
+  get "/users/:nid/detail"   => "users#detail"
   
   #############################################################################
   #####  FOLLOWERS  ###########################################################
@@ -38,9 +36,9 @@ NomIt::Application.routes.draw do
   #############################################################################
   #####  LOCATIONS  ###########################################################
   #############################################################################
-  get "/locations/create"   => "locations#create"                       ## POST
-  get "/locations/search"   => "locations#search"
-  get "/locations/here"     => "locations#here"
+  get "/locations/create" => "locations#create"                         ## POST
+  get "/locations/search" => "locations#search"
+  get "/locations/here"   => "locations#here"
   
   #############################################################################
   #####  COMMENTS  ############################################################
@@ -55,18 +53,18 @@ NomIt::Application.routes.draw do
   #############################################################################
   #####  THUMBS  ##############################################################
   #############################################################################
-  get "locations/:nid/thumb"  => "locations#thumb_create"                ## POST
+  get "locations/:nid/thumbs/create"  => "locations#thumb_create"       ## POST
   get "locations/:nid/thumbs" => "locations#thumbs"
   
-  get "users/:nid/thumb/create"=> "users#thumb_create"                   ## POST
+  get "users/:nid/thumbs/create"=> "users#thumb_create"                 ## POST
   get "users/:nid/thumbs"      => "user#thumbs"
-  get "users/:nid/thumbed"     => "user#thumbed"                         ## POST
+  get "users/:nid/thumbed"     => "user#thumbed"                        ## POST
   #############################################################################
   #####  RANKING  #############################################################
   #############################################################################
-  get "/rankings/create"        => "rankings#create"                        ## POST
-  get "/rankings/update"        => "rankings#create"                        ## POST
-  get "/rankings/destory"       => "rankings#destory"                       ## POST
+  get "/rankings/create"        => "rankings#create"                    ## POST
+  get "/rankings/update"        => "rankings#create"                    ## POST
+  get "/rankings/destory"       => "rankings#destory"                   ## POST
   
   get "user/:nid/ranked"        => "rankings#user"
   get "location/:nid/rankings"  => "rankings#location"

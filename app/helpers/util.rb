@@ -7,7 +7,12 @@ class Util
       item.delete(id)
       item
     end
-  
+    
+    def de_nid(item,key=:nid)
+      item.delete(key) if item.respond_to?(:delete)
+      item
+    end
+    
     def translate!(items, mapper)
       items.each do |it|
         mapper.each do |k,v|

@@ -83,7 +83,7 @@ module Status
       message(-1, "an unknown error has occurred")
     end
     
-    def thumbs(thmbs)success
+    def thumbs(thmbs)
       status_message_results(1,"fetched thumbs successfully",thumbs, {:result_name => :thumbs})
     end
     

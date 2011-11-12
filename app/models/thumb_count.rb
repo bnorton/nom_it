@@ -31,7 +31,9 @@ class ThumbCount < MongoRuby
       } catch ( ex ) { return false; }
       return true; }")
   end
-    
+  
+  private
+  
   def self.update_thumb_count(nid,value)
     if value == ThumbCount.meh || value == ThumbCount.up
       if (nid = Util.STRINGify(nid))
@@ -50,7 +52,7 @@ class ThumbCount < MongoRuby
     if (nid = Util.STRINGify(nid))
       item = ThumbCount.find_one({ :_id => nid })
       return {} if item.nil?
-      { :up => item['up'], :meh => item['meh'], :_id => nid }
+      { :up => item['up'], :meh => item['meh'] }
     else
       {}
     end

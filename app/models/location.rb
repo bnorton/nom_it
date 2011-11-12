@@ -76,7 +76,7 @@ class Location < ActiveRecord::Base
       detail = find_by_nid(nid).as_json
     end
     Metadata.returned(nid)
-    thumb = ThumbCount.for_nid(nid)
+    thumb = Thumb.detail_for_nid(nid)
     meta = Metadata.for_nid(nid)
     geo = geolocation || Geolocation.for_nid(nid).as_json
     detail.merge({
