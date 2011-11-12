@@ -9,11 +9,11 @@ NomIt::Application.routes.draw do
   #############################################################################
   get "/user/me"            => "users#me"                              ### POST
   
-  get "/user/:nid/login"    => "users#login"                           ### POST
-  get "/user/register"      => "users#register"                        ### POST
-  get "/user/check"         => "users#check"
+  get "/users/:nid/login"    => "users#login"                           ### POST
+  get "/users/register"      => "users#register"                        ### POST
+  get "/users/check"         => "users#check"
     
-  get "/user/search"       => "users#search"
+  get "/users/search"       => "users#search"
   get "/users/:nid/detail" => "users#detail"
   
   #############################################################################
@@ -22,11 +22,8 @@ NomIt::Application.routes.draw do
   get "/follow/create"      => "followers#create"                      ### POST
   get "/follow/destroy"     => "followers#destroy"                     ### POST
   
-  get "/followers"          => "followers#who_follows_id"
-  get "/follows"            => "followers#followers"
-  
-  get "/user/:nid/followers" => "followers#who_follows_id"
-  get "/user/:nid/follows"   => "followers#followers"
+  get "/users/:nid/followers" => "followers#who_follows_id"
+  get "/users/:nid/following" => "followers#following"
   
   #############################################################################
   #####  RECOMMENDATIONS  #####################################################
@@ -35,17 +32,15 @@ NomIt::Application.routes.draw do
   get "/recommendation/destroy"      => "recommendations#destroy"      ### POST
   get "/recommendation/update"       => "recommendations#update"       ### POST
   
-  get "/recommendations/user/:nid"    => "recommendations#to_user"
-  get "/recommendations/location/:nid"=> "recommendations#about_location"
-  
-  get "/location/:nid/recommends"     => "recommendations#location"
+  get "/user/:nid/recommendations"    => "recommendations#user"
+  get "/location/:nid/recommendations"=> "recommendations#location"
   
   #############################################################################
   #####  LOCATIONS  ###########################################################
   #############################################################################
   get "/locations/create"   => "locations#create"                       ## POST
-  get "/locations/search"   => "geolocations#search"
-  get "/locations/here"     => "geolocations#here"
+  get "/locations/search"   => "locations#search"
+  get "/locations/here"     => "locations#here"
   
   #############################################################################
   #####  COMMENTS  ############################################################
@@ -60,21 +55,21 @@ NomIt::Application.routes.draw do
   #############################################################################
   #####  THUMBS  ##############################################################
   #############################################################################
-  get "location/:nid/thumb"  => "locations#thumb_create"                ## POST
-  get "location/:nid/thumbs" => "locations#thumbs"
+  get "locations/:nid/thumb"  => "locations#thumb_create"                ## POST
+  get "locations/:nid/thumbs" => "locations#thumbs"
   
-  get "user/:nid/thumb/create"=> "users#thumb_create"                   ## POST
-  get "user/:nid/thumbs"      => "user#thumbs"
-  get "user/:nid/thumbed"     => "user#thumbed"                         ## POST
+  get "users/:nid/thumb/create"=> "users#thumb_create"                   ## POST
+  get "users/:nid/thumbs"      => "user#thumbs"
+  get "users/:nid/thumbed"     => "user#thumbed"                         ## POST
   #############################################################################
   #####  RANKING  #############################################################
   #############################################################################
-  get "/rank/create"        => "rankings#create"                        ## POST
-  get "/rank/update"        => "rankings#create"                        ## POST
-  get "/rank/destory"       => "rankings#destory"                       ## POST
+  get "/rankings/create"        => "rankings#create"                        ## POST
+  get "/rankings/update"        => "rankings#create"                        ## POST
+  get "/rankings/destory"       => "rankings#destory"                       ## POST
   
-  get "user/:nid/ranked"    => "rankings#user"
-  get "location/:nid/ranks" => "rankings#location"
+  get "user/:nid/ranked"        => "rankings#user"
+  get "location/:nid/rankings"  => "rankings#location"
   
   #############################################################################
   #####  USERS  ###############################################################
