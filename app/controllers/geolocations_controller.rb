@@ -10,12 +10,7 @@ class GeolocationsController < ApplicationController
   before_filter :authentication_required, :only => []
   
   def here
-    @search = Geolocation.search_by_geolocation(@options)
-    details
-  end
-  
-  def search
-    @search = Geolocation.category_search(@options)
+    @search = Geolocation.search(@options)
     details
   end
   
