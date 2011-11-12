@@ -20,9 +20,9 @@ class Location < ActiveRecord::Base
   }
   scope :find_by_address_parts, lambda {|street,city|
     unless city.blank?
-      compact.where(["street like ? and city like ?","%#{street}%","%#{city}%"])
+      compact.where(["(address like ? or street like ?) and city like ?","%#{street}%","%#{street}%","%#{city}%"])
     else
-      compact.where(["street like ?","%#{street}%"])
+      compact.where(["street like ? or address like ?","%#{street}%","%#{street}%"])
     end
   }
   
@@ -43,41 +43,41 @@ class Location < ActiveRecord::Base
     return true if created_loc && created_geo
   end
   
+  # @optional :nid
+  # @optional :name
+  # @optional :street
+  # @optional :city
   def self.search(opt,start=0,lim=10)
     nid = Util.BSONify(opt[:nid])
     name = opt[:name]
-    st = opt[:street]
-    ci = opt[:city]
-    
+    street = opt[:street]
+    city = opt[:city]
     if nid
-      result = compact.find_by_nid(nid)
-      real_result = [Location.detail_for_nid(result['nid'],location=result)]
+      result = compact.find_by_nid(nid).limit(lim).as_json
+      built = Array(Location.detail_for_nid(result['nid'],location=result))
     else
-      result = if name && st && ci
-        find_by_like_name(name).find_by_address_parts(st,ci)
-      elsif name
-        find_by_like_name(name).limit(lim)
-      elsif st && ci
-        find_by_address_parts(st,ci)
-      end.limit(lim)
-      
-      result.each do |res|
-        real_result << Location.detail_for_nid(res['nid'],location=res)
+      if opt[:lat] && opt[:lng]
+        results = Geolocation.search(opt)
+        what = :geolocation
+      else
+        results = search_by_name_street_city(name,street,city,lim)
+        what = :location
       end
+      built = build_results(results,what)
     end
-    real_result
+    built
   end
   
   def self.detail_for_nid(nid,location=nil,geolocation=nil)
-    nid = Util.BSONify(nid)
+    nid = Util.STRINGify(nid)
     if location.present?
-      detail = location      
+      detail = location.as_json
     else
       detail = find_by_nid(nid).as_json
     end
     Metadata.returned(nid)
-    thumb = ThumbCount.find_by_nid(nid)
-    meta = Metadata.find_by_nid(nid)
+    thumb = ThumbCount.for_nid(nid)
+    meta = Metadata.for_nid(nid)
     geo = geolocation || Geolocation.for_nid(nid).as_json
     detail.merge({
       :thumbs => thumb,
@@ -86,7 +86,7 @@ class Location < ActiveRecord::Base
     })
   end
   
-  def self.full_detail_for_ids(nids)
+  def self.full_detail_for_nids(nids)
     locations = []
     nids.each do |nid|
       locations << Location.detail_for_nid(nid)
@@ -94,15 +94,27 @@ class Location < ActiveRecord::Base
     locations
   end
   
+  def self.build_results(results,what=:location)
+    real_result = []
+    unless results.blank? || !(results = results.as_json)
+      results.each do |result|
+        real_result << if what == :location
+          Location.detail_for_nid(result['nid'],result)
+        elsif what == :geolocation
+          Location.detail_for_nid(result['location_nid'],nil,result)
+        else
+          Location.detail_for_nid(result['nid'])
+        end
+      end
+    end
+    real_result
+  end
+  
   def self.details_from_search(search)
       locations = Location.parse_ids search
       Location.detail_for_ids(locations)
     end
     
-  def self.full_details_from_search(search)
-    locations = Location.parse_ids search
-    Location.full_detail_for_ids(locations)
-  end
   
   def self.parse_ids(search)
     locations = []
@@ -116,6 +128,18 @@ class Location < ActiveRecord::Base
     return 0 unless str =~ /\$+/
     return 4 if str.length > 3
     str.length
+  end
+  
+  private 
+  
+  def self.search_by_name_street_city(name,street,city,lim)
+    if name && street
+      find_by_like_name(name).find_by_address_parts(street,city).limit(lim)
+    elsif name
+      find_by_like_name(name).limit(lim)
+    elsif street
+      find_by_address_parts(street,city).limit(lim)
+    end
   end
   
 end

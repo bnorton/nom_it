@@ -10,9 +10,9 @@ class Category < MongoRuby
   end
   
   # try ID first
-  def self.find(id_or_name,opt={})
-    unless (result = Category.find_by_id(id_or_name))
-      Category.find_by_name(id_or_name,opt)
+  def self.find(nid_or_name,opt={})
+    unless (result = Category.find_by_id(nid_or_name))
+      Category.find_by_name(nid_or_name,opt)
     else
       result
     end
@@ -28,7 +28,11 @@ class Category < MongoRuby
     elsif secondary
       Category.find_one({ :p => primary, :s => secondary })
     else
-      Category.find_one({ :p => primary })
+      if (found = Category.find_one({ :p => primary }))
+        found
+      else
+        Category.find_one({ :s => primary })
+      end
     end
   end
   

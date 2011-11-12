@@ -13,40 +13,38 @@ class LocationsInit
         :nid => nid1,
         :name => 'location name 1',
         :address => '14 darrell pl',
-        :primary => cat1})
-        
+        :primary => cat1
+      })
       Location.create({
         :nid => nid2,
         :name => 'location name 2',
         :address => '2670 parker st',
-        :primary => cat2})
-      
+        :primary => cat2
+      })
       Location.create({
         :nid => nid3,
         :name => 'location name 3',
         :address => '201 11th st',
-        :primary => cat3})
-        
+        :primary => cat3
+      })
       Geolocation.create({
         :location_nid => nid1,
         :primary => cat1,
         :lat => 33.3311,
-        :lng => -122.2211,
-        :nid => nid1
+        :lng => -122.2211
       })
       Geolocation.create({
         :location_nid => nid2,
         :primary => cat2,
         :lat => 33.3322,
-        :lng => -122.2222,
-        :nid => nid2
+        :lng => -122.2222
       })
       Geolocation.create({
         :location_nid => nid3,
         :primary => cat3,
         :lat => 33.3333,
-        :lng => -122.2233,
-        :nid => nid3})
+        :lng => -122.2233
+      })
       
       ThumbCount.update_thumb_count(nid1,2) # meh
       ThumbCount.update_thumb_count(nid2,2) # meh

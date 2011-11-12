@@ -29,6 +29,28 @@ class Comment < MongoRuby
     self.create(opt)
   end
   
+  # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid
+  #
+  def self.search(opt={})
+    if fn = opt[:nid]
+      Comment.search_id(fn)
+    elsif fn = opt[:text]
+      Comment.text_search(fn)
+    elsif check_params_full(opt)
+      Comment.search_by_uid_lid_rid(opt[:uid],opt[:lid],opt[:rid])
+    elsif check_params(opt)
+      Comment.search_by_uid_lid(opt[:uid],opt[:lid])
+    elsif val = opt[:uid]
+      Comment.for_user_id(val)
+    elsif val = opt[:lid]
+      Comment.for_location_id(val)
+    elsif val = opt[:rid]
+      Comment.for_recommendation_id(val)
+    else
+      false
+    end
+  end
+  
   # can only destroy one since the id is globally unique
   def self.destroy_id(id)
     return false unless (id = Util.BSONify(id))
@@ -49,6 +71,7 @@ class Comment < MongoRuby
     false
   end
   
+  private
   # find all my comments on a specific item
   def self.search_by_uid_lid_rid(uid,lid,rid)
     Comment.find({ :uid => uid.to_i, :lid => lid.to_i, :rid => rid.to_i })
@@ -127,28 +150,6 @@ class Comment < MongoRuby
   def self.for_all(finder,options={})
     the_limit = options[:limit] || 20
     Comment.find(finder).sort([[ :_id, MONGO_ASC ]]).limit(the_limit)
-  end
-  
-  # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid
-  #
-  def self.search(opt={})
-    if fn = opt[:nid]
-      Comment.search_id(fn)
-    elsif fn = opt[:text]
-      Comment.text_search(fn)
-    elsif check_params_full(opt)
-      Comment.search_by_uid_lid_rid(opt[:uid],opt[:lid],opt[:rid])
-    elsif check_params(opt)
-      Comment.search_by_uid_lid(opt[:uid],opt[:lid])
-    elsif val = opt[:uid]
-      Comment.for_user_id(val)
-    elsif val = opt[:lid]
-      Comment.for_location_id(val)
-    elsif val = opt[:rid]
-      Comment.for_recommendation_id(val)
-    else
-      false
-    end
   end
   
 end

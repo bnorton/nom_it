@@ -25,7 +25,7 @@ class Metadata < MongoRuby
     end
   end
   
-  def self.find_by_nid(nid)
+  def self.for_nid(nid)
     nid = Util.BSONify(nid)
     meta = Metadata.find_one({ :_id => nid })
     Util.nidify(meta) unless meta.blank?
