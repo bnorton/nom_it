@@ -8,18 +8,18 @@ describe "category" do
     
     # METHODS AVAILABLE
     # find_by_name(name)
-    # find_by_id(id)
+    # find_by_nid(id)
     # find_or_create_by_name(name) # opt must have name and can have alias
     # destroy_by_id(id)
     it "should reject a location Category if the text is not present" do
       Category.find_or_create_by_name('',{:odd=>'opts'}).should be_false
     end
     it "should reject a search if none of the correct parameters are not specified" do
-      Category.find_by_id('').should == nil
+      Category.find_by_nid('').should == nil
     end
     it "should reject a search if the id cannot be parsed to a BSON::ObjectId" do
-      id = BSON::ObjectId.new.to_s[0..10] # make it invalid
-      Category.find_by_id(id).should be_nil
+      nid = BSON::ObjectId.new.to_s[0..10] # make it invalid
+      Category.find_by_nid(nid).should be_nil
     end
   end
   describe "create" do
@@ -42,23 +42,23 @@ describe "category" do
       items[:s].should == 'a non-top level'
     end
     it "should create a new top-level Category" do
-      Category.find_or_create_by_name('food').class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food').class.should == String
       (Category.collection.count - @before).should == 1
     end
     it "should create multiple top-level Categories" do
-      Category.find_or_create_by_name('bars').class.should == BSON::ObjectId
-      Category.find_or_create_by_name('nightlife').class.should == BSON::ObjectId
-      Category.find_or_create_by_name('hiking').class.should == BSON::ObjectId
+      Category.find_or_create_by_name('bars').class.should == String
+      Category.find_or_create_by_name('nightlife').class.should == String
+      Category.find_or_create_by_name('hiking').class.should == String
       (Category.collection.count - @before).should == 3
     end
     it "should create a new secondary-level Category" do
-      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == String
       (Category.collection.count - @before).should == 1
     end
     it "should create multiple secondary-level Categories" do
-      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == BSON::ObjectId
-      Category.find_or_create_by_name('food',{:s=>'sushi'}).class.should == BSON::ObjectId
-      Category.find_or_create_by_name('food',{:s=>'asian fusion'}).class.should == BSON::ObjectId
+      Category.find_or_create_by_name('food',{:s=>'pizza'}).class.should == String
+      Category.find_or_create_by_name('food',{:s=>'sushi'}).class.should == String
+      Category.find_or_create_by_name('food',{:s=>'asian fusion'}).class.should == String
       (Category.collection.count - @before).should == 3
     end
     it "should create top level and secondery categories if needed" do
@@ -69,23 +69,23 @@ describe "category" do
       (Category.collection.count - @before).should == 4
       category_ids.each do |c|
         c.should_not be_blank
-        c.class.should == BSON::ObjectId
+        c.class.should == String
       end
       top_level = 'Eat' # same as above
       arr = ['hot dogs','Crepes']
       category_ids = Category.new_categories(top_level,arr)
       category_ids.each do |c|
         c.should_not be_blank
-        c.class.should == BSON::ObjectId
+        c.class.should == String
       end
       category_ids.length.should == 3
       (Category.collection.count - @before).should == 5 # only add 1 in this case
     end
     it "should not create a new item if the NAME is already present" do
       iid = 'blah_blah'
-      Category.find_or_create_by_name(iid).class.should == BSON::ObjectId
+      Category.find_or_create_by_name(iid).class.should == String
       (Category.collection.count - @before).should == 1
-      Category.find_or_create_by_name(iid).class.should == BSON::ObjectId
+      Category.find_or_create_by_name(iid).class.should == String
       (Category.collection.count - @before).should == 1 # same as before
     end
     it "should have the same parent when two child categories are of one parent" do

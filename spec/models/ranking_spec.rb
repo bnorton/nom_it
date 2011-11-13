@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-  # Ranking.new_rank(nid,uid,value,text='')
-  # Ranking.remove_rank(nid,uid)
-  # Ranking.for_uid(uid)
+  # Ranking.new_rank(nid,unid,value,text='')
+  # Ranking.remove_rank(nid,unid)
+  # Ranking.for_unid(unid)
   # Ranking.for_nid(nid)
   
   
@@ -16,12 +16,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "ranking" do
   before do
-    @nid1 = '4e13456'
-    @nid2 = '4e23457'
-    @nid3 = '4e23459'
-    @uid1 = '5f66'
-    @uid2 = '5f55'
-    @uid3 = '5f44'
+    @nid1 = Util.ID
+    @nid2 = Util.ID
+    @nid3 = Util.ID
+    @uid1 = Util.ID
+    @uid2 = Util.ID
+    @uid3 = Util.ID
   end
   describe "create" do
     before do
@@ -66,12 +66,12 @@ describe "ranking" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
         RankingAverage.ranking(@nid1).should be_within(0.001).of(1.0)
         RankingAverage.total(@nid1).should  == 1
-        Ranking.for_uid(@uid1).count.should == 1
+        Ranking.for_unid(@uid1).count.should == 1
         
         Ranking.new_rank(@nid1,@uid1,2,'sample').should == true
         RankingAverage.ranking(@nid1).should be_within(0.001).of(2.0)
         RankingAverage.total(@nid1).should  == 1
-        Ranking.for_uid(@uid1).count.should == 1
+        Ranking.for_unid(@uid1).count.should == 1
       end
       it "should update the average when the value is reused for another location" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
@@ -103,9 +103,9 @@ describe "ranking" do
     end
     describe "user" do
       it "should find ranks by the users specified" do
-        Ranking.for_uid(@uid1).count.should == 1
-        Ranking.for_uid(@uid2).count.should == 2
-        Ranking.for_uid(@uid3).count.should == 3
+        Ranking.for_unid(@uid1).count.should == 1
+        Ranking.for_unid(@uid2).count.should == 2
+        Ranking.for_unid(@uid3).count.should == 3
       end
     end
     describe "location" do

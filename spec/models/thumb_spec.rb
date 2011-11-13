@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
   # Thumb.new_thumb(nid,uid,value)
-  # Thumb.for_uid(uid,lim=20)
+  # Thumb.for_unid(uid,lim=20)
   # Thumb.for_nid(nid,lim=20)
   # 
   # ThumbCount.update_thumb_count(nid,value)
@@ -75,7 +75,7 @@ describe "thumbs" do
     end
     describe "user" do
       it "should find thumbs by the users specified" do
-        uid = Thumb.for_uid(@uid1)
+        uid = Thumb.for_unid(@uid1)
         uid.count.should == 2
         uid.count.times do
           u = uid.next
