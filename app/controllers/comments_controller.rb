@@ -24,7 +24,7 @@ class CommentsController < ApplicationController
   end
   
   def create
-    nid = if @search[:rid] && @search[:lid]
+    nid = if @search[:rnid] && @search[:lnid]
       Comment.create_comment_for_recommendation(@search)
     else
       Comment.create_comment_for_location(@search)
@@ -36,7 +36,7 @@ class CommentsController < ApplicationController
   private 
   
   def comments(method_name)
-    comments = Comment.send("for_#{method_name}_id".to_sym, @nid, {:start=>@start,:limit=>@limit})
+    comments = Comment.send("for_#{method_name}_nid".to_sym, @nid, {:start=>@start,:limit=>@limit})
     prepared = Util.prepare(comments)
     respond_with ok_or_not(prepared)
   end
@@ -53,7 +53,7 @@ class CommentsController < ApplicationController
     @nid    = params[:nid]
     @start = params[:start]
     @limit = params[:limit]
-    unless (!@nid.blank? && @nid = @nid.to_i)
+    unless (!@nid.blank? && @nid = @nid)
       respond_with Status.comments_not_found
     end
   end
@@ -61,14 +61,14 @@ class CommentsController < ApplicationController
   def search_params
     @search = {
       :nid  => params[:nid],
-      :uid  => params[:uid],
-      :lid  => params[:lid],
-      :rid  => params[:rid],
+      :unid  => params[:unid],
+      :lnid  => params[:lnid],
+      :rnid  => params[:rnid],
       :text => params[:text]
     }
-    unless @search[:nid] || @search[:uid] || @search[:lid] || @search[:rid] || @search[:text]
+    unless @search[:nid] || @search[:unid] || @search[:lnid] || @search[:rnid] || @search[:text]
       respond_with Status.insufficient_arguments({
-        :message=>"must have a `nid`, `uid`, `lid` ,`rid`, or some `text`"})
+        :message=>"must have a `nid`, `unid`, `lnid` ,`rnid`, or some `text`"})
     end
   end
   
