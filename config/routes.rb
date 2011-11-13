@@ -20,7 +20,7 @@ NomIt::Application.routes.draw do
   get "/follow/create"      => "followers#create"                      ### POST
   get "/follow/destroy"     => "followers#destroy"                     ### POST
   
-  get "/users/:nid/followers" => "followers#who_follows_id"
+  get "/users/:nid/followers" => "followers#who_follows_nid"
   get "/users/:nid/following" => "followers#following"
   
   #############################################################################
@@ -30,8 +30,8 @@ NomIt::Application.routes.draw do
   get "/recommendation/destroy"      => "recommendations#destroy"      ### POST
   get "/recommendation/update"       => "recommendations#update"       ### POST
   
-  get "/user/:nid/recommendations"    => "recommendations#user"
-  get "/location/:nid/recommendations"=> "recommendations#location"
+  get "/users/:nid/recommended"    => "recommendations#user"
+  get "/locations/:nid/recommended"=> "recommendations#location"
   
   #############################################################################
   #####  LOCATIONS  ###########################################################
