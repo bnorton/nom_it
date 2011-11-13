@@ -80,7 +80,7 @@ class Geocode
         loc.nid = Util.ID
         loc.save
       end
-      [loc.id, loc,nid]
+      raise "what should be returned"
     end
     
     def store_geolocation(yahoo,opt={})
@@ -101,7 +101,7 @@ class Geocode
     def build_and_store_location(item,cats,file_name)
       return false if item.blank?
       
-      category_ids = Category.new_categories('eat',cats)
+      category_nids = Category.new_categories('eat',cats)
       
       _address = address(item)
       yahoo = fetch_yahoo_data(_address)
@@ -126,8 +126,8 @@ class Geocode
         :cost => _cost
       })
       
-      cid0 = category_ids[0] rescue nil
-      cid1 = category_ids[1] rescue nil
+      cid0 = category_nids[0] rescue nil
+      cid1 = category_nids[1] rescue nil
       store_geolocation(yahoo,{
         :location_nid => location_nid,
         :primary => cid0,
