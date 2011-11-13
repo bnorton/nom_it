@@ -60,7 +60,7 @@ class RecommendationsController < ApplicationController
   end
   
   def recommend(method_name)
-    recs = Recommend.send("for_#{method_name}_id".to_sym, @nid)
+    recs = Recommend.send("for_#{method_name}_nid".to_sym, @nid)
     recs = Util.prepare(recs)
     respond_with ok_or_not(!recs.blank?,{:recommends=>recs})
   end
@@ -80,12 +80,11 @@ class RecommendationsController < ApplicationController
       Status.couldnt_complete_recommendation options[:action]
     end
   end
-
   
   def required_for_creation
     @lat  = params[:lat]
     @lng  = params[:lng]
-    @user = params[:user_id]
+    @user = params[:user_nid]
     @location_nid = params[:location_nid]
     if (@lat.blank? || @lng.blank? || @user.blank? || @location_nid.blank?)
       respond_with Status.recommendation_not({:word => "made"})
@@ -94,7 +93,7 @@ class RecommendationsController < ApplicationController
   
   def required_for_destroy
     @recid = params[:nid] || params[:recommendation]
-    @user  = params[:uid] || params[:user_id]
+    @user  = params[:user_nid]
     if @recid.blank? || @user.blank?
       respond_with Status.recommendation_not({:word => "destroyed"})
     end
@@ -109,7 +108,7 @@ class RecommendationsController < ApplicationController
   end
   
   def user_or_location
-    @user = params[:user_id] || params[:uid]
+    @user = params[:user_nid] || params[:uid]
     if @user.blank?
       respond_with Status.no_recommendations
     end
@@ -135,7 +134,7 @@ class RecommendationsController < ApplicationController
     @all_params = {
       :lat  => @lat,
       :lng  => @lng,
-      :user_id => @user,
+      :user_nid => @user,
       :text => @text,
       :location_nid => @location_nid,
       ## optional

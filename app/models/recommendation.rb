@@ -4,16 +4,16 @@ class Recommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :location
   
-  COMPACT = "id,nid,user_id,lat,lng,token,location_nid,location_name,location_city,title,text,updated_at,image"
+  COMPACT = "id,nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,updated_at,image"
   
   scope :compact, lambda {
     Recommendation.select(COMPACT)
   }
-  scope :for_user, lambda {|id|
-    compact.where(["user_id=?",id])
+  scope :for_user, lambda {|nid|
+    compact.where(["user_nid=?",id])
   }
-  scope :for_location, lambda {|id|
-    compact.where(["location_nid=?",id])
+  scope :for_location, lambda {|nid|
+    compact.where(["location_nid=?",nid])
   }
   scope :for_nid, lambda {|nid|
     compact.where(["nid=?",nid])
@@ -27,7 +27,7 @@ class Recommendation < ActiveRecord::Base
     r = Recommendation.new
     r.lat      = this[:lat]
     r.lng      = this[:lng]
-    r.user_id  = this[:user_id]
+    r.user_nid  = this[:user_nid]
     r.user_name= this[:user_name]
     r.location_nid = this[:location_nid]
     r.title    = this[:title]

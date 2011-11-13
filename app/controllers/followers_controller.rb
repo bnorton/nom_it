@@ -4,11 +4,11 @@ class FollowersController < ApplicationController
   
   respond_to :json
   
-  before_filter :parse_params,            :only => [:create,:destroy,:followers,:who_follows_id]
-  before_filter :check_params,            :only => [:create,:destroy,:followers,:who_follows_id]
+  before_filter :parse_params,            :only => [:create,:destroy,:followers,:who_follows_nid]
+  before_filter :check_params,            :only => [:create,:destroy,:followers,:who_follows_nid]
   before_filter :follow_params,           :only => [:create,:destroy]
   before_filter :authentication_required, :only => [:create,:destroy]
-  before_filter :validate_ids,            :only => [:followers,:who_follows_id]
+  before_filter :validate_nids,            :only => [:followers,:who_follows_nid]
   
   def create
     follower  = Follower.find_or_create(@nid,@identifier,@items)
@@ -28,19 +28,19 @@ class FollowersController < ApplicationController
   
   # ids of the people who I follow.
   def followers
-    ids = Follower.followers_ids(@nid)
-    respond_with response_from_ids(ids,:to_user_id)
+    nids = Follower.followers_nids(@nid)
+    respond_with response_from_nids(nids,:to_user_nid)
   end
   
   # ids of the people who follow some `id`
-  def who_follows_id
-    ids = Follower.follows_id_ids(@nid)
-    respond_with response_from_ids(ids,:user_id)
+  def who_follows_nid
+    nids = Follower.follows_nid_nids(@nid)
+    respond_with response_from_nids(nids,:user_nid)
   end
   
-  def response_from_ids(ids,key)
+  def response_from_nids(nids,key)
     list = []
-    ids.each do |i| 
+    nids.each do |i| 
       list << i[key] 
     end
     list.uniq!
@@ -49,7 +49,7 @@ class FollowersController < ApplicationController
   end
   
   def ok_or_not(condition,options={})
-    if condition && follower = options[:follower] || User.find_by_id_or_email(@nid)
+    if condition && follower = options[:follower] || User.find_by_nid_or_email(@nid)
       Status.OK(follower)
     elsif options[:follow]
       Status.couldnt_follow_or_unfollow
@@ -88,7 +88,7 @@ class FollowersController < ApplicationController
     
   end
   
-  def validate_ids
+  def validate_nids
     if @nid.blank? || !(@nid =~ NUMBER_ARR)
       respond_with Status.insufficient_arguments
     end

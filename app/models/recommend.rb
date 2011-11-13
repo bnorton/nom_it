@@ -1,13 +1,13 @@
 require 'mongo_ruby'
 
 class Recommend < MongoRuby
-  # rid => recommendation_id
-  # uid => user_id
+  # rid => recommendation_nid
+  # unid => user_nid
   # 
-  attr_accessor :rid,   :uid,    :uname,     :to_uid
+  attr_accessor :rnid,   :unid,    :uname,     :to_unid
   attr_accessor :token, :name,   :city
   attr_accessor :text,  :title,  :lat,       :lng
-  attr_accessor :time,  :iid,    :lid
+  attr_accessor :time,  :inid,    :lnid
     
   def self.dbcollection
     "recommends"
@@ -22,12 +22,12 @@ class Recommend < MongoRuby
     r = recommendation
     followers.each do |follower|
       Recommend.save({
-        :rid    => r['id'],
-        :uid    => r['user_id'],
+        :rnid    => r['nid'],
+        :unid    => r['user_nid'],
         :uname  => r['user_name'],
-        :to_uid => follower.user_id,
+        :to_unid => follower.user_nid,
         :token  => r['token'],
-        :lid    => r['location_nid'],
+        :lnid    => r['location_nid'],
         :name   => r['name'],
         :city   => r['city'],
         :text   => r['text'],
@@ -35,7 +35,7 @@ class Recommend < MongoRuby
         :lat    => r['lat'],
         :lng    => r['lng'],
         :time   => r['time'] || Time.now,
-        :iid    => r['image_id']
+        :inid    => r['image_nid']
       })
     end
   end
@@ -44,16 +44,19 @@ class Recommend < MongoRuby
     
   end
   
-  def self.by_user_id(id)
-    Recommend.find({:uid => id.to_i})
+  def self.by_user_nid(nid)
+    nid = Util.STRINGify(nid)
+    Recommend.find({:unid => nid})
   end
   
-  def self.for_user_id(id)
-    Recommend.find({:to_uid => id.to_i})
+  def self.for_user_nid(nid)
+    nid = Util.STRINGify(nid)
+    Recommend.find({:to_unid => nid})
   end
   
-  def self.for_location_nid(id)
-    Recommend.find({:lid => id.to_i})
+  def self.for_location_nid(nid)
+    nid = Util.STRINGify(nid)
+    Recommend.find({:lnid => nid})
   end
   
   def self.for_token(token)
