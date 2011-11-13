@@ -11,8 +11,8 @@ class User < ActiveRecord::Base
   scope :private_fields, lambda {
     select(User.fields(:private))
   }
-  scope :private_id, lambda {|id|
-    private_fields.where(["id=?",id])
+  scope :private_nid, lambda {|nid|
+    private_fields.where(["nid=?",nid])
   }
   scope :me, lambda {|token|
     private_fields.where(["session_id=?",token])
@@ -23,24 +23,24 @@ class User < ActiveRecord::Base
   scope :hasnt_joined, lambda {
     where(["has_joined=0"])
   }
-  scope :find_by_id_or_email, lambda {|id|
-    public_fields.where(["id=? or email=?", id, id]).has_joined
+  scope :find_by_nid_or_email, lambda {|nid|
+    public_fields.where(["nid=? or email=?", nid, nid]).has_joined
   }
-  scope :login_with_id_or_email, lambda {|i|
-    select("salt,password").where(["id=? or email=?",i,i]).has_joined
+  scope :login_with_nid_or_email, lambda {|nid|
+    select("salt,password").where(["nid=? or email=?",nid,nid]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id,id]
-    public_fields.where(["id=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
+    public_fields.where(["nid=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
   }
   scope :find_by_not_yet_joined, lambda {|identifier|
     find_by_any_means(identifier).hasnt_joined
   }
-  scope :detail, lambda {|id|
-    find_by_id_or_email(id)
+  scope :detail, lambda {|nid|
+    find_by_nid_or_email(nid)
   }
-  scope :detail_for_ids, lambda {|ids|
-    public_fields.where(["id in (?)", ids.split(',')])
+  scope :detail_for_nids, lambda {|nids|
+    public_fields.where(["nid in (?)", nids.split(',')])
   }
   scope :find_by_like_name, lambda {|name|
     public_fields.where(["name like ?", "%#{name}%"]).has_joined
@@ -52,9 +52,9 @@ class User < ActiveRecord::Base
     public_fields.where(["name like ? or email=? or screen_name=?", name,email,screen_name]).has_joined
   }
   
-  def self.token_match?(id, token)
+  def self.token_match?(nid, token)
     begin
-      id == me(token).id
+      nid == me(token).nid
     rescue Exception
       false
     end
@@ -67,7 +67,7 @@ class User < ActiveRecord::Base
   
   def self.login(nid_or_email,password,vname='')
     unless nid_or_email.blank?
-      user = User.login_with_id_or_email(nid_or_email).first
+      user = User.login_with_nid_or_email(nid_or_email).first
       if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
         user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
         user.last_seen  = Time.now
@@ -89,7 +89,7 @@ class User < ActiveRecord::Base
       user.save!
     rescue ActiveRecord::RecordNotUnique
     end
-    User.find_by_email(email)
+    User.public_fields.find_by_email(email)
   end
   
   def self.register_with_facebook(fbHash,username='')
@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
         user = User.new
       end
     else
-      Follower.user_has_joined(user.id)
+      Follower.user_has_joined(user.nid)
     end
     user
   end
@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "id,nid,name,last_seen,city,screen_name,follower_count,description,created_at"
+    fields = "id,nid,name,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
     if opt == :private
       fields << ",street,country,email,phone,facebook,twitter"
     end

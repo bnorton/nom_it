@@ -10,7 +10,7 @@ class Location < ActiveRecord::Base
     select(COMPACT)
   }
   scope :detail_for_nid, lambda {|nid| 
-    detail_for_ids(nid)
+    detail_for_nids(nid)
   }
   scope :detail_for_nids, lambda {|nids| 
     compact.where(["nid in (?)", nids.split(',')])
@@ -111,12 +111,11 @@ class Location < ActiveRecord::Base
   end
   
   def self.details_from_search(search)
-      locations = Location.parse_ids search
-      Location.detail_for_ids(locations)
-    end
-    
+    locations = Location.parse_nids search
+    Location.detail_for_nids(locations)
+  end
   
-  def self.parse_ids(search)
+  def self.parse_nids(search)
     locations = []
     search.each do |locid|
       locations << locid.location_nid

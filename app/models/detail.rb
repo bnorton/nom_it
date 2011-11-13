@@ -1,14 +1,15 @@
 class Detail < MongoRuby
   
-    #        | token | recommendation_id | user_id
+    #        | token | recommendation_nid
   attr_accessor :_id, :rnid
   
   def self.dbcollection
     "tokens"
   end
   
-  def self.new_token(token,recommendation_id)
-    Detail.save({:_id => token, :rnid => recommendation_id})  
+  def self.new_token(token,recommendation_nid)
+    recommendation_nid = Util.STRINGify(recommendation_nid)
+    Detail.save({:_id => token, :rnid => recommendation_nid})
   end
   
   def self.for_whatever(key,item,lim)
@@ -21,8 +22,9 @@ class Detail < MongoRuby
     Detail.for_whatever(:_id,token,lim)
   end
   
-  def self.for_recommendation(rid,lim=20)
-    Detail.for_whatever(:rnid,rid,lim)
+  def self.for_recommendation(rnid,lim=20)
+    rnid = Util.STRINGify(rnid)
+    Detail.for_whatever(:rnid,rnid,lim)
   end
   
   # Coordinate the full capture of all data for a detail
