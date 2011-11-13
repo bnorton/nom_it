@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,23 +10,23 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111110212425) do
+ActiveRecord::Schema.define(:version => 20111113230256) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id",                       :null => false
+    t.string   "user_nid",                       :null => false
     t.string   "user_name"
     t.string   "user_city"
-    t.integer  "to_user_id",                    :null => false
+    t.string   "to_user_nid",                    :null => false
     t.string   "to_name"
-    t.boolean  "approved",   :default => true,  :null => false
-    t.boolean  "undirected", :default => false, :null => false
+    t.boolean  "approved",    :default => true,  :null => false
+    t.boolean  "undirected",  :default => false, :null => false
     t.binary   "schemaless"
   end
 
-  add_index "followers", ["to_user_id", "user_id"], :name => "followers_to_from", :unique => true
-  add_index "followers", ["user_id", "to_user_id"], :name => "followers_from_to", :unique => true
+  add_index "followers", ["to_user_nid", "user_nid"], :name => "followers_to_from", :unique => true
+  add_index "followers", ["user_nid", "to_user_nid"], :name => "followers_from_to", :unique => true
 
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"
@@ -86,7 +85,7 @@ ActiveRecord::Schema.define(:version => 20111110212425) do
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_nid",                         :null => false
+    t.string   "user_nid",                         :null => false
     t.string   "token"
     t.string   "location_name"
     t.string   "location_city"
