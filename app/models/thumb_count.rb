@@ -1,6 +1,6 @@
 class ThumbCount < MongoRuby
   
-  #          | nom_id | user_id | value
+  #          | nom_id | up | meh
   attr_accessor :nid, :up, :meh
   
   def self.dbcollection

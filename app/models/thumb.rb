@@ -1,17 +1,17 @@
 class Thumb < MongoRuby
   
-  #          | nom_id | user_id | value
-  attr_accessor :nid, :uid, :value
+  #          | nom_id | user_nid | value
+  attr_accessor :nid, :unid, :value
   
   def self.dbcollection
     "thumbs"
   end
   
   def self.add_new_thumb
-    Thumb.store_function('new_thumb', "function( nid,uid,value ) {
-      try { item = db.#{Thumb.dbcollection}.findOne({ nid:nid, uid:uid });
+    Thumb.store_function('new_thumb', "function( nid,unid,value ) {
+      try { item = db.#{Thumb.dbcollection}.findOne({ nid:nid, unid:unid });
         if ( item == null ) {
-          db.#{Thumb.dbcollection}.save({ nid:nid, uid:uid, value:value });
+          db.#{Thumb.dbcollection}.save({ nid:nid, unid:unid, value:value });
         } else {
           if (item.value == value) { return false; }
           item.value = value;
@@ -22,9 +22,9 @@ class Thumb < MongoRuby
   end
     
   ## methods that add new data
-  def self.new_thumb(nid,uid,value)
+  def self.new_thumb(nid,unid,value)
     nid = Util.STRINGify(nid)
-    if Thumb.eval("new_thumb('#{nid}','#{uid}',#{value})")
+    if Thumb.eval("new_thumb('#{nid}','#{unid}',#{value})")
       ThumbCount.update_thumb_count(nid,value)
     else
       false # dont need to update
@@ -32,15 +32,17 @@ class Thumb < MongoRuby
   end
   
   ## methods that find ratings or totals
-  def self.for_uid(uid,lim=20)
-    Thumb.find_by({ :uid => uid }, lim)
+  def self.for_unid(unid,lim=20)
+    unid = Util.STRINGify(unid)
+    Thumb.find_by({ :unid => unid }, lim)
   end
   
   def self.detail_for_nid(nid,lim=10)
+    nid = Util.STRINGify(nid)
     result = []
     thumbs = Thumb.for_nid(nid,lim)
     while (thumb = thumbs.next).present?
-      result << Util.nidify(thumb,:tid)
+      result << Util.nidify(thumb,:tnid)
     end
     {
       :thumbs => result,
