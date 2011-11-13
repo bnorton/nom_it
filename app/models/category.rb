@@ -11,7 +11,7 @@ class Category < MongoRuby
   
   # try ID first
   def self.find(nid_or_name,opt={})
-    unless (result = Category.find_by_id(nid_or_name))
+    unless (result = Category.find_by_nid(nid_or_name))
       Category.find_by_name(nid_or_name,opt)
     else
       result
@@ -36,18 +36,18 @@ class Category < MongoRuby
     end
   end
   
-  # @required id
-  def self.find_by_id(id)
-    return false unless (id = Util.BSONify(id))
-    Category.find_one({ :_id => id })
+  # @required nid
+  def self.find_by_nid(nid)
+    return false unless (nid = Util.BSONify(nid))
+    Category.find_one({ :_id => nid })
   end
   
   # @required_for_find id
   # @required_for_create primary
   # @optional secondary
   # @optional alias
-  def self.find_or_create_by_id(id,opt={})
-    found = Category.find_by_id(id)
+  def self.find_or_create_by_nid(nid,opt={})
+    found = Category.find_by_nid(nid)
     if found.blank?
       options = Category.params(opt)
       unless (options).blank? || options[:p].blank?
@@ -68,18 +68,20 @@ class Category < MongoRuby
     category = Category.find_by_name(primary,opt)
     if category.blank?
       items = Category.params(opt, primary)
-      Category.save(items)
+      Util.STRINGify(Category.save(items))
     else
-      category['_id']
+      Util.STRINGify(category['_id'])
     end
   end
   
-  def self.find_or_create_by_primary_and_secordary(pid,s)
+  def self.find_or_create_by_primary_and_secordary(pnid,s)
     Category.normalize!(s)
-    return false if s.blank? || (top = Category.find_by_id(pid)).blank?
-    sec = Category.find_one({ :parent => top['_id'], :p => s })
-    return sec['_id'] unless sec.blank?
-    Category.save({ :p => s, :parent => top['_id']})
+    return false if s.blank? || (top = Category.find_by_nid(pnid)).blank?
+    id = Util.STRINGify(top['_id'])
+    sec = Category.find_one({ :parent => id, :p => s })
+    return Util.STRINGify(sec['_id']) unless sec.blank?
+    ss = Util.STRINGify(Category.save({ :p => s, :parent => id }))
+    ss
   end
   
   def self.new_categories(top_level,cats=[])
@@ -96,24 +98,23 @@ class Category < MongoRuby
   private
   
   # @required id
-  def self.destroy_by_id(id)
-    return false unless (id = Util.BSONify(id))
-    Category.remove({ :_id => id })
+  def self.destroy_by_nid(nid)
+    return false unless (nid = Util.BSONify(nid))
+    Category.remove({ :_id => nid })
   end
   
   def self.normalize!(denorm)
-    if denorm.respond_to? :keys
+    if denorm.respond_to? :downcase!
+      denorm.downcase!
+    elsif denorm.respond_to? :keys
       denorm.each do |k,v|
-        v.downcase!
+        Category.normalize!(v)
       end
     elsif denorm.respond_to? :each
       denorm.each do |o|
-        o.downcase!
+        Category.normalize!(o)
       end
-    elsif denorm.respond_to? :downcase!
-       denorm.downcase!
     end
-    
   end
   
   def self.params(opt,primary=nil)
