@@ -6,9 +6,9 @@ class RankingsController < ApplicationController
   before_filter :user_params, :only => [:user]
   before_filter :location_params, :only => [:location]
   
-  # Ranking.new_rank(nid,uid,value,text='')
-  # Ranking.remove_rank(nid,uid)
-  # Ranking.for_uid(uid)
+  # Ranking.new_rank(nid,unid,value,text='')
+  # Ranking.remove_rank(nid,unid)
+  # Ranking.for_unid(unid)
   # Ranking.for_nid(nid)
   
   # RankingAverage.new_ranking(nid,rating)
@@ -28,8 +28,8 @@ class RankingsController < ApplicationController
   end
   
   def user
-    @key = :rank_id
-    @rankings = Ranking.for_uid(@uid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
+    @key = :rank_nid
+    @rankings = Ranking.for_unid(@uid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
     @rank_loc = Ranking.build_list @rankings      # now just get the locations that are associated with these rankings
     respond_with ok_or_not({
       :items => @rank_loc,
@@ -37,7 +37,7 @@ class RankingsController < ApplicationController
   end
   
   def location
-    @key = :rank_id
+    @key = :rank_nid
     @rankings = Ranking.for_nid(@nid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
     if @rankings.length > 0
       @location = Location.detail_for_nid(@nid)
@@ -76,7 +76,7 @@ class RankingsController < ApplicationController
     @limit = params[:limit] || 20
   end
   
-  # verifies the params of user_id, nid, and rank
+  # verifies the params of user_nid, nid, and rank
   def creation
     user_params
     location_params

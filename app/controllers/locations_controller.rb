@@ -2,7 +2,7 @@ class LocationsController < ApplicationController
   
   respond_to :json
   
-  before_filter :validate_ids
+  before_filter :validate_nids
   before_filter :authentication_required, :only => [:edit,:create]
   before_filter :needs_for_create, :only => [:create]
   before_filter :needs_for_search, :only => [:search,:here]
@@ -25,7 +25,7 @@ class LocationsController < ApplicationController
   end
   
   def detail
-    response = if (locations = Location.detail_for_ids(@locations))
+    response = if (locations = Location.detail_for_nids(@locations))
       Status.locations(locations)
     else
       Status.no_locations_found
@@ -50,23 +50,14 @@ class LocationsController < ApplicationController
     respond_with response
   end
   
-  ## NEW
-  # get "location/:nid/thumb"  => "locations#thumb_create"                ## POST
-  # get "location/:nid/thumbs" => "locations#thumbs"                      ## POST
-  
-  def validate_ids
+  def validate_nids
     @locations  = params[:nids] || []
     @locations << params[:nid]
     @locations = @locations.respond_to?(:split) ? @locations.split(',') : @locations
     flag = false
     unless @locations.is_a?(Array) && @locations.length > 0
-      flag = true
-    else
-      @locations.each do |l|
-        flag = true unless l.is_a? Fixnum
-      end
+      respond_with Status.location_not_properly_formatted({:plural=>true}) if flag
     end
-    respond_with Status.location_not_properly_formatted({:plural=>true}) if flag
   end
   
   def optional_for_create

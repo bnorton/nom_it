@@ -7,17 +7,12 @@ class UsersController < ApplicationController
   
   before_filter :user_params,       :only => [:me, :login, :register,:thumbs,:thumbed]
   before_filter :auth_params,       :only => [:me, :login, :register]
-  before_filter :force_email_passwd,:only => [:login]
+  before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
-  before_filter :validate_ids,      :only => [:detail,:thumbs,:thumbed]
+  before_filter :validate_nids,      :only => [:detail,:thumbs,:thumbed]
   before_filter :validate_token,    :only => []
   
   before_filter :authentication_required, :only => [:me,:thumb_create]
-  
-  # NEW
-  # get "user/:nid/thumb"      => "users#thumb_create"                    ## POST
-  # get "user/:nid/thumbs"     => "user#thumbs"                           ## POST
-
   
   def me
     me = User.me(@token)
@@ -25,7 +20,7 @@ class UsersController < ApplicationController
   end
   
   def login
-    condition = User.login(@email,@password)
+    condition = User.login(@email_or_nid,@password)
     response  = ok_or_not(condition,{:results=>[{:logged_in=>true}]})
     respond_with response
   end
@@ -40,13 +35,13 @@ class UsersController < ApplicationController
         User.register(@email, @password, @screen_name)
       end
       
-    condition = !registration.blank?
-    response  = ok_or_not(condition,{:results=>response})
+    condition = registration.present?
+    response  = ok_or_not(condition,{:results=>Array(registration)})
     respond_with response
   end
   
   def detail
-    results   = User.detail_for_ids(@nids)
+    results   = User.detail_for_nids(@nids)
     condition = !results.blank?
     response  = ok_or_not(condition,{:results=>results})
     respond_with response
@@ -54,7 +49,7 @@ class UsersController < ApplicationController
   
   def search
     results   = User.search_by_all(@query,@email,@screen_name)
-    condition = !results.blank?
+    condition = results.present?
     response  = ok_or_not(condition,{:results=>results,:not_found=>true})
     respond_with response
   end
@@ -112,14 +107,13 @@ class UsersController < ApplicationController
     end
   end
   
-  def force_email_passwd
-    if @email.blank? || @password.blank?
+  def login_required
+    if (@email.blank? || @nid.blank?) && @password.blank?
       respond_with Status.user_not_authorized
     end
   end
   
   def user_params
-    @nid    = params[:nid]
     @nid_them=params[:their_nid]
     @limit  = params[:limit]
     @email  = params[:email] || params[:id]
@@ -129,6 +123,8 @@ class UsersController < ApplicationController
   end
   
   def auth_params
+    @nid = params[:nid]
+    @email_or_nid = @nid || @email
     @password = params[:password]
     @token = @oauth_token = params[:token]
     @registration_type = params[:regtype] || 'nom'
@@ -143,7 +139,7 @@ class UsersController < ApplicationController
     end
   end
   
-  def validate_ids
+  def validate_nids
     @nid  = params[:nid]
     @nids = params[:nids] || []
     @nids << @nid if @nid.present?
