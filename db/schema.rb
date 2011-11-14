@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111113230256) do
+ActiveRecord::Schema.define(:version => 20111114081149) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "nid"
     t.string   "name"
     t.string   "fsq_name"
     t.string   "fsq_id"
@@ -56,26 +57,25 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
     t.string   "street2"
     t.string   "city"
     t.string   "state"
-    t.string   "area_code",     :limit => 7
+    t.string   "area_code"
     t.string   "country"
     t.text     "json_encode"
-    t.boolean  "is_new",                     :default => false, :null => false
+    t.boolean  "is_new",        :default => false, :null => false
     t.string   "code"
     t.binary   "schemaless"
     t.string   "primary"
     t.string   "secondary"
-    t.string   "nid"
-    t.string   "hash"
+    t.string   "location_hash"
     t.string   "yid"
     t.string   "woeid"
     t.string   "neighborhoods"
     t.string   "url"
-    t.string   "revision_nid"
     t.string   "twitter"
     t.string   "facebook"
     t.string   "phone"
     t.string   "cost"
     t.string   "timeofday"
+    t.string   "revision_nid"
     t.string   "metadata_nid"
     t.string   "creator"
   end
@@ -85,10 +85,13 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "nid"
     t.string   "user_nid",                         :null => false
-    t.string   "token"
+    t.string   "user_name"
+    t.string   "location_nid"
     t.string   "location_name"
     t.string   "location_city"
+    t.string   "token"
     t.string   "title"
     t.text     "text"
     t.boolean  "facebook",      :default => false
@@ -99,9 +102,6 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
     t.binary   "schemaless"
     t.boolean  "is_valid",      :default => true
     t.string   "image"
-    t.string   "user_name"
-    t.string   "nid"
-    t.string   "location_nid"
   end
 
   add_index "recommendations", ["new"], :name => "recommendations_location_new"
@@ -111,13 +111,18 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
   create_table "users", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "nid"
     t.string   "name"
+    t.string   "screen_name"
+    t.string   "email"
+    t.string   "phone"
     t.string   "facebook"
     t.string   "twitter"
     t.string   "google"
     t.string   "last_seen"
     t.string   "udid"
     t.string   "url"
+    t.string   "image_url"
     t.string   "street"
     t.string   "city"
     t.string   "state"
@@ -128,16 +133,12 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
     t.string   "session_id"
     t.binary   "newpassword",    :limit => 255
     t.datetime "newpass_time"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "screen_name"
     t.text     "description"
     t.datetime "authenticated"
     t.string   "token"
     t.date     "token_expires"
     t.string   "referral_code",  :limit => 32
     t.string   "referred_by",    :limit => 32
-    t.binary   "schemaless"
     t.string   "json_encode",    :limit => 1022
     t.integer  "follower_count"
     t.string   "oauth_token"
@@ -145,7 +146,7 @@ ActiveRecord::Schema.define(:version => 20111113230256) do
     t.binary   "facebook_hash"
     t.binary   "twitter_hash"
     t.boolean  "has_joined",                     :default => true
-    t.string   "nid"
+    t.binary   "schemaless"
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true

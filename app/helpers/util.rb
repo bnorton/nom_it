@@ -15,7 +15,7 @@ class Util
     
     def translate!(items, mapper)
       items.each do |it|
-        mapper.each do |k,v|
+        mapper.each_pair do |k,v|
           it[v] = it.delete(k.to_s) if it.has_key? k.to_s
         end
       end

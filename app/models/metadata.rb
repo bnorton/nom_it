@@ -2,7 +2,7 @@ require 'mongo_ruby'
 
 class Metadata < MongoRuby
   
-  VALID_YELP = [:yelp_rating,:yelp_count]
+  VALID_YELP = [:yelp_rating,:yelp_count,:categories]
   VALID_COUNTS = [:hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount]
   
   #                    view_count | returned | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
@@ -20,7 +20,9 @@ class Metadata < MongoRuby
   def self.create(nids)
     nids = Array(nids)
     nids.each do |nid|
-      Metadata.save({ :_id => nid, :views => 0, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
+      unless (Metadata.for_nid(nid))
+        Metadata.save({ :_id => nid, :views => 0, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
+      end
     end
   end
   
@@ -29,23 +31,25 @@ class Metadata < MongoRuby
     Util.nidify(meta) unless meta.blank?
   end
   
-  def self.set_attributes(attrs,valid_items)
-    return false unless (nid = attrs[:nid])
-    item = Metadata.for_nid(nid) || Metadata.create(nid)
-    attrs do |k,v|
+  def self.set_attributes(attribs,valid_items)
+    return false unless (nid = attribs[:nid])
+    item = Metadata.find_one({ :_id => nid })
+    attribs.keys.each do |k|
       if valid_items.include?(k) || valid_items.include?(k.to_sym)
-        item.k = v
+        item[k] = attribs[k]
       end
     end
     Metadata.save(item)
   end
   
-  def self.set_region_counts(attrs)
-    set_attributes(attrs,VALID_COUNTS)
+  def self.set_region_counts(attribs)
+    return false unless attribs[:nid]
+    Metadata.set_attributes(attribs,VALID_COUNTS)
   end
   
-  def self.set_yelp_items(attrs)
-    set_attributes(attrs,VALID_YELP)
+  def self.set_yelp_items(attribs)
+    return false unless attribs[:nid]
+    Metadata.set_attributes(attribs,VALID_YELP)
   end
   
   def self.viewed(nid,by=1)

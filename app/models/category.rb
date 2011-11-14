@@ -69,7 +69,7 @@ class Category < MongoRuby
     Category.save_item({ :p => s, :parent => pcid })
   end
   
-  def self.new_categories(top_level,cats=[])
+  def self.new_categories(top_level,cats=[],assoc=:none)
     return if top_level.blank?
     ids = []
     top = Category.find_or_create_by_name(top_level)
@@ -91,7 +91,7 @@ class Category < MongoRuby
     if denorm.respond_to? :downcase!
       denorm.downcase!
     elsif denorm.respond_to? :keys
-      denorm.each do |k,v|
+      denorm.each_pair do |k,v|
         normalize!(v)
       end
     elsif denorm.respond_to? :each

@@ -1,8 +1,8 @@
 require 'ostruct'
 REGIONS = ['austin','berkeley','boston','chicago','dc','denver','losangeles',
            'newyork','paloalto','portland','sacramento','sandiego','sanjose',
-           'sanfrancisco','seattle','vegas'].uniq
-BASE_DIR = '../../data/yelp'
+           'sanfrancisco','seattle','vegas']
+BASE_DIR = './data/yelp'
 DELIM = /<\^&/
 
 class Geocode
@@ -12,8 +12,8 @@ class Geocode
     def scan_regions(regions=[])
       regions_to_scan = regions || REGIONS
       regions_to_scan.each do |region|
-        path = "#{BASE_DIR}/#{region}"
-        these_locations = process_directory(path)
+        @@path = "#{BASE_DIR}/#{region}"
+        these_locations = process_directory(@@path)
         out = "#{path}/out/#{Time.now.strftime("%Y|%m|%d|%H|%M|%S_")}#{region}.txt"
         File.open(out, 'w+') { |f| 
           f.write(these_locations.to_json)
@@ -24,8 +24,11 @@ class Geocode
     def process_directory(path_to)
       locations = []
       Dir.foreach(path_to) do |file_name|
-        File.open(file_name) do |file|
-          process_file_into!(file, locations, file_name)
+        unless ['.','..'].include? file_name
+          puts file_name
+          File.open("#{@@path}/#{file_name}") do |file|
+            process_file_into!(file, locations, file_name)
+          end
         end
       end
       locations
@@ -56,30 +59,57 @@ class Geocode
     end
     
     def fetch_yahoo_data(addr)
-      OpenStruct.new(Util.geocode_address(addr))
+      begin
+        if (yahoo_raw = Util.geocode_address(addr))
+          result = yahoo_raw['ResultSet']['Result']
+          if result.is_a? Array
+            result = result[0]
+          end
+          OpenStruct.new(result)
+        end
+      rescue Exception => e
+        puts "YAHOO for #{addr} FAILED #{yahoo_raw.inspect}"
+        raise e
+      end
+    end
+    
+    def yahoo_addr_neighbor(yahoo)
+      line2 = yahoo.line2.try(:gsub,'  ', ' ')
+      addr = "#{yahoo.line1} #{line2}" if line2
+      addr ||= "#{yahoo.line1}" if yahoo.line1
+      neighborhoods = yahoo.neighborhood.try(:gsub, '|', ' | ')
+      street = "#{yahoo.house} #{yahoo.street}" if yahoo.house
+      street ||= yahoo.street
+      [addr,neighborhoods]
+    end
+    
+    def yahoo_cross_street(yahoo)
+      cross = yahoo.cross
+      cross.gsub('the intersection of ','') if cross
     end
     
     def store_location(yahoo,opt={})
-      loc = Location.find_or_create_by_hash(opt[:hash])
-      if loc.new_record?
-        loc.name = opt[:name]
-        loc.address = "#{yahoo.line1} #{yahoo.line2}" if yahoo.line2
-        loc.address ||= "#{yahoo.line1}"
-        loc.street = "#{yahoo.house} #{yahoo.street}"
-        loc.cross_street = yahoo.cross
-        loc.city = yahoo.city
-        loc.state = yahoo.state
-        loc.area_code = yahoo.uzip
-        loc.country = yahoo.country
-        loc.primary = opt[:primary]
-        loc.secordary = opt[:secordary]
-        loc.neighborhoods = yahoo.neighborhood
-        loc.cost = opt[:cost]
-        loc.timeofday = opt[:tod]
-        loc.nid = Util.ID
-        loc.save
-      end
-      raise "what should be returned"
+      iid = Util.ID
+      addr,neigh,street = yahoo_addr_neighbor(yahoo)
+      loc = Location.find_or_create_by_location_hash(
+        :location_hash => opt[:location_hash],
+        :name => opt[:name],
+        :address => addr,
+        :street => street,
+        :cross_street => yahoo_cross_street(yahoo),
+        :city => yahoo.city,
+        :state => yahoo.state,
+        :area_code => yahoo.postal,
+        :country => yahoo.country,
+        :primary => opt[:primary],
+        :secondary => opt[:secondary],
+        :neighborhoods => neigh,
+        :cost => opt[:cost],
+        :timeofday => opt[:tod],
+        :woeid => yahoo.woeid,
+        :yid => yahoo.hash,
+        :nid => iid)
+      iid
     end
     
     def store_geolocation(yahoo,opt={})
@@ -88,13 +118,17 @@ class Geocode
         :lat => yahoo.latitude,
         :lng => yahoo.longitude,
         :primary => opt[:primary],
-        :secordary => opt[:secordary],
+        :secondary => opt[:secondary],
         :cost => opt[:cost]
       )
     end
     
     def store_metadata(opt={})
-      Metadata.set_yelp_items(opt)
+      if Metadata.create(opt[:nid])
+        Metadata.set_yelp_items(opt)
+      else
+        raise "Metadata not created for #{opt.inspect}"
+      end
     end
     
     def build_and_store_location(item,file_name)
@@ -104,7 +138,7 @@ class Geocode
       yahoo = fetch_yahoo_data(_address)
       
       _name = name(item)
-      hash = Digest::SHA2.hexdigest(_name + _address)
+      location_hash = Digest::SHA2.hexdigest(_name + _address)
       
       _tod = timeofday(file_name)
       _cost = cost(file_name)
@@ -113,14 +147,15 @@ class Geocode
       _digits = digits(item)
       
       cats = categories(item)
-      top_level_nid, category_nids = Category.new_categories('eat',cats)
+      top_level_nid, category_nids = Category.new_categories('eat',cats,:assoc)
       
       primary = top_level_nid
       secondary = category_nids[0] rescue nil
-      location_nid, _nid = store_location(yahoo,{
-        :hash=>hash,
-        :primary => cid0,
-        :secondary => cid1,
+      
+      location_nid = store_location(yahoo,{
+        :location_hash=>location_hash,
+        :primary => primary,
+        :secondary => secondary,
         :name => _name,
         :tod => _tod,
         :cost => _cost
@@ -130,13 +165,15 @@ class Geocode
         :location_nid => location_nid,
         :primary => primary,
         :secondary => secondary,
-        :cost => Location.integer_cost(_cost)
+        :cost => _cost
       })
       
-      store_metadata(yahoo,{
-        :nid => _nid,
-        :yelp_rating => opt[:yelp_rating],
-        :yelp_count => opt[:yelp_count]
+      Category.normalize!(cats)
+      store_metadata({
+        :nid => location_nid,
+        :yelp_rating => _rating,
+        :yelp_count => _rating_count,
+        :categories => cats
         })
       
       {
@@ -188,9 +225,9 @@ class Geocode
     end
     
     def timeofday(file_name) # filenames are ($)+_?[(breakfast)|(dessert)]?\.txt
-      return 'breakfast|brunch'  if file_name =~ /(breakfast)/
-      return 'dessert|latenight' if file_name =~ /(dessert)/
-      'lunch|dinner'
+      return 'breakfast | brunch'  if file_name =~ /(breakfast)/
+      return 'dessert | latenight' if file_name =~ /(dessert)/
+      'lunch | dinner'
     end
     
     # "$.txt" => $
@@ -341,4 +378,3 @@ Geocode.scan_regions(regions=['sanfrancisco'])
 #            }
 #         }
 #      }
-      
