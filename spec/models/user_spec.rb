@@ -28,7 +28,7 @@ describe "user" do
       user = User.find_by_email(email)
       user.email.should == email
       user.screen_name.should == @brian[:screen_name]
-      user.password.should == Digest::SHA2.hexdigest(user[:salt] + @brian[:password])
+      user.password.should == Digest::SHA2.hexdigest(user['salt'].to_s + @brian[:password])
       user.has_joined.should == true
     end
     it "should create two new users that are the correct details" do
