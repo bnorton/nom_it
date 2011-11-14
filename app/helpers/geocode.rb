@@ -77,10 +77,13 @@ class Geocode
       line2 = yahoo.line2.try(:gsub,'  ', ' ')
       addr = "#{yahoo.line1} #{line2}" if line2
       addr ||= "#{yahoo.line1}" if yahoo.line1
+      
       neighborhoods = yahoo.neighborhood.try(:gsub, '|', ' | ')
+      
       street = "#{yahoo.house} #{yahoo.street}" if yahoo.house
       street ||= yahoo.street
-      [addr,neighborhoods]
+      
+      [addr,neighborhoods,street]
     end
     
     def yahoo_cross_street(yahoo)
@@ -91,25 +94,30 @@ class Geocode
     def store_location(yahoo,opt={})
       iid = Util.ID
       addr,neigh,street = yahoo_addr_neighbor(yahoo)
-      loc = Location.find_or_create_by_location_hash(
-        :location_hash => opt[:location_hash],
-        :name => opt[:name],
-        :address => addr,
-        :street => street,
-        :cross_street => yahoo_cross_street(yahoo),
-        :city => yahoo.city,
-        :state => yahoo.state,
-        :area_code => yahoo.postal,
-        :country => yahoo.country,
-        :primary => opt[:primary],
-        :secondary => opt[:secondary],
-        :neighborhoods => neigh,
-        :cost => opt[:cost],
-        :timeofday => opt[:tod],
-        :woeid => yahoo.woeid,
-        :yid => yahoo.hash,
-        :nid => iid)
-      iid
+      if (found = Location.find_by_location_hash(opt[:location_hash]))
+        [found.nid, false]
+      else
+        Location.find_or_create_by_location_hash(
+          :location_hash => opt[:location_hash],
+          :name => opt[:name],
+          :address => addr,
+          :street => street,
+          :cross_street => yahoo_cross_street(yahoo),
+          :city => yahoo.city,
+          :state => yahoo.state,
+          :area_code => yahoo.postal,
+          :country => yahoo.country,
+          :primary => opt[:primary],
+          :secondary => opt[:secondary],
+          :neighborhoods => neigh,
+          :cost => opt[:cost],
+          :phone => opt[:phone],
+          :timeofday => opt[:tod],
+          :woeid => yahoo.woeid,
+          :yid => yahoo.hash,
+          :nid => iid)
+        [iid, true]
+      end
     end
     
     def store_geolocation(yahoo,opt={})
@@ -152,30 +160,31 @@ class Geocode
       primary = top_level_nid
       secondary = category_nids[0] rescue nil
       
-      location_nid = store_location(yahoo,{
+      location_nid,is_new = store_location(yahoo,{
         :location_hash=>location_hash,
         :primary => primary,
         :secondary => secondary,
         :name => _name,
         :tod => _tod,
-        :cost => _cost
+        :cost => _cost,
+        :phone => _digits
       })
-      
-      store_geolocation(yahoo,{
-        :location_nid => location_nid,
-        :primary => primary,
-        :secondary => secondary,
-        :cost => _cost
-      })
-      
-      Category.normalize!(cats)
-      store_metadata({
-        :nid => location_nid,
-        :yelp_rating => _rating,
-        :yelp_count => _rating_count,
-        :categories => cats
+      if is_new
+        store_geolocation(yahoo,{
+          :location_nid => location_nid,
+          :primary => primary,
+          :secondary => secondary,
+          :cost => _cost
         })
-      
+        
+        Category.normalize!(cats)
+        store_metadata({
+          :nid => location_nid,
+          :yelp_rating => _rating,
+          :yelp_count => _rating_count,
+          :categories => cats
+          })
+      end
       {
         :name => _name,
         :primary => primary,

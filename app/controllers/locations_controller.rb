@@ -102,7 +102,7 @@ class LocationsController < ApplicationController
     @lng = params[:lng]
     @dist = params[:dist]
     @addr = params[:addr]
-    @city = parmas[:city]
+    @city = params[:city]
     
     unless (@lat && @lng)
       respond_with Status.insufficient_arguments({:message => 'needs lat/lng or addr/city by default'})
