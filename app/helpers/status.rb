@@ -139,6 +139,15 @@ module Status
       }
     end
 
+    def location_not_properly_formatted(options={})
+      example = 'id=lid'
+      if options[:plural]
+        s      = 's'
+        example='ids=lid1,lid2,lid3'
+      end
+      message(-1, "The specified location#{s} were not properly formatted eg. #{example}")
+    end
+
     private
     
     def status_message_results(status,message,results,options)
@@ -153,15 +162,6 @@ module Status
         :message     => message,
          result_name => results
       }
-    end
-    
-    def location_not_properly_formatted(options={})
-      example = 'id=lid'
-      if options[:plural]
-        s      = 's'
-        example='ids=lid1,lid2,lid3'
-      end
-      message(-1, "The specified location#{s} were not properly formatted eg. #{example}")
     end
     
     def no_locations_found
