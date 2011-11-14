@@ -40,13 +40,13 @@ class MongoRuby
   
   def self.incr(nid,what,ct=1)
     return false unless nid && what
-    nid = Util.BSONify(nid)
+    nid = Util.STRINGify(nid)
     self.collection.update({ :_id => nid }, { '$inc' => { what => ct }}, {:upsert => true}) ? true : false
   end
   
   def self.set(nid,what,val)
     return false unless nid && what && val
-    nid = Util.BSONify(nid)
+    nid = Util.STRINGify(nid)
     self.collection.update({ :_id => nid }, {'$set' => { what => val }}) ? true : false
   end
   

@@ -2,6 +2,9 @@ require 'mongo_ruby'
 
 class Metadata < MongoRuby
   
+  VALID_YELP = [:yelp_rating,:yelp_count]
+  VALID_COUNTS = [:hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount]
+  
   #                    view_count | returned | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
   attr_accessor :_id, :views,      :ret,      :up,       :meh,       :rank,     :rank_ct,        :rec_ct
   #              h == half    m == mile  tm == two mile
@@ -15,24 +18,22 @@ class Metadata < MongoRuby
   end
   
   def self.create(nids)
-    nids = [nids] unless nids.respond_to?(:each)
+    nids = Array(nids)
     nids.each do |nid|
-      nid = Util.BSONify(nid)  # TODO figure out how to incur on fields that may not be there in the document
       Metadata.save({ :_id => nid, :views => 0, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
     end
   end
   
   def self.for_nid(nid)
-    nid = Util.BSONify(nid)
     meta = Metadata.find_one({ :_id => nid })
     Util.nidify(meta) unless meta.blank?
   end
   
   def self.set_attributes(attrs,valid_items)
-    return false unless (nid = Util.BSONify(attrs[:nid])) 
-    item = Metadata.for_nid(nid)
+    return false unless (nid = attrs[:nid])
+    item = Metadata.for_nid(nid) || Metadata.create(nid)
     attrs do |k,v|
-      if valid_items.include?(k)
+      if valid_items.include?(k) || valid_items.include?(k.to_sym)
         item.k = v
       end
     end

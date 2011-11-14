@@ -55,7 +55,7 @@ class Ranking < MongoRuby
   end
   
   def self.new_rank(nid,unid,value,text='')
-    Metadata.ranked(nid)
+    Metadata.ranked(Util.STRINGify(nid))
     value = Ranking.valid(value)
     old_nid, old_val = Ranking.eval("new_rank('#{nid}','#{unid}',#{value},'#{text}')")
     if old_nid

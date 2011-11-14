@@ -21,6 +21,8 @@ class Category < MongoRuby
   # @required n
   # @optional secondary
   def self.find_by_name(primary,opt={})
+    Category.normalize!(primary)
+    Category.normalize!(opt)
     return false if primary.blank?
     secondary = opt[:s]
     if secondary && (ali = opt[:a])
@@ -42,46 +44,30 @@ class Category < MongoRuby
     Category.find_one({ :_id => nid })
   end
   
-  # @required_for_find id
-  # @required_for_create primary
-  # @optional secondary
-  # @optional alias
-  def self.find_or_create_by_nid(nid,opt={})
-    found = Category.find_by_nid(nid)
-    if found.blank?
-      options = Category.params(opt)
-      unless (options).blank? || options[:p].blank?
-        return Category.save({ :_id => Util.BSONify(id) }.merge(options))
-      end
-    end
-    found
-  end
-  
   # @required_for_find primary
   # @required_for_create primary
   # @optional secondary
   # @optional alias
   def self.find_or_create_by_name(primary,opt={})
     return false if primary.blank?
-    Category.normalize!(primary)
-    Category.normalize!(opt)
     category = Category.find_by_name(primary,opt)
-    if category.blank?
+    unless category.blank?
+      Util.STRINGify(category['_id'])
+    else
       items = Category.params(opt, primary)
       Util.STRINGify(Category.save(items))
-    else
-      Util.STRINGify(category['_id'])
     end
   end
   
   def self.find_or_create_by_primary_and_secordary(pnid,s)
-    Category.normalize!(s)
     return false if s.blank? || (top = Category.find_by_nid(pnid)).blank?
-    id = Util.STRINGify(top['_id'])
-    sec = Category.find_one({ :parent => id, :p => s })
+    
+    Category.normalize!(s)
+    pcid = Util.STRINGify(top['_id'])
+    sec = Category.find_one({ :parent => pcid, :p => s })
+    
     return Util.STRINGify(sec['_id']) unless sec.blank?
-    ss = Util.STRINGify(Category.save({ :p => s, :parent => id }))
-    ss
+    Util.STRINGify(Category.save({ :p => s, :parent => pcid }))
   end
   
   def self.new_categories(top_level,cats=[])
@@ -108,11 +94,11 @@ class Category < MongoRuby
       denorm.downcase!
     elsif denorm.respond_to? :keys
       denorm.each do |k,v|
-        Category.normalize!(v)
+        normalize!(v)
       end
     elsif denorm.respond_to? :each
       denorm.each do |o|
-        Category.normalize!(o)
+        normalize!(o)
       end
     end
   end
@@ -120,10 +106,8 @@ class Category < MongoRuby
   def self.params(opt,primary=nil)
     Category.normalize!(opt)
     Category.normalize!(primary)
-    op = {:p => (primary || opt[:p])}
-    op.merge!({:s => opt[:s]}) if opt[:s]
-    op.merge!({:a => opt[:a]}) if opt[:a]
-    op
+    opt.merge!({:p => primary}) if primary.present?
+    opt
   end
   
 end
