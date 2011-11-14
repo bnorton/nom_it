@@ -55,7 +55,7 @@ class Category < MongoRuby
       Util.STRINGify(category['_id'])
     else
       items = Category.params(opt, primary)
-      Util.STRINGify(Category.save(items.merge(Category.ID)))
+      Category.save_item(items)
     end
   end
   
@@ -66,7 +66,7 @@ class Category < MongoRuby
     sec = Category.find_one({ :parent => pcid, :p => s })
     
     return Util.STRINGify(sec['_id']) unless sec.blank?
-    Util.STRINGify(Category.save({ :p => s, :parent => pcid }.merge(Category.ID)))
+    Category.save_item({ :p => s, :parent => pcid })
   end
   
   def self.new_categories(top_level,cats=[])
@@ -106,6 +106,10 @@ class Category < MongoRuby
     Category.normalize!(primary)
     opt.merge!({:p => primary}) if primary.present?
     opt
+  end
+  
+  def self.save_item(what)
+    Util.STRINGify(Category.save(what.merge(Category.ID)))
   end
   
   def self.ID

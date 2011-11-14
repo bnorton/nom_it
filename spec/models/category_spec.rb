@@ -5,12 +5,6 @@ describe "category" do
     before :each do
       Category.collection.remove
     end
-    
-    # METHODS AVAILABLE
-    # find_by_name(name)
-    # find_by_nid(id)
-    # find_or_create_by_name(name) # opt must have name and can have alias
-    # destroy_by_id(id)
     it "should reject a location Category if the text is not present" do
       Category.find_or_create_by_name('',{:odd=>'opts'}).should be_false
     end
@@ -140,8 +134,6 @@ describe "category" do
         Category.find_by_nid(c2['_id'])['parent'].should == Category.find_by_name('eat')['_id']
       end
       it "should find Category by alias" do
-      end
-      it "should find Category by id only if the id is a valid BSON::ObjectId" do
       end
     end
   end
