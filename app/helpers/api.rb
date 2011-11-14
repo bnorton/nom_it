@@ -12,7 +12,7 @@ module NOM
         { :endpoint => "/users/login", :required => [:password], :optional => [:nid,:email], :example => "/users/login?nid={nid}&password={some_pass}", :description => {  } }
       end
       def register
-        { :endpoint => "/users/register", :required => [:email,:password], :optional => [:regtype,:fb_hash,:tw_hash], :example => "/users/register?email={email@example.com}&password={some_pass}", :description => {  } }
+        { :endpoint => "/users/register", :required => [:email,:password], :optional => [:name,:city,:regtype,:fb_hash,:tw_hash], :example => "/users/register?email={email@example.com}&password={some_pass}&name={real_name}", :description => {  } }
       end
       def usearch
         { :endpoint => "/users/search", :required => [:q], :optional => [:email,:screen_name], :example => "/users/search?q={nort}", :description => {  } }
@@ -66,7 +66,23 @@ module NOM
       def rdestroy
         { :endpoint => "/recommendations/destroy", :required => [], :optional => [], :example => "/recommendations/", :description => {  } }
       end
-    
+      
+      # comments
+      def ccreate
+        { :endpoint => "/comments/create", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+      def crecommendation
+        { :endpoint => "/comments/recommendation", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+      def clocation
+        { :endpoint => "/comments/location", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+      def cuser
+        { :endpoint => "/comments/user", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+      def csearch
+        { :endpoint => "/comments/search", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
     end
   end
 end

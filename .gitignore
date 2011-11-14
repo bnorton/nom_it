@@ -4,4 +4,5 @@ log/*.log
 tmp/
 Gemfile.lock
 .sass-cache/
-config/unicorn.rb
+# config/unicorn.rb
+.DS_Store

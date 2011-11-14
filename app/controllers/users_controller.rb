@@ -10,18 +10,20 @@ class UsersController < ApplicationController
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
   before_filter :validate_nids,      :only => [:detail,:thumbs,:thumbed]
-  before_filter :validate_token,    :only => []
   
   before_filter :authentication_required, :only => [:me,:thumb_create]
   
-  def me
-    me = User.me(@token)
-    respond_with Status.OK(me)
-  end
-  
-  def login
-    condition = User.login(@email_or_nid,@password)
-    response  = ok_or_not(condition,{:results=>[{:logged_in=>true}]})
+  def check
+    @screen_name = params[:screen_name]
+    response = if @screen_name.blank?
+      Status.insufficient_arguments
+    else
+      if (time = User.find_by_screen_name(@screen_name)).blank?
+        ok_or_not(true,{:results => [{:reserved_until => Time.now + 1.minutes}]})
+      else
+        ok_or_not(false,{:name_taken=>true})
+      end
+    end
     respond_with response
   end
   
@@ -32,12 +34,22 @@ class UsersController < ApplicationController
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
-        User.register(@email, @password, @screen_name)
+        User.register(@email, @password, @screen_name, @name, @city)
       end
-      
     condition = registration.present?
     response  = ok_or_not(condition,{:results=>Array(registration)})
     respond_with response
+  end
+  
+  def login
+    condition = User.login(@email_or_nid,@password)
+    response  = ok_or_not(condition,{:results=>[{:logged_in=>true}]})
+    respond_with response
+  end
+  
+  def me
+    me = User.me(@token)
+    respond_with Status.OK(me)
   end
   
   def detail
@@ -50,7 +62,7 @@ class UsersController < ApplicationController
   def search
     results   = User.search_by_all(@query,@email,@screen_name)
     condition = results.present?
-    response  = ok_or_not(condition,{:results=>results,:not_found=>true})
+    response  = ok_or_not(condition,{:results=>results,:search=>true})
     respond_with response
   end
   
@@ -81,34 +93,26 @@ class UsersController < ApplicationController
     
   end
   
-  def check
-    @screen_name = params[:screen_name]
-    response = if @screen_name.blank?
-      Status.insufficient_arguments
-    else
-      if User.find_by_screen_name(@screen_name).blank?
-        ok_or_not(true,{:results => [{:detail => 'That name is valid and has been reserved for 5 minutes'}]})
-      else
-        ok_or_not(true,{:not_found=>true})
-      end
-    end
-    respond_with response
-  end
-  
   private
   
   def ok_or_not(condition,options={})
     if condition && (detail = options[:results])
       Status.OK(detail)
-    elsif options[:not_found]
-      Status.user_found
+    elsif options[:name_taken]
+      Status.screen_name_taken
+    elsif options[:search]
+      if condition
+        Status.search_result(results)
+      else
+        Status.not_found
+      end
     else
       Status.user_not_authorized
     end
   end
   
   def login_required
-    if (@email.blank? || @nid.blank?) && @password.blank?
+    if (@email.blank? || @nid.blank?) || @password.blank?
       respond_with Status.user_not_authorized
     end
   end
@@ -116,10 +120,12 @@ class UsersController < ApplicationController
   def user_params
     @nid_them=params[:their_nid]
     @limit  = params[:limit]
-    @email  = params[:email] || params[:id]
+    @email  = params[:email] || params[:nid]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
     @TWHash = params[:twhash]
+    @name = params[:name]
+    @city = params[:city]
   end
   
   def auth_params
@@ -132,9 +138,9 @@ class UsersController < ApplicationController
   
   def search_params
     @query = params[:query] || params[:q]
-    @screen_name = params[:screen_name]
-    @email = params[:email]
-    if !(@query.blank? || @screen_name.blank? || @email.blank?)
+    @screen_name = params[:screen_name] || @query
+    @email = params[:email] || @query
+    if !(@query.present? || @screen_name.present? || @email.present?)
       respond_with Status.insufficient_arguments
     end
   end
@@ -152,6 +158,10 @@ class UsersController < ApplicationController
     unless @token.present? && User.token_match?(@nid,@token)
       respond_with Status.user_not_authorized
     end
+  end
+  
+  def authentication_required
+    validate_token
   end
   
 end

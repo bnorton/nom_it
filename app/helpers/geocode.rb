@@ -34,8 +34,7 @@ class Geocode
     def process_file_into!(file, locations, file_name)
       while true
         item = build_item(file)
-        cats = categories(item)
-        if (location = build_and_store_location(item,cats,file_name))
+        if (location = build_and_store_location(item,file_name))
           locations << location
         else
           break
@@ -72,8 +71,8 @@ class Geocode
         loc.state = yahoo.state
         loc.area_code = yahoo.uzip
         loc.country = yahoo.country
-        loc.primary = opt[:c0]
-        loc.secordary = opt[:c1]
+        loc.primary = opt[:primary]
+        loc.secordary = opt[:secordary]
         loc.neighborhoods = yahoo.neighborhood
         loc.cost = opt[:cost]
         loc.timeofday = opt[:tod]
@@ -98,10 +97,8 @@ class Geocode
       Metadata.set_yelp_items(opt)
     end
     
-    def build_and_store_location(item,cats,file_name)
+    def build_and_store_location(item,file_name)
       return false if item.blank?
-      
-      top_level_nid, category_nids = Category.new_categories('eat',cats)
       
       _address = address(item)
       yahoo = fetch_yahoo_data(_address)
@@ -115,23 +112,24 @@ class Geocode
       _rating_count = rating_count(item)
       _digits = digits(item)
       
-      c0 = cats[0] rescue nil
-      c1 = cats[1] rescue nil
+      cats = categories(item)
+      top_level_nid, category_nids = Category.new_categories('eat',cats)
+      
+      primary = top_level_nid
+      secondary = category_nids[0] rescue nil
       location_nid, _nid = store_location(yahoo,{
         :hash=>hash,
-        :c0 => c1,
-        :c1 => c1,
+        :primary => cid0,
+        :secondary => cid1,
         :name => _name,
         :tod => _tod,
         :cost => _cost
       })
       
-      cid0 = top_level_nid
-      cid1 = category_nids[0] rescue nil
       store_geolocation(yahoo,{
         :location_nid => location_nid,
-        :primary => cid0,
-        :secondary => cid1,
+        :primary => primary,
+        :secondary => secondary,
         :cost => Location.integer_cost(_cost)
       })
       
@@ -143,8 +141,8 @@ class Geocode
       
       {
         :name => _name,
-        :primary => c0,
-        :secondary => c1,
+        :primary => primary,
+        :secondary => secondary,
         :categories => cats.join(', '),
         :neighborhood => neighborhood(item),
         :rating => _rating,
@@ -205,7 +203,7 @@ class Geocode
   end
 end
 
-# Geocode.scan_regions(regions=['sanfrancisco'])
+Geocode.scan_regions(regions=['sanfrancisco'])
 
 ###############################################################################
 #####   YELP EXTRACT   ########################################################

@@ -49,12 +49,13 @@ class User < ActiveRecord::Base
     public_fields.where(["screen_name=?", username]).has_joined
   }
   scope :search_by_all, lambda {|name,email,screen_name|
-    public_fields.where(["name like ? or email=? or screen_name=?", name,email,screen_name]).has_joined
+    public_fields.where(["name like ? or email=? or screen_name=?", "%#{name}%",email,screen_name]).has_joined
   }
   
   def self.token_match?(nid, token)
     begin
-      nid == me(token).nid
+      i = me
+      nid == i(token).nid
     rescue Exception
       false
     end
@@ -68,28 +69,31 @@ class User < ActiveRecord::Base
   def self.login(nid_or_email,password,vname='')
     unless nid_or_email.blank?
       user = User.login_with_nid_or_email(nid_or_email).first
-      if user && user.password == Digest::SHA2.hexdigest(user[:salt] + password)
-        user.session_id = Digest::SHA2.hexdigest(rand(1<<16).to_s)
+      if user && user.password == Digest::SHA2.hexdigest(user['salt'].to_s + password, 256)
+        user.session_id = User.new_session_id
         user.last_seen  = Time.now
         return true if user.save!
       end
     end
   end
   
-  def self.register(email, pass, username)
+  def self.register(email, pass, username, name='', city='')
     user = new_or_hasnt_joined(email)
     user.email    = email
     user.salt     = rand(1<<32).to_s
-    user.password = Digest::SHA2.hexdigest(user[:salt] + pass, 256)
+    user.password = Digest::SHA2.hexdigest(user['salt'].to_s + pass, 256)
     user.last_seen= Time.now
     user.has_joined= true
     user.screen_name=username
+    user.name = name
+    user.city = city
+    user.session_id = User.new_session_id
     user.nid      ||= Util.ID
     begin
       user.save!
     rescue ActiveRecord::RecordNotUnique
     end
-    User.public_fields.find_by_email(email)
+    User.private_fields.find_by_email(email)
   end
   
   def self.register_with_facebook(fbHash,username='')
@@ -105,6 +109,7 @@ class User < ActiveRecord::Base
     user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
     user.has_joined= true
+    user.session_id = User.new_session_id
     user.nid    ||= Util.ID
     user.save!
   end
@@ -158,6 +163,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def self.new_session_id
+    Digest::SHA2.hexdigest(rand(1<<16).to_s)
+  end
+  
   def self.email_token(email=rand(1<<16).to_s)
     Digest::SHA2.hexdigest(email.to_s + Time.now.to_s, 256)
   end
@@ -169,7 +178,7 @@ class User < ActiveRecord::Base
   def self.fields(opt=:public)
     fields = "id,nid,name,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
     if opt == :private
-      fields << ",street,country,email,phone,facebook,twitter"
+      fields << ",session_id,street,country,email,phone,facebook,twitter"
     end
     fields
   end

@@ -50,10 +50,10 @@ class CommentsController < ApplicationController
   end
   
   def check_params
-    @nid    = params[:nid]
+    @nid = params[:nid]
     @start = params[:start]
     @limit = params[:limit]
-    unless (!@nid.blank? && @nid = @nid)
+    if @nid.blank?
       respond_with Status.comments_not_found
     end
   end
@@ -61,9 +61,9 @@ class CommentsController < ApplicationController
   def search_params
     @search = {
       :nid  => params[:nid],
-      :unid  => params[:unid],
-      :lnid  => params[:lnid],
-      :rnid  => params[:rnid],
+      :unid => params[:unid],
+      :lnid => params[:lnid],
+      :rnid => params[:rnid],
       :text => params[:text]
     }
     unless @search[:nid] || @search[:unid] || @search[:lnid] || @search[:rnid] || @search[:text]

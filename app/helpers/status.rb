@@ -18,8 +18,16 @@ module Status
       message(-1, "you are not authorized to view that user")
     end
     
-    def user_found
+    def screen_name_taken
       message(-1, "the screen_name you were looking for is not available")
+    end
+    
+    def search_result(results)
+      status_message_results(1,'OK',results)
+    end
+    
+    def not_found
+      message(-1,'nothing was found that matched the query')
     end
     
     def thumb_created

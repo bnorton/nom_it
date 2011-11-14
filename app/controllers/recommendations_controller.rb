@@ -41,6 +41,16 @@ class RecommendationsController < ApplicationController
      recommendations 'location'
   end
   
+  def to_user
+    recommend 'user'
+  end
+  
+  def about_location
+    recommend 'location'
+  end
+  
+  private
+  
   def recommendations(method_name)
     recs = Recommendation.send("for_#{method_name}".to_sym, @user)
     recs = Util.prepare(recs)
@@ -49,14 +59,6 @@ class RecommendationsController < ApplicationController
       :recommends => recs,
       :action     =>'lookup',
       :empty      => method_name })
-  end
-  
-  def to_user
-    recommend 'user'
-  end
-  
-  def about_location
-    recommend 'location'
   end
   
   def recommend(method_name)
