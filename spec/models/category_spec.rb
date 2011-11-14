@@ -64,8 +64,9 @@ describe "category" do
     it "should create top level and secondery categories if needed" do
       top_level = 'eat'
       arr = ['Food Truck','Hot Dogs','Indian']
-      category_ids = Category.new_categories(top_level,arr)
-      category_ids.length.should == 4
+      top_level_nid, category_ids = Category.new_categories(top_level,arr)
+      top_level_nid.should_not be_blank
+      category_ids.length.should == 3
       (Category.collection.count - @before).should == 4
       category_ids.each do |c|
         c.should_not be_blank
@@ -73,12 +74,13 @@ describe "category" do
       end
       top_level = 'Eat' # same as above
       arr = ['hot dogs','Crepes']
-      category_ids = Category.new_categories(top_level,arr)
+      top_level_nid, category_ids = Category.new_categories(top_level,arr)
+      top_level_nid.should_not be_blank
       category_ids.each do |c|
         c.should_not be_blank
         c.class.should == String
       end
-      category_ids.length.should == 3
+      category_ids.length.should == 2
       (Category.collection.count - @before).should == 5 # only add 1 in this case
     end
     it "should not create a new item if the NAME is already present" do
@@ -89,7 +91,12 @@ describe "category" do
       (Category.collection.count - @before).should == 1 # same as before
     end
     it "should have the same parent when two child categories are of one parent" do
-      
+      top_level = 'eat'
+      childs = ['child 1', 'child 2']
+      top_level_nid, category_ids = Category.new_categories(top_level,childs)
+      category_ids.each do |c|
+        Category.find_by_nid(c)['parent'].should == top_level_nid
+      end
     end
     it "should then find the created Categorys based on the criteria" do
       
@@ -112,9 +119,25 @@ describe "category" do
   describe "search" do
     before :each do
       Category.collection.remove
+      Category.new_categories('eAt',['Food Truck','Hot Dogs','Indian'])
     end
     describe "name" do
       it "should find Category by name" do
+        Category.find_by_name('eat').should_not be_blank
+        Category.find_by_name('food truCK').should_not be_blank
+        Category.find_by_name('food truck').should_not be_blank
+        Category.find_by_name('EAT').should_not be_blank
+        Category.find_by_name('hot dogs').should_not be_blank
+        Category.find_by_name('Indian').should_not be_blank
+        Category.find_by_name('InDIan').should_not be_blank
+      end
+      it "should have the sam parent" do
+        c1 = Category.find_by_name('hot dogs')
+        c1.should_not be_blank
+        Category.find_by_nid(c1['_id'])['parent'].should == Category.find_by_name('eat')['_id']
+        c2 = Category.find_by_name('Indian')
+        c2.should_not be_blank
+        Category.find_by_nid(c2['_id'])['parent'].should == Category.find_by_name('eat')['_id']
       end
       it "should find Category by alias" do
       end

@@ -40,7 +40,7 @@ class Category < MongoRuby
   
   # @required nid
   def self.find_by_nid(nid)
-    return false unless (nid = Util.BSONify(nid))
+    return false unless (nid = Util.STRINGify(nid))
     Category.find_one({ :_id => nid })
   end
   
@@ -55,37 +55,35 @@ class Category < MongoRuby
       Util.STRINGify(category['_id'])
     else
       items = Category.params(opt, primary)
-      Util.STRINGify(Category.save(items))
+      Util.STRINGify(Category.save(items.merge(Category.ID)))
     end
   end
   
   def self.find_or_create_by_primary_and_secordary(pnid,s)
     return false if s.blank? || (top = Category.find_by_nid(pnid)).blank?
-    
     Category.normalize!(s)
     pcid = Util.STRINGify(top['_id'])
     sec = Category.find_one({ :parent => pcid, :p => s })
     
     return Util.STRINGify(sec['_id']) unless sec.blank?
-    Util.STRINGify(Category.save({ :p => s, :parent => pcid }))
+    Util.STRINGify(Category.save({ :p => s, :parent => pcid }.merge(Category.ID)))
   end
   
   def self.new_categories(top_level,cats=[])
-    return false if cats.blank?
+    return if top_level.blank?
     ids = []
     top = Category.find_or_create_by_name(top_level)
-    ids << top
     cats.each do |c|
       ids << Category.find_or_create_by_primary_and_secordary(top, c)
     end
-    ids
+    [top, ids]
   end
   
   private
   
   # @required id
   def self.destroy_by_nid(nid)
-    return false unless (nid = Util.BSONify(nid))
+    return false unless (nid = Util.STRINGify(nid))
     Category.remove({ :_id => nid })
   end
   
@@ -108,6 +106,10 @@ class Category < MongoRuby
     Category.normalize!(primary)
     opt.merge!({:p => primary}) if primary.present?
     opt
+  end
+  
+  def self.ID
+    { :_id => Util.ID }
   end
   
 end
