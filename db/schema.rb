@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111114081149) do
+ActiveRecord::Schema.define(:version => 20111114171153) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(:version => 20111114081149) do
     t.datetime "updated_at"
     t.float    "lat",          :default => 0.0
     t.float    "lng",          :default => 0.0
-    t.integer  "cost"
+    t.string   "cost"
     t.string   "primary"
     t.string   "secondary"
     t.string   "location_nid"
