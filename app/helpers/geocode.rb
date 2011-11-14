@@ -15,7 +15,7 @@ class Geocode
         path = "#{BASE_DIR}/#{region}"
         these_locations = process_directory(path)
         out = "#{path}/out/#{Time.now.strftime("%Y|%m|%d|%H|%M|%S_")}#{region}.txt"
-        File.open(out, 'w') { |f| 
+        File.open(out, 'w+') { |f| 
           f.write(these_locations.to_json)
         }
       end

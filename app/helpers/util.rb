@@ -70,7 +70,7 @@ class Util
         id
       end
     end
- 
+    
     def BSONID
       BSON::ObjectId.new
     end
@@ -91,7 +91,7 @@ class Util
       end
     end
     
-    def reverse_geocode_address(lat,lng)
+    def reverse_geocode(lat,lng)
       begin
         placefinder.get(:q => "#{lat},#{lng}", :gflags => YAHOO_GFLAGS_REV)
       rescue Exception

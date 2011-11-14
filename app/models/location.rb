@@ -48,7 +48,7 @@ class Location < ActiveRecord::Base
   # @optional :street
   # @optional :city
   def self.search(opt,start=0,lim=10)
-    nid = Util.BSONify(opt[:nid])
+    nid = Util.STRINGify(opt[:nid])
     name = opt[:name]
     street = opt[:street]
     city = opt[:city]
