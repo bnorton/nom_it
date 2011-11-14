@@ -2,7 +2,7 @@ class LocationsController < ApplicationController
   
   respond_to :json
   
-  before_filter :validate_nids
+  before_filter :validate_nids, :only => [:detail] 
   before_filter :authentication_required, :only => [:edit,:create]
   before_filter :needs_for_create, :only => [:create]
   before_filter :needs_for_search, :only => [:search,:here]
