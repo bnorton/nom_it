@@ -20,6 +20,8 @@ gem 'mongo'
 
 gem "paperclip", "~> 2.4"
 
+gem 'placefinder'
+
 group :assets do
   gem 'sass-rails',   '~> 3.1.4'
   gem 'coffee-rails', '~> 3.1.1'
@@ -36,7 +38,6 @@ group :development, :test do
     gem 'capistrano-unicorn'
     gem "rspec-rails"
     gem 'capistrano'
-    gem 'placefinder'
 end
 
 group :test do
