@@ -49,13 +49,10 @@ class ThumbCount < MongoRuby
   
   ## methods that find ratings or totals
   def self.for_nid(nid)
-    if (nid = Util.STRINGify(nid))
-      item = ThumbCount.find_one({ :_id => nid })
-      return {} if item.nil?
-      { :up => item['up'], :meh => item['meh'] }
-    else
-      {}
-    end
+    nid = Util.STRINGify(nid)
+    item = ThumbCount.find_one({ :_id => nid })
+    return {} if item.nil?
+    { :up => item['up'], :meh => item['meh'] }
   end
   
 end

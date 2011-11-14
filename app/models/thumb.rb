@@ -34,15 +34,17 @@ class Thumb < MongoRuby
   ## methods that find ratings or totals
   def self.for_unid(unid,lim=20)
     unid = Util.STRINGify(unid)
-    Thumb.find_by({ :unid => unid }, lim)
+    Thumb.find_by({ :unid => unid }, lim) || {}
   end
   
   def self.detail_for_nid(nid,lim=10)
     nid = Util.STRINGify(nid)
     result = []
     thumbs = Thumb.for_nid(nid,lim)
-    while (thumb = thumbs.next).present?
-      result << Util.nidify(thumb,:tnid)
+    if thumbs.count > 0
+      while (thumb = thumbs.next).present?
+        result << Util.nidify(thumb,:tnid)
+      end
     end
     {
       :thumbs => result,
