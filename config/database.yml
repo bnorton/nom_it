@@ -18,3 +18,4 @@ production:
   database: production
   username: root
   password: "%planb56b6!"
+  reconnect: true
