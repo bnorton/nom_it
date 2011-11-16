@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ "$(pidof mongod)" ] 
+then
+    echo "mongod already started on /data/db"
+else
+    sudo /usr/bin/mongod --dbpath=/data/db --logpath=/log/mongodb/production.log --journal &
+fi
+
+if [ "$(pidof nginx)" ] 
+then
+    echo "nginx already running"
+else
+    /etc/init.d/nginx stop
+    /etc/init.d/nginx start
+fi
+
+if [ "$(pidof mysqld)" ] 
+then
+    echo "mysqld is already running"
+else
+    mysqld &
+fi
+
+if [ "$(pidof unicorn)" ] 
+then
+    echo "unicorn is already started..."
+else
+    cd /apps/nom/current; unicorn
+fi
+
+
