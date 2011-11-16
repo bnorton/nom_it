@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.1.1'
 
+gem 'aws-s3'
+
 gem 'mysql'
 gem 'mysql2'
 gem 'ruby-mysql' 
