@@ -87,7 +87,7 @@ upstream nom {
 
 server {
     listen 80 default;
-    server_name localhost justnom.it;
+    server_name _;
 
     root /apps/nom/current/public;
     access_log /var/log/nginx/nom_access.log;

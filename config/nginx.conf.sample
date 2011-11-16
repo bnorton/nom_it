@@ -1,3 +1,6 @@
+#############################################################################
+### This the the sample for nginx.conf
+#############################################################################
 user root root;
 
 # Change this depending on your hardware
@@ -41,4 +44,103 @@ http {
 
     include /etc/nginx/conf.d/*.conf;
     include /etc/nginx/sites-enabled/*;
+}
+
+
+#############################################################################
+### This the the sample for the sites-enabled/default
+#############################################################################
+user root root;
+
+# Change this depending on your hardware
+worker_processes 4;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+    multi_accept on;
+}
+
+http {
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay off;
+    # server_tokens off;
+
+    # server_names_hash_bucket_size 64;
+    # server_name_in_redirect off;
+
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    gzip on;
+    gzip_disable "msie6";
+
+    # gzip_vary on;
+    gzip_proxied any;
+    gzip_min_length 500;
+    # gzip_comp_level 6;
+    # gzip_buffers 16 8k;
+    # gzip_http_version 1.1;upstream nom {
+  server unix:/apps/nom/shared/sockets/unicorn.sock fail_timeout=0;
+}
+
+server {
+    listen 80 default;
+    server_name _;
+
+    root /apps/nom/current/public;
+    access_log /var/log/nginx/nom_access.log;
+    rewrite_log on;
+
+    location / {
+        #all requests are sent to the UNIX socket
+        proxy_pass  http://nom;
+        proxy_redirect     off;
+
+        proxy_set_header   Host             $host;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+
+        client_max_body_size       6m;
+
+        proxy_connect_timeout      90;
+        proxy_send_timeout         90;
+        proxy_read_timeout         90;
+
+        proxy_buffer_size          64k;
+        proxy_buffers              32 16k;
+        proxy_busy_buffers_size    64k;
+        proxy_temp_file_write_size 64k;
+    }
+
+    location ~ ^/(images|javascripts|stylesheets|system)/  {
+      root /apps/nom/current/public;
+      expires max;
+      break;
+    }
+}
+server {
+    listen       443 ssl;
+    server_name  _;
+
+    ssl on;
+    ssl_certificate /apps/keys/justnom/justnom.it.crt;
+    ssl_certificate_key /apps/keys/justnom/justnom.it.key;
+
+    location / {
+        proxy_pass    http://nom;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-FORWARDED_PROTO https;
+    }
+    location ~ ^/(images|javascripts|stylesheets|system)/  {
+        root /apps/nom/current/public;
+        expires max;
+        break;
+    }
 }

@@ -1,14 +1,13 @@
-#---------------------------------------------------------------------------
 # Example MySQL config file for large systems.
 #
 # This is for a large system with memory = 512M where the system runs mainly
 # MySQL.
 #
-# You can copy this file to
-# /etc/my.cnf to set global options,
-# mysql-data-dir/my.cnf to set server-specific options (in this
-# installation this directory is @localstatedir@) or
-# ~/.my.cnf to set user-specific options.
+# MySQL programs look for option files in a set of
+# locations which depend on the deployment platform.
+# You can copy this option file to one of those
+# locations. For information about these locations, see:
+# http://dev.mysql.com/doc/mysql/en/option-files.html
 #
 # In this file, you can use all long options that a program supports.
 # If you want to know which options a program supports, run the program
@@ -17,46 +16,27 @@
 # The following options will be passed to all MySQL clients
 [client]
 #password	= your_password
-port  = 8008
-socket  = /var/lib/mysql/mysql.sock
+port		= 3306
+socket		= /tmp/mysql.sock
 
 # Here follows entries for some specific programs
 
 # The MySQL server
 [mysqld]
-port  = 8008
-socket  = /var/lib/mysql/mysql.sock
-skip-locking
-
-# Caches and Buffer Sizes
-key_buffer = 256M
-max_allowed_packet=16M
-table_cache = 256
-sort_buffer_size = 2M
-read_buffer_size = 2M
+port		= 3306
+socket		= /tmp/mysql.sock
+skip-external-locking
+key_buffer_size = 256M
+max_allowed_packet = 1M
+table_open_cache = 256
+sort_buffer_size = 1M
+read_buffer_size = 1M
 read_rnd_buffer_size = 4M
-record_buffer = 1M
-myisam_sort_buffer_size = 128M
-thread_cache = 128
-query_cache_limit = 2M
-query_cache_type = 1
-query_cache_size = 32M
-key_buffer = 16M
-join_buffer = 2M
-table_cache = 1024
-
-#Time Outs
-interactive_timeout = 100
-wait_timeout = 100
-connect_timeout = 10
-
+myisam_sort_buffer_size = 64M
+thread_cache_size = 8
+query_cache_size= 16M
 # Try number of CPU's*2 for thread_concurrency
-thread_concurrency = 2
-
-# Maximum connections allowed
-max_connections = 500
-max_user_connections = 50
-max_connect_errors = 10
+thread_concurrency = 8
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
 # if all processes that need to connect to mysqld run on the same host.
@@ -68,7 +48,10 @@ max_connect_errors = 10
 
 # Replication Master Server (default)
 # binary logging is required for replication
-log-bin
+log-bin=mysql-bin
+
+# binary logging format - mixed recommended
+binlog_format=mixed
 
 # required unique id between 1 and 2^32 - 1
 # defaults to 1 if master-host is not set
@@ -110,45 +93,36 @@ server-id	= 1
 # (and different from the master)
 # defaults to 2 if master-host is set
 # but will not function as a slave if omitted
-#server-id      = 2
+#server-id       = 2
 #
 # The replication master for this slave - required
-#master-host    =  <hostname>
+#master-host     =   <hostname>
 #
 # The username the slave will use for authentication when connecting
 # to the master - required
-#master-user    =  <username>
+#master-user     =   <username>
 #
 # The password the slave will authenticate with when connecting to
 # the master - required
-#master-password =  <password>
+#master-password =   <password>
 #
 # The port the master is listening on.
 # optional - defaults to 3306
-#master-port    =  <port>
+#master-port     =  <port>
 #
 # binary logging - not required for slaves, but recommended
-#log-bin
-
-# Point the following paths to different dedicated disks
-#tmpdir  = /tmp/  
-#log-update  = /path-to-dedicated-directory/hostname
-
-# Uncomment the following if you are using BDB tables
-#bdb_cache_size = 64M
-#bdb_max_lock = 100000
+#log-bin=mysql-bin
 
 # Uncomment the following if you are using InnoDB tables
-innodb_data_home_dir = /var/lib/mysql/
+innodb_data_home_dir = /usr/local/mysql/data
 innodb_data_file_path = ibdata1:10M:autoextend
-innodb_log_group_home_dir = /var/log/innodblogs/
-innodb_log_arch_dir = /var/log/innodblogsarchive/
+innodb_log_group_home_dir = /usr/local/mysql/data
 # You can set .._buffer_pool_size up to 50 - 80 %
 # of RAM but beware of setting memory usage too high
-innodb_buffer_pool_size = 160M
+innodb_buffer_pool_size = 256M
 innodb_additional_mem_pool_size = 20M
 # Set .._log_file_size to 25 % of buffer pool size
-innodb_log_file_size = 40M
+innodb_log_file_size = 64M
 innodb_log_buffer_size = 8M
 innodb_flush_log_at_trx_commit = 1
 innodb_lock_wait_timeout = 50
@@ -157,29 +131,16 @@ innodb_lock_wait_timeout = 50
 quick
 max_allowed_packet = 16M
 
-[safe_mysqld]
-#err-log=/var/log/mysqld.log
-#pid-file=/var/lib/mysql/mysql.pid <-- Not necessary
-open_files_limit=8192
-
-
 [mysql]
 no-auto-rehash
 # Remove the next comment character if you are not familiar with SQL
 #safe-updates
 
-[isamchk]
-key_buffer = 128M
-sort_buffer_size = 128M
-read_buffer = 2M
-write_buffer = 2M
-
 [myisamchk]
-key_buffer = 128M
+key_buffer_size = 128M
 sort_buffer_size = 128M
 read_buffer = 2M
 write_buffer = 2M
 
 [mysqlhotcopy]
-interactive-timeout/log
-#------------------------------------------------------------------------------------------
+interactive-timeout
