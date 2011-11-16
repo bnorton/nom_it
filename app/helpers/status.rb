@@ -18,6 +18,10 @@ module Status
       message(-1, "you are not authorized to view that user")
     end
     
+    def image_not_saved
+      message(-1, "the image was not able to be saved.")
+    end
+    
     def screen_name_taken
       message(-1, "the screen_name you were looking for is not available")
     end
