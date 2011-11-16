@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111114171153) do
+ActiveRecord::Schema.define(:version => 20111115060656) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -41,6 +41,17 @@ ActiveRecord::Schema.define(:version => 20111114171153) do
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
   add_index "geolocations", ["lng", "lat"], :name => "geolocations_long_lat"
+
+  create_table "images", :force => true do |t|
+    t.datetime "created_at"
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.string   "image_file_size"
+    t.datetime "image_updated_at"
+    t.string   "nid"
+    t.string   "user_nid"
+    t.string   "location_nid"
+  end
 
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
