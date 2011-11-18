@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# after git.bash
+
+nginx=stable # use nginx=development for latest development version
+add-apt-repository ppa:nginx/$nginx
+sudo apt-get update -y && sudo apt-get upgrade -y
+
+# now after adding the ppa just install
+sudo apt-get install -y nginx
+
+sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.original
+sudo mkdir -p /var /var/log /var/log/nginx/
+
+sudo cp ~/nom_it/config/nginx.conf.sample /etc/nginx/nginx.conf
+
+echo tail -f -n100 /var/log/nginx/access.log > ~/log/nginx_access
+chmod +x ~/log/nginx_access
+
+echo tail -f -n100 /var/log/nginx/error.log > ~/log/nginx_error
+chmod +x ~/log/nginx_error
+
+sudo /etc/init.d/nginx stop
+sudo /etc/init.d/nginx start

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# after git.bash
+
+sudo mkdir -p /apps/keys/justnom/
+
+cp ~/nom_it/keys/justnom/justnom.it.key /apps/key/justnom/
+cp ~/nom_it/keys/justnom/justnom.it.crt /apps/key/justnom/

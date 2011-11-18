@@ -1,0 +1,10 @@
+#!/bin/bash
+
+sudo apt-get install -y git-core
+
+git config --global user.name "Nom Production"
+git config --global user.email "deployer@justnom.it"
+git config --global github.user bnorton
+git config --global github.token a97228eb813ef5b0734ebc3dee4ce5e5
+
+git clone git@github.com:bnorton/nom_it.git ~/nom_it

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.0.1.tgz
+tar -xzf mongodb-linux-x86_64-2.0.1.tgz
+sudo cp mongodb-linux-x86_64-2.0.1/bin/* /usr/bin/
+
+sudo mkdir /data && sudo mkdir -p /data/db && sudo mkdir -p /log && sudo mkdir -p /log/mongodb
+sudo touch /log/mongodb/production.log
+
+echo tail -f -n100 /log/mongodb/production.log > ~/log/mongodb
+chmod +x ~/log/mongodb
+
+sudo /usr/bin/mongod --dbpath=/data/db --logpath=/log/mongodb/production.log --journal &

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+rvmsudo rvm pkg install 'openssl 0.9.8n'
+
+rvmsudo rvm install ree
+rvm --default use ree
+rvm gemset create nom
+rvm --default use ree@nom

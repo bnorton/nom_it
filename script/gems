@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rvmsudo gem update --system
+rvmsudo gem install bundler rails rake rack unicorn mysql2 json bson bson_ext --no-ri --no-rdoc

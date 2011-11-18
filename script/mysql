@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# after git.bash
+
+sudo apt-get install -y mysql-client libmysqlclient16-dev libmysqlclient16 libmysql-ruby libmysqlclient-dev
+echo "done with client setup"
+
+groupadd mysql
+useradd -r -g mysql mysql
+
+wget http://mysql.he.net/Downloads/MySQL-5.5/mysql-5.5.17.tar.gz
+tar xzf mysql-5.5.17.tar.gz 
+cd mysql-5.5.17
+echo "Done with download and extract"
+cmake .
+make && make install
+
+echo "export, add users, chmod"
+export PATH=$PATH:/usr/local/mysql/bin
+
+chown -R mysql /usr/local/mysql
+chgrp -R mysql /usr/local/mysql
+
+# post install stuffs
+/usr/local/mysql/scripts/mysql_install_db --user=mysql --basedir=/usr/local/mysql
+
+chown -R root /usr/local/mysql
+chown -R mysql /usr/local/mysql/data
+
+mkdir -p /usr/share
+ln -sf /usr/local/mysql/share/english/errmsg.sys /usr/share/errmsg.sys
+
+cp /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql.server
+
+mkdir -p /var/log/mysql
+
+echo "my.cnf and mysqld_safe + passwords"
+sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
+
+mysqld_safe &
+mysqladmin -u root password '%planb56b6!'
+
+echo tail -f -n100 /var/log/mysql/error.log > ~/log/mysql
+chmod +x ~/log/mysql

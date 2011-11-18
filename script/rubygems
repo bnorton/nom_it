@@ -1,0 +1,6 @@
+#!/bin/bash
+
+wget http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
+tar zxf rubygems-1.8.10.tgz
+
+ruby rubygems-1.8.10/setup.rb

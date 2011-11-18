@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# mysql, mongodb, nginx, rvm, rubygems, ree, unicorn, ssl
+
+# install the dependencies for all installations
+## update/upgrade apt-get
+## openssl, zlib, imagemagik
+
+./prefix
+
+if [ ! -f ~/.ssh/id_rsa ]; then
+  echo "Copying and setting up ssh keys"
+  ./ssh
+fi
+
+if ! hash git >/dev/null; then
+  echo "Setting up git"
+  ./git
+fi
+
+if [ ! -f ~/nom_it/keys/justnom/justnom.it.key ]; then
+  echo "Copying the server certificate and keys"
+  ./keys
+fi
+
+if ! hash nginx; then
+  echo "Installing Nginx"
+  ./nginx
+fi
+
+if ! hash mysqld; then
+  echo "Installing MySQL"
+  ./mysql
+fi
+
+if ! hash mongod; then
+  echo "Installing MongoDB"
+  ./mongodb
+fi
+
+if ! hash rvm; then
+  echo "Downloading building and installing RVM"
+  ./rvm
+  echo "Exiting after RVM install... please log back in and restart this script"
+  touch ~/rvm_installed
+  exit
+fi
+
+rvm use ree@nom
+if gem list | grep blah; then  # this outputs if rubygems is NOT installed and fails silently when it is installed
+  ./rubygems
+fi
+
+if [ -f ~/rvm_installed ]; then
+  echo "Installing REE"
+  ./ree
+  rm ~/rvm_installed
+fi
+
+rvm use ree@nom
+if ! gem list | grep blah; then
+  if ! gem list | grep unicorn; then
+    echo "Installing Ruby gems"
+    ./rubygems
+  fi
+fi
