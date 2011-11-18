@@ -50,7 +50,7 @@ class Ranking < MongoRuby
       rank = db.#{Ranking.dbcollection}.findOne({ nid:nid, unid:unid, cur:true });
       if (rank) { rank.cur = false;
         db.#{Ranking.dbcollection}.save( rank );
-        return true;
+        return rank.v;
       } else { return false; }}")
   end
   
@@ -68,10 +68,11 @@ class Ranking < MongoRuby
   # mark as not current
   def self.remove_rank(nid,unid)
     old_value = Ranking.eval("remove_rank('#{nid}','#{unid}')")
+    return false unless old_value
     RankingAverage.remove_ranking(nid, old_value)
   end
   
-  def self.for_unid(unid,lim=10,key=:ranking_nid)
+  def self.for_unid(unid,lim=10,key=:rank_nid)
     lim = Ranking.valid_limit(lim)
     unless (unid = unid.to_s).blank?
       found = Ranking.find({:unid => unid, :cur => true}).limit(lim)

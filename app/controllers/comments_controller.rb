@@ -2,6 +2,7 @@ class CommentsController < ApplicationController
   
   respond_to :json
   
+  before_filter :lat_lng_user
   before_filter :check_params,  :only => [:recommendation,:location,:user]
   before_filter :search_params, :only => [:search,:create]
   
@@ -24,12 +25,14 @@ class CommentsController < ApplicationController
   end
   
   def create
-    nid = if @search[:rnid] && @search[:lnid]
+    nid = if @search[:recommendation_nid]
       Comment.create_comment_for_recommendation(@search)
-    else
+    elsif @search[:location_nid]
       Comment.create_comment_for_location(@search)
+    elsif @search[:about_user_nid]
+      Comment.create_comment_about_user(@search)
     end
-    message = nid ? [{:nid=>nid.to_s}] : nil
+    message = nid ? [{:comment_nid=>Util.STRINGify(nid)}] : nil
     respond_with ok_or_not(message)
   end
   
@@ -50,7 +53,7 @@ class CommentsController < ApplicationController
   end
   
   def check_params
-    @nid = params[:nid]
+    @nid = params[:comment_nid]
     @start = params[:start]
     @limit = params[:limit]
     if @nid.blank?
@@ -60,16 +63,22 @@ class CommentsController < ApplicationController
   
   def search_params
     @search = {
-      :nid  => params[:nid],
-      :unid => params[:unid],
-      :lnid => params[:lnid],
-      :rnid => params[:rnid],
+      :comment_nid  => params[:comment_nid],
+      :user_nid => @user_nid,
+      :location_nid => params[:location_nid],
+      :recommendation_nid => params[:recommendation_nid],
       :text => params[:text]
     }
-    unless @search[:nid] || @search[:unid] || @search[:lnid] || @search[:rnid] || @search[:text]
+    unless @search[:comment_nid] || @search[:user_nid] || @search[:location_nid] || @search[:recommendation_nid] || @search[:text]
       respond_with Status.insufficient_arguments({
-        :message=>"must have a `nid`, `unid`, `lnid` ,`rnid`, or some `text`"})
+        :message=>"must have a `comment_nid`, `user_nid`, `location_nid` ,`recommendation_nid`, or some `text`"})
     end
   end
   
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
 end

@@ -2,6 +2,7 @@ class LocationsController < ApplicationController
   
   respond_to :json
   
+  before_filter :lat_lng_user
   before_filter :validate_nids, :only => [:detail] 
   before_filter :authentication_required, :only => [:edit,:create]
   before_filter :needs_for_create, :only => [:create]
@@ -132,5 +133,12 @@ class LocationsController < ApplicationController
   def authentication_required
     # token from the db must match
   end
+  
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
   
 end

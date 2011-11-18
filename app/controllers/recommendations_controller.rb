@@ -4,17 +4,18 @@ class RecommendationsController < ApplicationController
 
   respond_to :json
   
+  before_filter :lat_lng_user
   before_filter :required_for_creation,  :only => [:create ]
   before_filter :required_for_destroy,   :only => [:destroy]
   before_filter :required_for_update,    :only => [:update ]
   before_filter :optional,               :only => [:create,:update]
   before_filter :user_or_location,       :only => [:create,:user,:location]
-  before_filter :id_only,                :only => [:comments,:to_user,:about_location]
+  before_filter :id_only,                :only => [:to_user,:about_location]
   before_filter :authentication_required,:only => [:user,:location]
   
   def create
     token,item = Recommendation.create(@all_params)
-    followers  = Follower.users_that_follow_me(@user)
+    followers  = Follower.users_that_follow_me(@user_nid)
     recommends = Recommend.create(item,followers)
     condition  = !token.blank?
     respond_with ok_or_not(condition,{
@@ -52,7 +53,7 @@ class RecommendationsController < ApplicationController
   private
   
   def recommendations(method_name)
-    recs = Recommendation.send("for_#{method_name}".to_sym, @user)
+    recs = Recommendation.send("for_#{method_name}".to_sym, @user_nid)
     recs = Util.prepare(recs)
     condition = !recs.blank?
     respond_with ok_or_not(condition,{
@@ -83,20 +84,27 @@ class RecommendationsController < ApplicationController
     end
   end
   
+  before_filter :lat_lng_user
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+  
   def required_for_creation
     @lat  = params[:lat]
     @lng  = params[:lng]
-    @user = params[:user_nid]
+    @user_nid = params[:user_nid]
     @location_nid = params[:location_nid]
-    if (@lat.blank? || @lng.blank? || @user.blank? || @location_nid.blank?)
+    if (@lat.blank? || @lng.blank? || @user_nid_nid.blank? || @location_nid.blank?)
       respond_with Status.recommendation_not({:word => "made"})
     end
   end
   
   def required_for_destroy
     @recid = params[:nid] || params[:recommendation]
-    @user  = params[:user_nid]
-    if @recid.blank? || @user.blank?
+    @user_nid  = params[:user_nid]
+    if @recid.blank? || @user_nid.blank?
       respond_with Status.recommendation_not({:word => "destroyed"})
     end
   end
@@ -110,8 +118,8 @@ class RecommendationsController < ApplicationController
   end
   
   def user_or_location
-    @user = params[:user_nid] || params[:uid]
-    if @user.blank?
+    @user_nid = params[:user_nid]
+    if @user_nid.blank?
       respond_with Status.no_recommendations
     end
   end
@@ -136,7 +144,7 @@ class RecommendationsController < ApplicationController
     @all_params = {
       :lat  => @lat,
       :lng  => @lng,
-      :user_nid => @user,
+      :user_nid => @user_nid,
       :text => @text,
       :location_nid => @location_nid,
       ## optional

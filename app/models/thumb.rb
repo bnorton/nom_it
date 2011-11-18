@@ -43,7 +43,7 @@ class Thumb < MongoRuby
     thumbs = Thumb.for_nid(nid,lim)
     if thumbs.count > 0
       while (thumb = thumbs.next).present?
-        result << Util.nidify(thumb,:tnid)
+        result << Util.nidify(thumb,:location_nid)
       end
     end
     {

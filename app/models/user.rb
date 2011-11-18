@@ -48,8 +48,9 @@ class User < ActiveRecord::Base
   scope :find_by_username, lambda {|username|
     public_fields.where(["screen_name=?", username]).has_joined
   }
-  scope :search_by_all, lambda {|name,email,screen_name|
-    public_fields.where(["name like ? or email=? or screen_name=?", "%#{name}%",email,screen_name]).has_joined
+  scope :search_by_all, lambda {|identifier|
+    list = [identifier,identifier,identifier]
+    public_fields.where(["name like ? or nid=? or email=? or screen_name=?", "%#{identifier}%",*list]).has_joined
   }
   
   def self.token_match?(nid, token)
@@ -189,13 +190,18 @@ end
   # create_table "users", :force => true do |t|
   #   t.datetime "created_at"
   #   t.datetime "updated_at"
+  #   t.string   "nid"
   #   t.string   "name"
+  #   t.string   "screen_name"
+  #   t.string   "email"
+  #   t.string   "phone"
   #   t.string   "facebook"
   #   t.string   "twitter"
   #   t.string   "google"
   #   t.string   "last_seen"
   #   t.string   "udid"
   #   t.string   "url"
+  #   t.string   "image_url"
   #   t.string   "street"
   #   t.string   "city"
   #   t.string   "state"
@@ -206,16 +212,12 @@ end
   #   t.string   "session_id"
   #   t.binary   "newpassword",    :limit => 255
   #   t.datetime "newpass_time"
-  #   t.string   "email"
-  #   t.string   "phone"
-  #   t.string   "screen_name"
   #   t.text     "description"
   #   t.datetime "authenticated"
   #   t.string   "token"
   #   t.date     "token_expires"
   #   t.string   "referral_code",  :limit => 32
   #   t.string   "referred_by",    :limit => 32
-  #   t.binary   "schemaless"
   #   t.string   "json_encode",    :limit => 1022
   #   t.integer  "follower_count"
   #   t.string   "oauth_token"
@@ -223,8 +225,10 @@ end
   #   t.binary   "facebook_hash"
   #   t.binary   "twitter_hash"
   #   t.boolean  "has_joined",                     :default => true
-  # end  
-  # what is returned from a twitter session
+  #   t.binary   "schemaless"
+  # end
+
+# what is returned from a twitter session
 #   [
 # 
 #     {

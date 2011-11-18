@@ -21,14 +21,14 @@ class Metadata < MongoRuby
     nids = Array(nids)
     nids.each do |nid|
       unless (Metadata.for_nid(nid))
-        Metadata.save({ :_id => nid, :views => 0, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
+        Metadata.save({ :_id => nid, :views => 1, :ret => 0, :up => 0, :meh => 0,:rank => 0, :rank_c => 0, :rec_c => 0 })
       end
     end
   end
   
   def self.for_nid(nid)
     meta = Metadata.find_one({ :_id => nid })
-    Util.nidify(meta) unless meta.blank?
+    Util.nidify(meta,:location_nid) unless meta.blank?
   end
   
   def self.set_attributes(attribs,valid_items)

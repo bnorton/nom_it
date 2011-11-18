@@ -4,6 +4,7 @@ class GeolocationsController < ApplicationController
   
   respond_to :json
   
+  before_filter :lat_lng_user
   before_filter :lat_lng_dist, :only => [:here, :search]
   before_filter :primary,      :only => [:search]
   before_filter :secondary,    :only => [:search]
@@ -49,5 +50,12 @@ class GeolocationsController < ApplicationController
   def authentication_required
     
   end
+  
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
   
 end

@@ -5,6 +5,7 @@ class UsersController < ApplicationController
   
   respond_to :json
   
+  before_filter :lat_lng_user
   before_filter :user_params,       :only => [:me, :login, :register,:thumbs,:thumbed]
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :login_required,    :only => [:login]
@@ -60,7 +61,8 @@ class UsersController < ApplicationController
   end
   
   def search
-    results   = User.search_by_all(@query,@email,@screen_name)
+    @query ||= @screen_name || @email
+    results   = User.search_by_all(@query)
     condition = results.present?
     response  = ok_or_not(condition,{:results=>results,:search=>true})
     respond_with response
@@ -138,9 +140,9 @@ class UsersController < ApplicationController
   
   def search_params
     @query = params[:query] || params[:q]
-    @screen_name = params[:screen_name] || @query
-    @email = params[:email] || @query
-    if !(@query.present? || @screen_name.present? || @email.present?)
+    @screen_name = params[:screen_name]
+    @email = params[:email]
+    unless @query.present? || @screen_name.present? || @email.present?
       respond_with Status.insufficient_arguments
     end
   end
@@ -164,4 +166,10 @@ class UsersController < ApplicationController
     validate_token
   end
   
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
 end

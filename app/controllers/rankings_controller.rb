@@ -2,7 +2,9 @@ class RankingsController < ApplicationController
   
   respond_to :json
   
-  before_filter :creation, :only => [:create,:update,:destroy]
+  before_filter :lat_lng_user
+  before_filter :creation, :only => [:create]
+  before_filter :destruction, :only => [:destroy]
   before_filter :user_params, :only => [:user]
   before_filter :location_params, :only => [:location]
   
@@ -18,19 +20,23 @@ class RankingsController < ApplicationController
   # RankingAverage.ranking_total(nid)
   
   def create
-    Ranking.new_rank(@nid,@uid,@rank)
-    respond_with Status.OK
+    success = Ranking.new_rank(@location_nid,@user_nid,@rank)
+    respond_with ok_or_not({:oper => success})
   end
   
   def destroy
-    Ranking.remove_ranking(@nid,@uid,@rank)
-    respond_with Status.OK
+    success = if (@rank_nid)
+      Ranking.remove_rank_nid(@rank_nid)
+    else
+      Ranking.remove_ranking(@location_nid,@user_nid,@rank)
+    end
+    respond_with ok_or_not({:oper => success,:remove => true})
   end
   
   def user
     @key = :rank_nid
-    @rankings = Ranking.for_unid(@uid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
-    @rank_loc = Ranking.build_list @rankings      # now just get the locations that are associated with these rankings
+    @rankings = Ranking.for_unid(@user_nid,@limit,@key)
+    @rank_loc = Ranking.build_list @rankings
     respond_with ok_or_not({
       :items => @rank_loc,
       :what => 'user'})
@@ -38,9 +44,9 @@ class RankingsController < ApplicationController
   
   def location
     @key = :rank_nid
-    @rankings = Ranking.for_nid(@nid,@limit,@key) # a list of objects attr_accessor :nid, :uid, :v, :text, :cur
+    @rankings = Ranking.for_nid(@location_nid,@limit,@key)
     if @rankings.length > 0
-      @location = Location.detail_for_nid(@nid)
+      @location = Location.detail_for_nid(@location_nid)
       respond_with ok_or_not({
         :location=>@location,
         :ranks => @rankings,
@@ -57,6 +63,12 @@ class RankingsController < ApplicationController
       Status.location_ranks(loc,ranks)
     elsif (items = options[:items])
       Status.ranks(items)
+    elsif options[:oper]
+      if options[:remove]
+        Status.rank_action({:which => 'removed'})
+      else
+        Status.rank_action({:which => 'created'})
+      end
     else
       Status.no_ranks_for(options)
     end
@@ -67,12 +79,12 @@ class RankingsController < ApplicationController
   end
   
   def user_params
-    render_insufficient unless (@uid = params[:nid])
+    render_insufficient unless (@user_nid = params[:user_nid])
     @limit = params[:limit] || 20
   end
   
   def location_params
-    render_insufficient unless (@nid = params[:nid])
+    render_insufficient unless (@location_nid = params[:location_nid])
     @limit = params[:limit] || 20
   end
   
@@ -82,5 +94,20 @@ class RankingsController < ApplicationController
     location_params
     render_insufficient unless (@rank = params[:rank])
   end
+
+  def destruction
+    unless @rank_nid = params[:rank_nid]
+      user_params
+      location_params
+    end
+    render_insufficient unless (@rank = params[:rank])
+  end
+  
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
   
 end

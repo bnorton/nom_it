@@ -22,6 +22,11 @@ module Status
       message(-1, "the image was not able to be saved.")
     end
     
+    def image_saved(image_nid)
+      d = [{:image_nid => image_nid}]
+      status_message_results(1,'image uploaded',d)
+    end
+    
     def screen_name_taken
       message(-1, "the screen_name you were looking for is not available")
     end
@@ -71,6 +76,11 @@ module Status
     def no_ranks_for(options={})
       msg = options[:message] || "There are no rankings for that #{options[:what]} yet :("
       message(-1, msg)
+    end
+    
+    def rank_action(opt={})
+      msg opt[:which] || 'done something with'
+      message(1,"rank successfully #{msg}")
     end
     
     def insufficient_arguments(options={})
@@ -154,10 +164,10 @@ module Status
 
     private
     
-    def status_message_results(status,message,results,options)
+    def status_message_results(status,message,results,options={})
       if results.nil?
-        result_name = :message_detail
-        results = 'everything went fine on our end'
+        result_name = :messags
+        results = ['everything went fine on our end']
       else
         result_name = options[:result_name] || :results
       end

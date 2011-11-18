@@ -27,12 +27,12 @@ class Follower < ActiveRecord::Base
     where(["approved=1"])
   }
   
-  scope :followers__, lambda {|me|
-    valid.where(["user_nid in (?)",me.split(',')]) }
-  scope :followers, lambda {|me|
-    info.followers__(me) }
-  scope :followers_nids, lambda {|me|
-    iids.followers__(me) }
+  scope :followers__, lambda {|user_nid|
+    valid.where(["user_nid in (?)",user_nid.split(',')]) }
+  scope :followers, lambda {|user_nid|
+    info.followers__(user_nid) }
+  scope :followers_nids, lambda {|user_nid|
+    iids.followers__(user_nid) }
   
   scope :follows_nid__, lambda {|nid|
     valid.where(["to_user_nid in (?)",nid.split(',')]) }
@@ -41,11 +41,11 @@ class Follower < ActiveRecord::Base
   scope :follows_nid_nids, lambda {|nid|
     fids.follows_nid__(nid) }
   
-  scope :find_by_me_them_who_ifollow, lambda {|me,them|
-    valid.where(["user_nid=? and to_user_nid=?",me,them])
+  scope :find_by_me_them_who_ifollow, lambda {|user_nid,to_user_nid|
+    valid.where(["user_nid=? and to_user_nid=?",user_nid,to_user_nid])
   }
-  scope :find_by_me_them_follows_me, lambda {|me,them|
-    valid.where(["to_user_nid=? and user_nid=?",me,them])
+  scope :find_by_me_them_follows_me, lambda {|user_nid,to_user_nid|
+    valid.where(["to_user_nid=? and user_nid=?",user_nid,to_user_nid])
   }
   
   def self.find_or_create(nid,their_identifier,items)
@@ -61,12 +61,12 @@ class Follower < ActiveRecord::Base
   
   private
   
-  def self.new_follower(mynid,other,options={})
-    me = User.private_nid(mynid).try(:first)
+  def self.new_follower(user_nid,other,options={})
+    me = User.private_nid(user_nid).try(:first)
     return false if me.blank? || other.blank?
     my_name   = me.name || me.screen_name
     other_name= other.name || other.screen_name
-    f = Follower.new_or_old(mynid,other.nid)
+    f = Follower.new_or_old(user_nid,other.nid)
     f.user_nid      = me.nid
     f.user_name    = my_name
     f.user_city    = me.city
@@ -95,39 +95,39 @@ class Follower < ActiveRecord::Base
     end
   end
   
-  def self.unfollow(me,them)
-    them     = User.find_by_any_means_necessary(them)
-    follower = Follower.find_by_me_them_who_ifollow(me,them.try(:nid))
-    return false if follower.blank? || them.blank?
+  def self.unfollow(user_nid,to_user_nid)
+    to_user_nid     = User.find_by_any_means_necessary(to_user_nid)
+    follower = Follower.find_by_me_them_who_ifollow(user_nid,to_user_nid.try(:nid))
+    return false if follower.blank? || to_user_nid.blank?
     follower.delete!
   end
   
-  def self.block_follower(me,them)
-    me = Util.STRINGify(me)
-    them = Util.STRINGify(them)
-    them     = User.find_by_any_means_necessary(them)
-    follower = Follower.find_by_me_them_follows_me(me,them.try(:nid))
-    return false if follower.blank? || them.blank?
+  def self.block_follower(user_nid,to_user_nid)
+    user_nid = Util.STRINGify(user_nid)
+    to_user_nid = Util.STRINGify(to_user_nid)
+    to_user_nid = User.find_by_any_means_necessary(to_user_nid)
+    follower = Follower.find_by_me_them_follows_me(user_nid,to_user_nid.try(:nid))
+    return false if follower.blank? || to_user_nid.blank?
     follower.approved = false
     follower.save!
   end
   
-  def self.users_that_follow_me(me)
-    return [] if me.blank?
-    me = Util.STRINGify(me)
-    Follower.follows_nid_nids(me)
+  def self.users_that_follow_me(user_nid)
+    return [] if user_nid.blank?
+    user_nid = Util.STRINGify(user_nid)
+    Follower.follows_nid_nids(user_nid)
   end
   
-  def self.users_that_i_follow(me)
-    return [] if me.blank?
-    me = Util.STRINGify(me)
-    Follower.followers_nids(me)
+  def self.users_that_i_follow(user_nid)
+    return [] if user_nid.blank?
+    user_nid = Util.STRINGify(user_nid)
+    Follower.followers_nids(user_nid)
   end
   
-  def self.new_or_old(mynid,othernid)
-    mynid = Util.STRINGify(mynid)
-    othernid = Util.STRINGify(mynid)
-    Follower.find_by_me_them_follows_me(mynid,othernid).try(:first) || Follower.new
+  def self.new_or_old(user_nid,to_user_nid)
+    user_nid = Util.STRINGify(user_nid)
+    to_user_nid = Util.STRINGify(user_nid)
+    Follower.find_by_me_them_follows_me(user_nid,to_user_nid).first || Follower.new
   end
 end
 

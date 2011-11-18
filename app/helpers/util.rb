@@ -1,10 +1,9 @@
 class Util
   class << self
     
-    def nidify(item,key=:nid,id='_id')
+    def nidify(item,key,id='_id')
       return item unless item.respond_to?(:[])
-      item[key] = item[id].to_s
-      item.delete(id)
+      item[key] = Util.STRINGify(item.delete(id))
       item
     end
     

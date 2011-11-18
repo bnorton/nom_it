@@ -132,10 +132,10 @@ San Francisco, CA 94114
       Geocode.cost(@filename4).should == "$"
     end
     it "should extract the timeofday field" do
-      Geocode.timeofday(@filename1).should == "lunch|dinner"
-      Geocode.timeofday(@filename2).should == "lunch|dinner"
-      Geocode.timeofday(@filename3).should == "dessert|latenight"
-      Geocode.timeofday(@filename4).should == "breakfast|brunch"
+      Geocode.timeofday(@filename1).should == "lunch | dinner"
+      Geocode.timeofday(@filename2).should == "lunch | dinner"
+      Geocode.timeofday(@filename3).should == "dessert | latenight"
+      Geocode.timeofday(@filename4).should == "breakfast | brunch"
     end
     it "should fetch the data for an address" do
       addr = '691 14th St San Francisco, CA 94114'

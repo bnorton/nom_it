@@ -249,7 +249,7 @@ class Geocode
   end
 end
 
-Geocode.scan_regions(regions=['sanfrancisco'])
+# Geocode.scan_regions(regions=['sanfrancisco'])
 
 ###############################################################################
 #####   YELP EXTRACT   ########################################################

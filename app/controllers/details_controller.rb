@@ -2,6 +2,7 @@ class DetailsController < ApplicationController
   
   respond_to :html, :json
   
+  before_filter :lat_lng_user
   before_filter :parse_params
   before_filter :authentication_required, :only => []
   
@@ -30,4 +31,10 @@ class DetailsController < ApplicationController
     
   end
   
+  def lat_lng_user
+    @lat  = params[:lat]
+    @lng  = params[:lng]
+    @user_nid = params[:user_nid]
+  end
+
 end

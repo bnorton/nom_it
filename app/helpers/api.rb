@@ -2,7 +2,7 @@ module NOM
   class API
     class << self
       def api_prefix
-        { :prefix => "api.justnom.it" }
+        { :prefix => "justnom.it" }
       end
       # users
       def me
@@ -26,8 +26,8 @@ module NOM
       def urecommended
         { :endpoint => "/users/{:nid}/recommended", :required => [:nid], :optional => [], :example => "/users/", :description => {  } }
       end
-      def tcreate
-        { :endpoint => "/users/{:nid}/thumbs/create", :required => [:nid,:user_nid,:value,:token], :optional => [], :example => "/users/", :description => {  } }
+      def tnew
+        { :endpoint => "/users/{:nid}/thumbs/new", :required => [:nid,:user_nid,:value,:token], :optional => [], :example => "/users/", :description => {  } }
       end
       def uthumbs
         { :endpoint => "/users/{:nid}/thumbs", :required => [:nid], :optional => [], :example => "/users/", :description => {  } }
@@ -37,8 +37,8 @@ module NOM
       end
       
       #locations
-      def lcreate
-        { :endpoint => "/locations/create", :required => [:nid,:token,:lat,:lng,:name,:primary], :optional => [:text,:street,:city,:secondary], :example => "/locations/create", :description => {  } }
+      def lnew
+        { :endpoint => "/locations/new", :required => [:nid,:token,:lat,:lng,:name,:primary], :optional => [:text,:street,:city,:secondary], :example => "/locations/new", :description => {  } }
       end
       def lsearch
         { :endpoint => "/locations/search", :required => [:q], :optional => [:nid,:lat,:lng,:street,:city], :example => "/locations/search", :description => {  } }
@@ -52,24 +52,24 @@ module NOM
       def rrecommendatons
         { :endpoint => "/locations/{:nid}/recommendations", :required => [:nid], :optional => [], :example => "/locations/{:nid}/recommendations", :description => {  } }
       end
-      def tcreate
-        { :endpoint => "/locations/{:nid}/thumbs/create", :required => [:nid], :optional => [], :example => "/locations/", :description => {  } }
+      def tnew
+        { :endpoint => "/locations/{:nid}/thumbs/new", :required => [:nid,:user_nid,:value,:token], :optional => [], :example => "/locations/", :description => {  } }
       end
       def rthumbs
         { :endpoint => "/locations/{:nid}/thumbs", :required => [:nid], :optional => [], :example => "/locations/", :description => {  } }
       end
       
       # recommendations
-      def rcreate
-        { :endpoint => "/recommendations/create", :required => [], :optional => [], :example => "/recommendations/", :description => {  } }
+      def rnew
+        { :endpoint => "/recommendations/new", :required => [:location_nid,:user_nid,:text], :optional => [], :example => "/recommendations/", :description => {  } }
       end
       def rdestroy
         { :endpoint => "/recommendations/destroy", :required => [], :optional => [], :example => "/recommendations/", :description => {  } }
       end
       
       # comments
-      def ccreate
-        { :endpoint => "/comments/create", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      def cnew
+        { :endpoint => "/comments/new", :required => [], :optional => [], :example => "/comments/", :description => {  } }
       end
       def crecommendation
         { :endpoint => "/comments/recommendation", :required => [], :optional => [], :example => "/comments/", :description => {  } }
@@ -83,6 +83,15 @@ module NOM
       def csearch
         { :endpoint => "/comments/search", :required => [], :optional => [], :example => "/comments/", :description => {  } }
       end
+      
+      # followers
+      def followers
+        { :endpoint => "/comments/user", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+      def following
+        { :endpoint => "/comments/search", :required => [], :optional => [], :example => "/comments/", :description => {  } }
+      end
+
     end
   end
 end
