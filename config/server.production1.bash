@@ -17,8 +17,8 @@ cmake .
 make && make install
 
 # post install stuffs
-cd /usr/local/mysql
-scripts/mysql_install_db
+export PATH=$PATH:/usr/local/mysql/bin
+cd /usr/local/mysql/scripts/mysql_install_db
 
 cp support-files/mysql.server /etc/init.d/mysql.server
 
@@ -92,8 +92,6 @@ sudo mkdir -p /var /var/log /var/log/nginx/
 
 sudo cp ~/nom_it/config/nginx.conf.sample /etc/nginx/nginx.conf
 sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
-
-cd ~/src
 
 wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-2.0.1.tgz
 tar -xzf mongodb-linux-x86_64-2.0.1.tgz

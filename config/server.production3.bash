@@ -29,6 +29,6 @@ cd ~/
 sudo /etc/init.d/nginx stop
 sudo /etc/init.d/nginx start
 
-sudo /usr/bin/mongod --dbpath=/data/db --logpath=/log/mongodb/production.log --journal &
+# sudo /usr/bin/mongod --dbpath=/data/db --logpath=/log/mongodb/production.log --journal &
 
-bin/mysqld_safe &
+# bin/mysqld_safe &
