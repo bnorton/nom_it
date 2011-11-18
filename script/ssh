@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo mkdir ~/.ssh
+sudo mkdir -p ~/.ssh
 cat > ~/.ssh/id_rsa <<ID_RSA
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA8U534rcKwr/HzPp7rFHDCNlsoeik3en2TROkdyrIwpCpCU4B

@@ -6,41 +6,41 @@
 ## update/upgrade apt-get
 ## openssl, zlib, imagemagik
 
-./prefix
+./script/prefix
 
 if [ ! -f ~/.ssh/id_rsa ]; then
   echo "Copying and setting up ssh keys"
-  ./ssh
+  ./script/ssh
 fi
 
 if ! hash git >/dev/null; then
   echo "Setting up git"
-  ./git
+  ./script/git
 fi
 
-if [ ! -f ~/nom_it/keys/justnom/justnom.it.key ]; then
+if [ ! -f /apps/key/justnom/justnom.it.key ]; then
   echo "Copying the server certificate and keys"
-  ./keys
+  ./script/keys
 fi
 
 if ! hash nginx; then
   echo "Installing Nginx"
-  ./nginx
+  ./script/nginx
 fi
 
 if ! hash mysqld; then
   echo "Installing MySQL"
-  ./mysql
+  ./script/mysql
 fi
 
 if ! hash mongod; then
   echo "Installing MongoDB"
-  ./mongodb
+  ./script/mongodb
 fi
 
 if ! hash rvm; then
   echo "Downloading building and installing RVM"
-  ./rvm
+  ./script/rvm
   echo "Exiting after RVM install... please log back in and restart this script"
   touch ~/rvm_installed
   exit
@@ -48,12 +48,12 @@ fi
 
 rvm use ree@nom
 if gem list | grep blah; then  # this outputs if rubygems is NOT installed and fails silently when it is installed
-  ./rubygems
+  ./script/rubygems
 fi
 
 if [ -f ~/rvm_installed ]; then
   echo "Installing REE"
-  ./ree
+  ./script/ree
   rm ~/rvm_installed
 fi
 
@@ -61,6 +61,6 @@ rvm use ree@nom
 if ! gem list | grep blah; then
   if ! gem list | grep unicorn; then
     echo "Installing Ruby gems"
-    ./rubygems
+    ./script/rubygems
   fi
 fi

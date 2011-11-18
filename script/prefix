@@ -7,4 +7,4 @@ sudo apt-get install -y zlib1g zlib1g-dev libyaml-dev libxml2-dev libxslt-dev li
 sudo apt-get install -y python-software-properties build-essential 
 sudo apt-get install -y ruby-full curl autoconf automake libtool bison cmake make
 sudo apt-get install -y imagemagick libmagickcore-dev
-mkdir -p ~/log
+mkdir -p ~/log ~/.ssh
