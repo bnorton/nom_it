@@ -18,6 +18,12 @@ rvm --default use ree@nom
 rvmsudo gem update --system
 rvmsudo gem install bundler rails rake rack unicorn mysql2 json bson bson_ext --no-ri --no-rdoc
 
+
+sudo mkdir -p /apps/keys/justnom/
+cd ~/nom_it/keys/justnom/
+cp justnom.it.key /apps/key/justnom/
+cp justnom.it.crt /apps/key/justnom/
+
 cd ~/
 
 sudo /etc/init.d/nginx stop

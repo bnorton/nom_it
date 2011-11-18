@@ -29,7 +29,8 @@ git config --global user.email "deployer@justnom.it"
 git config --global github.user bnorton
 git config --global github.token a97228eb813ef5b0734ebc3dee4ce5e5
 
-cd ~/; cat > .ssh/id_rsa <<ID_RSA
+sudo mkdir ~/.ssh
+cat > ~/.ssh/id_rsa <<ID_RSA
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA8U534rcKwr/HzPp7rFHDCNlsoeik3en2TROkdyrIwpCpCU4B
 vFps+f/J/0Rkorjimw4XmvSc5xju8Jd0ZJqp4p+pOlHyvTvmxvEYeiICcaLkeVFC
@@ -59,38 +60,38 @@ Upiibnn0anHDNv5sbELbrf1fNV6T6OkL1NJaKDR7hHWnOsNurJxgzw==
 -----END RSA PRIVATE KEY-----
 ID_RSA
 
-cat > .ssh/id_rsa.pub <<ID_RSA_PUB
+cat > ~/.ssh/id_rsa.pub <<ID_RSA_PUB
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDxTnfitwrCv8fM+nusUcMI2Wyh6KTd6fZNE6R3KsjCkKkJTgG8Wmz5/8n/RGSiuOKbDhea9JznGO7wl3Rkmqnin6k6UfK9O+bG8Rh6IgJxouR5UUJhq+J0IRz7g10c//dLvN0gw+SwZD82SM2JbTXEOWpfCgKNplQrtcGBe+JDQ3n8CHEvWhAcaYgzwtBjuUB6at5NpqQoJJJz6BadrDP+YKwQKGwcFRuWGBCT76Igj4lTaTv7+hKQ82dHcW4d0lAAfcBSeejR4aaeSCXNPSmKbNE3CkwH82ovcWfj01h/BPW4KbQMsHfEs4h5mh9Wdz9zZBne7YRKZIjDmP8QopdP brian.nort@gmail.com
 ID_RSA_PUB
 
-cat > .ssh/authorized_keys <<AUTH
+cat > ~/.ssh/authorized_keys <<AUTH
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCQxUAAvFjYWQ3BRlvuAkamL/aeSxraa8w6IuSakjBYnHcg4PmSxDF2Hxlnaq26LUUxm3aLOZdQsgsppmZuWcCopHcwsujLLlfDzUOzWmvvtyKG4Ubq45Uc8jHHGaGF1ObZOxALAvHKenBrzU9DG29FmJX0TwrIZySKOqKdTbExvR2R4kt204cN18sTsOi8CjBd3Ba+PA0W0TQS5sDi7KAuaY35HzXt+j3Ljrho2p6Qus+QHtuIVnLnQTNBab3/dQ0guosjEgU+lLmwJbT4GonvM9S2VQ25d0xqvXARgUMn4QMAwYaiDqtBumH65AaDfgvad5v6J73StCkx6FUEBTST bnorton_10-4_32bit_server
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDxTnfitwrCv8fM+nusUcMI2Wyh6KTd6fZNE6R3KsjCkKkJTgG8Wmz5/8n/RGSiuOKbDhea9JznGO7wl3Rkmqnin6k6UfK9O+bG8Rh6IgJxouR5UUJhq+J0IRz7g10c//dLvN0gw+SwZD82SM2JbTXEOWpfCgKNplQrtcGBe+JDQ3n8CHEvWhAcaYgzwtBjuUB6at5NpqQoJJJz6BadrDP+YKwQKGwcFRuWGBCT76Igj4lTaTv7+hKQ82dHcW4d0lAAfcBSeejR4aaeSCXNPSmKbNE3CkwH82ovcWfj01h/BPW4KbQMsHfEs4h5mh9Wdz9zZBne7YRKZIjDmP8QopdP brian.nort@gmail.com
 AUTH
 
-cat > .ssh/known_hosts <<KNOWN
+cat > ~/.ssh/known_hosts <<KNOWN
 github.com,207.97.227.239 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
 |1|EkdpYNUylA9W9SipZJrNw8m3kps=|lw6SOxc2Hgw5Wg0IKK9tUDMsWqk= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
 |1|vN+zFVFo3PuK1okybPzEuiA3bFg=|veNWwSfP5t6xJTBdv/H5pbOUvKU= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
 KNOWN
 
-cat > .ssh/environment <<ENV
+cat > ~/.ssh/environment <<ENV
 SSH_AUTH_SOCK=/tmp/ssh-ICqeeMAh3658/agent.3658; export SSH_AUTH_SOCK;
 SSH_AGENT_PID=3660; export SSH_AGENT_PID;
 ENV
 
 chmod 700 ~/.ssh
-chmod 600 .ssh/id_rsa
-chmod 600 .ssh/authorized_keys
+chmod 600 ~/.ssh/id_rsa
+chmod 600 ~/.ssh/authorized_keys
 
 cd ~/; git clone git@github.com:bnorton/nom_it.git
 
 sudo mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.original
 sudo mkdir -p /var /var/log /var/log/nginx/
 
-sudo cd nom_it/config
-sudo cp nginx.conf.example /etc/nginx/nginx.conf
-sudo cp my.cnf.example /etc/my.cnf
+
+sudo cp ~/nom_it/config/nginx.conf.sample /etc/nginx/nginx.conf
+sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
 
 cd ~/src
 
