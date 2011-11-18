@@ -73,8 +73,8 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    access_log /var/log/nginx/access.log;
-    error_log /var/log/nginx/error.log;
+    access_log /apps/log/nginx/access.log;
+    error_log /apps/log/nginx/error.log;
 
     gzip on;
     gzip_disable "msie6";
@@ -84,9 +84,11 @@ http {
     gzip_min_length 500;
     # gzip_comp_level 6;
     # gzip_buffers 16 8k;
-    # gzip_http_version 1.1;upstream nom {
-  server unix:/apps/nom/shared/sockets/unicorn.sock fail_timeout=0;
-}
+    # gzip_http_version 1.1;
+    
+    upstream nom {
+        server unix:/apps/nom/shared/sockets/unicorn.sock fail_timeout=0;
+    }
 
 server {
     listen 80 default;
