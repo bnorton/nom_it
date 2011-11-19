@@ -16,9 +16,9 @@ set :user,            "root"
 set :group,           "root"
 set :use_sudo,        false
 
-role :web,    "173.255.209.197"
-role :app,    "173.255.209.197"
-role :db,     "173.255.209.197", :primary => true
+role :web,    "justnom.it"
+role :app,    "justnom.it"
+role :db,     "justnom.it", :primary => true
 
 set(:latest_release)  { fetch(:current_path) }
 set(:release_path)    { fetch(:current_path) }
