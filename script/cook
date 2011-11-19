@@ -14,7 +14,7 @@ if [ ! -f ~/.ssh/id_rsa ]; then
 fi
 
 if ! hash git >/dev/null; then
-  echo "Setting up git"
+  echo "Setting up git and checking out nom_it"
   ./script/git
 fi
 
@@ -28,7 +28,7 @@ if ! hash nginx; then
   ./script/nginx
 fi
 
-if ! hash mysqld; then
+if ! hash mysql; then
   echo "Installing MySQL"
   ./script/mysql
 fi
