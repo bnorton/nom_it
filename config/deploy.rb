@@ -49,9 +49,10 @@ namespace :deploy do
   task :setup, :except => { :no_release => true } do
     dirs = [deploy_to, shared_path]
     dirs += shared_children.map { |d| File.join(shared_path, d) }
-    run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}"
-    run "git clone #{repository} #{current_path}"
-    run "bundle exec rake db:create db:schema:load"
+    run "if [ ! -f /apps/nom/current ]; then #{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}; fi"
+    run "if [ ! -f /apps/nom/current/config/deploy.rb ]; then git clone #{repository} #{current_path}; fi"
+    run "cd #{current_path}; rvm use ree@nom; bundle install"
+    run "cd #{current_path}; rvm use ree@nom; bundle exec rake db:create db:schema:load"
   end
 
   task :cold do

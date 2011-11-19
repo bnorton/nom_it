@@ -4,6 +4,7 @@ gem 'rails'
 
 gem 'aws-s3'
 
+gem 'mysql'
 gem 'mysql2'
 gem 'ruby-mysql' 
 
