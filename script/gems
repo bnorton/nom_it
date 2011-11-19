@@ -1,4 +1,6 @@
 #!/bin/bash
 
 rvmsudo gem update --system
-rvmsudo gem install bundler rails rake rack unicorn mysql2 json bson bson_ext --no-ri --no-rdoc
+rvmsudo gem install rails --no-ri --no-rdoc
+rvmsudo gem install bundler rake rack httparty unicorn mysql2 ruby-mysql --no-ri --no-rdoc
+rvmsudo gem install json mongo placefinder aws-s3 dalli memcache-client jquery-rails --no-ri --no-rdoc

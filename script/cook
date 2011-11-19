@@ -46,8 +46,8 @@ if ! hash rvm; then
   exit
 fi
 
-rvm use ree@nom
-if gem list | grep blah; then  # this outputs if rubygems is NOT installed and fails silently when it is installed
+if ! hash gem; then
+  echo "Installing rubygems"
   ./script/rubygems
 fi
 
@@ -61,6 +61,6 @@ rvm use ree@nom
 if ! gem list | grep blah; then
   if ! gem list | grep unicorn; then
     echo "Installing Ruby gems"
-    ./script/rubygems
+    ./script/gems
   fi
 fi

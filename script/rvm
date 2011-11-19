@@ -1,24 +1,5 @@
 #!/bin/bash
 
-cat > ~/.gemrc <<GEMRC
----
-:verbose: true
-:bulk_threshold: 1000
-install: --no-ri --no-rdoc --env-shebang
-:sources:
-- http://gemcutter.org
-- http://gems.rubyforge.org/
-- http://gems.github.com
-:benchmark: false
-:backtrace: false
-update: --no-ri --no-rdoc --env-shebang
-:update_sources: true
-GEMRC
-
-cat > ~/.rvmrc <<RVMRC
-rvm_trust_rvmrcs_flag=1
-RVMRC
-
 echo 'RAILS_ENV=production' >> /etc/environment
 
 bash < <(curl -s https://rvm.beginrescueend.com/install/rvm)

@@ -38,6 +38,7 @@ echo "my.cnf and mysqld_safe + passwords"
 sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
 
 mysqld_safe &
+sleep 10
 mysqladmin -u root password '%planb56b6!'
 
 echo tail -f -n100 /var/log/mysql/error.log > ~/log/mysql

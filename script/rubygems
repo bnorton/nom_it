@@ -1,5 +1,24 @@
 #!/bin/bash
 
+cat > ~/.gemrc <<GEMRC
+---
+:verbose: true
+:bulk_threshold: 1000
+install: --no-ri --no-rdoc --env-shebang
+:sources:
+- http://gemcutter.org
+- http://gems.rubyforge.org/
+- http://gems.github.com
+:benchmark: false
+:backtrace: false
+update: --no-ri --no-rdoc --env-shebang
+:update_sources: true
+GEMRC
+
+cat > ~/.rvmrc <<RVMRC
+rvm_trust_rvmrcs_flag=1
+RVMRC
+
 wget http://production.cf.rubygems.org/rubygems/rubygems-1.8.10.tgz
 tar zxf rubygems-1.8.10.tgz
 
