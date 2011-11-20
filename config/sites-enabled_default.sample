@@ -1,20 +1,13 @@
 upstream nom {
-  # fail_timeout=0 means we always retry an upstream even if it failed
-  # to return a good HTTP response (in case the Unicorn master nukes a
-  # single worker for timing out).
-
-  # for UNIX domain socket setups:
-  server unix:/tmp/unicorn.nom_it.socket fail_timeout=0;
+  server unix:/apps/nom/shared/sockets/unicorn.sock fail_timeout=0;
 }
 
 server {
     listen 80 default;
+    server_name _;
 
-    # you could put a list of other domain names this application answers
-    server_name localhost justnom.it;
-
-    root /home/deployer/apps/justnom.it/current/public;
-    access_log /var/log/nginx/justnom_it_access.log;
+    root /apps/nom/current/public;
+    access_log /var/log/nginx/nom_access.log;
     rewrite_log on;
 
     location / {
@@ -27,7 +20,7 @@ server {
         proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
 
-        client_max_body_size       128m;
+        client_max_body_size       6m;
 
         proxy_connect_timeout      90;
         proxy_send_timeout         90;
@@ -38,14 +31,30 @@ server {
         proxy_busy_buffers_size    64k;
         proxy_temp_file_write_size 64k;
     }
-    
-    # if the request is for a static resource, nginx should serve it directly
-    # and add a far future expires header to it, making the browser   
-    # cache the resource and navigate faster over the website
-    # this probably needs some work with Rails 3.1's asset pipe_line
+
     location ~ ^/(images|javascripts|stylesheets|system)/  {
-      root /home/deployer/apps/justnom.it/current/public;
+      root /apps/nom/current/public;
       expires max;
       break;
+    }
+}
+server {
+    listen       443 ssl;
+    server_name  _;
+
+    ssl on;
+    ssl_certificate /apps/keys/justnom/justnom.it.crt;
+    ssl_certificate_key /apps/keys/justnom/justnom.it.key;
+
+    location / {
+        proxy_pass    http://nom;
+        proxy_set_header   X-Real-IP        $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-FORWARDED_PROTO https;
+    }
+    location ~ ^/(images|javascripts|stylesheets|system)/  {
+        root /apps/nom/current/public;
+        expires max;
+        break;
     }
 }

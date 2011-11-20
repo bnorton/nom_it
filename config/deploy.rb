@@ -31,7 +31,7 @@ set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEA
 default_environment["RAILS_ENV"] = 'production'
 
 # Use our ruby-1.9.2-p290@my_site gemset
-default_environment["PATH"]         = "/usr/local/rvm/gems/ree-1.8.7-2011.03@nom/bin:/usr/local/rvm/gems/ree-1.8.7-2011.03@global/bin:/usr/local/rvm/rubies/ree-1.8.7-2011.03/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
+default_environment["PATH"]         = "/usr/local/mysql/bin:/usr/local/rvm/gems/ree-1.8.7-2011.03@nom/bin:/usr/local/rvm/gems/ree-1.8.7-2011.03@global/bin:/usr/local/rvm/rubies/ree-1.8.7-2011.03/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
 default_environment["GEM_HOME"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03@nom"
 default_environment["GEM_PATH"]     = "/usr/local/rvm/gems/ree-1.8.7-2011.03@nom:/usr/local/rvm/gems/ree-1.8.7-2011.03@global"
 default_environment["RUBY_VERSION"] = "ree-1.8.7-2011.03"
@@ -112,7 +112,8 @@ namespace :deploy do
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
     run "echo starting unicorn_rails"
-    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb"
+    run "mkdir -p /apps/nom/shared/sockets"
+    run "cd #{current_path} ; rvm use ree@nom ; bundle exec unicorn_rails -c config/unicorn.rb -D"
     # run "ps aux | grep -E 'unicorn.+masterer' | grep -v grep | awk '{print $2}' > #{unicorn_pid}"
   end
 
