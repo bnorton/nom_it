@@ -3,7 +3,7 @@ require "bundler/capistrano"
 
 set :scm,             :git
 set :repository,      "git@github.com:bnorton/nom_it.git"
-set :branch,          "master"
+set :branch,          "origin/master"
 set :deploy_via,      :checkout
 
 set :migrate_target,  :current
@@ -51,8 +51,8 @@ namespace :deploy do
   task :setup, :except => { :no_release => true } do
     dirs = [deploy_to, shared_path]
     dirs += shared_children.map { |d| File.join(shared_path, d) }
-    run "if [ ! -f /apps/nom/current ]; then #{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')}; fi"
-    run "if [ ! -f /apps/nom/current/config/deploy.rb ]; then git clone #{repository} #{current_path}; fi"
+    run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')};"
+    run "git clone #{repository} #{current_path};"
     run "cd #{current_path}; rvm use ree@nom; bundle install"
     run "cd #{current_path}; rvm use ree@nom; bundle exec rake db:create db:schema:load"
   end
@@ -70,7 +70,8 @@ namespace :deploy do
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    run "cd #{current_path}; git fetch origin; git reset --hard #{branch}"
+    run "cd #{current_path}; git fetch origin master; git reset --hard #{branch}"
+    run "cd #{current_path}; git checkout master; git pull origin master"
     finalize_update
   end
 
