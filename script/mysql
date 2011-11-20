@@ -41,7 +41,7 @@ sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
 
 ln -sf /usr/local/mysql/bin/mysqld_safe /usr/bin/mysqld_safe
 
-/etc/init.d/mysqld.server start
+/etc/init.d/mysql.server start
 sleep 10
 
 ln -sf /var/run/mysqld/mysqld.sock /tmp/mysql.sock

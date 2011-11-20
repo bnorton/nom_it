@@ -5,62 +5,71 @@
 # install the dependencies for all installations
 ## update/upgrade apt-get
 ## openssl, zlib, imagemagik
-
 ./script/prefix
 
+# SSH
 if [ ! -f ~/.ssh/id_rsa ]; then
   echo "Copying and setting up ssh keys"
-  ./script/ssh
+  ~/script/ssh
 fi
 
+# GIT
 if ! hash git >/dev/null; then
   echo "Setting up git and checking out nom_it"
-  ./script/git
+  ~/script/git
 fi
 
-if [ ! -f /apps/key/justnom/justnom.it.key ]; then
+# KEYS
+if [ ! -f /apps/keys/justnom/justnom.it.key ]; then
   echo "Copying the server certificate and keys"
-  ./script/keys
+  ~/script/keys
 fi
 
+# NGINX
 if ! hash nginx; then
   echo "Installing Nginx"
-  ./script/nginx
+  ~/script/nginx
 fi
 
+# MYSQL
 if ! hash mysql; then
   echo "Installing MySQL"
-  ./script/mysql
+  ~/script/mysql
 fi
 
+# MONGODB
 if ! hash mongod; then
   echo "Installing MongoDB"
-  ./script/mongodb
+  ~/script/mongodb
 fi
 
+# Ruby Version Manager
 if ! hash rvm; then
   echo "Downloading building and installing RVM"
-  ./script/rvm
+  ~/script/rvm
   echo "Exiting after RVM install... please log back in and restart this script"
   touch ~/rvm_installed
   exit
 fi
 
-if ! hash gem; then
+# RUBYGEMS
+if [ ! -f ~/.rvmrc ]; then
   echo "Installing rubygems"
-  ./script/rubygems
+  ~/script/rubygems
 fi
 
+# OPENSSL && REE
 if [ -f ~/rvm_installed ]; then
   echo "Installing REE"
-  ./script/ree
+  ~/script/ree
   rm ~/rvm_installed
 fi
 
+# UPDATE SYSTEM
 rvm use ree@nom
 if ! gem list | grep blah; then
-  if ! gem list | grep unicorn; then
+  if ! gem list | grep bundler; then
     echo "Installing Ruby gems"
-    ./script/gems
+    ~/script/gems
   fi
 fi
