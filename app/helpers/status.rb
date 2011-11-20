@@ -93,6 +93,10 @@ module Status
       message(-1, "There were no locations found")
     end
 
+    def locations(locs)
+      status_message_results(1, 'OK',locs)
+    end
+
     def user_auth_invalid
       message(-1, "authentication failed")
     end
