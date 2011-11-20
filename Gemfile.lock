@@ -193,7 +193,7 @@ DEPENDENCIES
   mysql2
   paperclip (~> 2.4)
   placefinder
-  rails (= 3.1.1)
+  rails
   rspec
   rspec-rails
   ruby-mysql
