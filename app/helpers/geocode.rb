@@ -8,6 +8,10 @@ DELIM = /<\^&/
 class Geocode
   class << self
     
+    def san_francisco
+      Geocode.scan_regions(['sanfrancisco'])
+    end
+    
     # write each region to its own file
     def scan_regions(regions=[])
       regions_to_scan = regions || REGIONS
