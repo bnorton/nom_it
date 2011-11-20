@@ -16,7 +16,9 @@ cmake .
 make && make install
 
 echo "export, add users, chmod"
-export PATH=$PATH:/usr/local/mysql/bin
+
+echo 'export PATH=/usr/local/mysql/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
 
 chown -R mysql /usr/local/mysql
 chgrp -R mysql /usr/local/mysql
@@ -37,8 +39,13 @@ mkdir -p /var/log/mysql
 echo "my.cnf and mysqld_safe + passwords"
 sudo cp ~/nom_it/config/my.cnf.sample /etc/my.cnf
 
-mysqld_safe &
+ln -sf /usr/local/mysql/bin/mysqld_safe /usr/bin/mysqld_safe
+
+/etc/init.d/mysqld.server start
 sleep 10
+
+ln -sf /var/run/mysqld/mysqld.sock /tmp/mysql.sock
+
 mysqladmin -u root password '%planb56b6!'
 
 echo tail -f -n100 /var/log/mysql/error.log > ~/log/mysql

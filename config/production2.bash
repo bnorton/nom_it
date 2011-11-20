@@ -156,14 +156,14 @@ cat > /etc/my.cnf <<MY_CNF
 [client]
 #password	= your_password
 port  = 8008
-socket  = /tmp/mysql.sock
+socket  = /var/run/mysqld/mysqld.sock
 
 # Here follows entries for some specific programs
 
 # The MySQL server
 [mysqld]
 port  = 8008
-socket  = /tmp/mysql.sock
+socket  = /var/run/mysqld/mysqld.sock
 skip-locking
 
 # Caches and Buffer Sizes
