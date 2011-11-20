@@ -52,7 +52,7 @@ class Location < ActiveRecord::Base
     name = opt[:name]
     street = opt[:street]
     city = opt[:city]
-    if nid
+    if nid.present?
       result = compact.find_by_nid(nid).limit(lim).as_json
       built = Array(Location.detail_for_nid(result['nid'],location=result))
     else

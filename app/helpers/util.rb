@@ -56,7 +56,7 @@ class Util
     end
     
     def STRINGify(s)
-      return if s.nil?
+      return if s.blank?
       return s.to_s if s.respond_to? :to_s
       s
     end
