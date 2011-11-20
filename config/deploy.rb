@@ -4,6 +4,8 @@ require "bundler/capistrano"
 set :scm,             :git
 set :repository,      "git@github.com:bnorton/nom_it.git"
 set :branch,          "master"
+set :deploy_via,      :checkout
+
 set :migrate_target,  :current
 set :ssh_options,     { :forward_agent => true }
 set :rails_env,       "production"
