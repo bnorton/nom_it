@@ -85,7 +85,8 @@ namespace :deploy do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
     run <<-CMD
-      rm -rf #{latest_release}/log #{latest_release}/public/system #{latest_release}/tmp/pids #{latest_release}/tmp/sockets &&
+      rm -rf #{latest_release}/log #{latest_release}/public/system &&
+      rm -rf #{latest_release}/tmp/pids #{latest_release}/tmp/sockets &&
       mkdir -p #{latest_release}/public &&
       mkdir -p #{latest_release}/tmp &&
       ln -s #{shared_path}/log #{latest_release}/log &&
@@ -111,8 +112,8 @@ namespace :deploy do
   desc "Start unicorn"
   task :start, :except => { :no_release => true } do
     run "echo starting unicorn_rails"
-    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
-    # run "ps aux | grep -E 'unicorn.+master' | grep -v grep | awk '{print $2}' > #{unicorn_pid}"
+    run "cd #{current_path} ; bundle exec unicorn_rails -c config/unicorn.rb"
+    # run "ps aux | grep -E 'unicorn.+masterer' | grep -v grep | awk '{print $2}' > #{unicorn_pid}"
   end
 
   desc "Stop unicorn"
