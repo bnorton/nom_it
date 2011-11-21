@@ -73,3 +73,8 @@ if ! gem list | grep blah; then
     ~/script/gems
   fi
 fi
+
+if [ ! -f /etc/init.d/memcached ]; then
+  echo "Installing memcached"
+  ~/script/memcached
+fi

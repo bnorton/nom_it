@@ -5,11 +5,10 @@ NomIt::Application.configure do
   config.cache_classes = true
 
   # Full error reports are disabled and caching is turned on
-  config.consider_all_requests_local       = false
-  config.action_controller.perform_caching = true
+  config.consider_all_requests_local = false
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
-  config.serve_static_assets = true
+  config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
   config.assets.compress = true
@@ -36,8 +35,17 @@ NomIt::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
-  # Use a different cache store in production
-  config.cache_store = :dalli_store
+  # Global enable/disable all memcached usage
+  config.perform_caching = true
+
+  # Disable/enable fragment and page caching in ActionController
+  config.action_controller.perform_caching = true
+
+  # The underlying cache store to use.
+  config.cache_store = :dalli_store, 'localhost:11211'
+
+  # The session store is completely different from the normal data cache
+  config.session_store = :dalli_store, 'localhost:11211'
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
