@@ -40,7 +40,7 @@ class Category < MongoRuby
   
   # @required nid
   def self.find_by_nid(nid)
-    return false unless (nid = Util.STRINGify(nid))
+    return unless (nid = Util.STRINGify(nid))
     Category.find_one({ :_id => nid })
   end
   
@@ -84,7 +84,7 @@ class Category < MongoRuby
   
   # @required id
   def self.destroy_by_nid(nid)
-    return false unless (nid = Util.STRINGify(nid))
+    return unless (nid = Util.STRINGify(nid))
     Category.remove({ :_id => nid })
   end
   

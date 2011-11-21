@@ -8,8 +8,8 @@ gem 'mysql'
 gem 'mysql2'
 gem 'ruby-mysql' 
 
+gem 'memcache'
 gem 'memcache-client'
-
 gem 'dalli'
 
 gem 'bson',     '<= 1.4.0'

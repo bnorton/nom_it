@@ -68,6 +68,12 @@ class UsersController < ApplicationController
     respond_with response
   end
   
+  def activity
+    # fetch the thumbs, recomendations and rankings for users this person follows
+    
+    
+  end
+  
   # thumb a user
   def thumb_create
     val = params[:value]

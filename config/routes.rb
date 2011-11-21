@@ -66,7 +66,7 @@ NomIt::Application.routes.draw do
   get '/rankings/update'        => 'rankings#new'                       ## POST
   get '/rankings/destory'       => 'rankings#destory'                   ## POST
   
-  get 'user/:nid/ranked'        => 'rankings#user'
+  get 'user/:nid/ranked'        => 'rankings#by_user'
   get 'location/:nid/rankings'  => 'rankings#location'
   
   #############################################################################
@@ -75,6 +75,10 @@ NomIt::Application.routes.draw do
   get '/categories/all' => 'categories#all'
   get '/locations/:nid/categories' => 'categories#location'
   
+  #############################################################################
+  #####  ACTIVITIES  ##########################################################
+  #############################################################################
+  get '/activity' => 'users#activity'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase

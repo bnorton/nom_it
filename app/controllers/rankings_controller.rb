@@ -33,7 +33,7 @@ class RankingsController < ApplicationController
     respond_with ok_or_not({:oper => success,:remove => true})
   end
   
-  def user
+  def by_user
     @key = :rank_nid
     @rankings = Ranking.for_unid(@user_nid,@limit,@key)
     @rank_loc = Ranking.build_list @rankings
