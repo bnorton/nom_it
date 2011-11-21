@@ -9,7 +9,7 @@ class Geocode
   class << self
     
     def current_regions
-      Geocode.scan_regions(['sandiego','austin'])
+      Geocode.scan_regions(['austin','portland'])
     end
     
     # write each region to its own file
@@ -18,7 +18,7 @@ class Geocode
       regions_to_scan.each do |region|
         @@path = "#{BASE_DIR}/#{region}"
         these_locations = process_directory(@@path)
-        out = "#{path}/out/#{Time.now.strftime("%Y|%m|%d|%H|%M|%S_")}#{region}.txt"
+        out = "#{@@path}/out/#{Time.now.strftime("%Y|%m|%d|%H|%M|%S_")}#{region}.txt"
         begin 
           File.open(out, 'w+') { |f| 
             f.write(these_locations.to_json)
@@ -90,11 +90,12 @@ class Geocode
           if result.is_a? Array
             result = result[0]
           end
-          OpenStruct.new(result)
+          return OpenStruct.new(result) unless result.blank?
+          OpenStruct.new({})
         end
-      rescue Exception => e
+      rescue Exception
         puts "YAHOO for #{addr} FAILED #{yahoo_raw.inspect}"
-        raise e
+        OpenStruct.new({})
       end
     end
     
@@ -210,11 +211,12 @@ class Geocode
           :categories => cats
           })
       end
+      cats_str = cats.join(', ') rescue nil
       {
         :name => _name,
         :primary => primary,
         :secondary => secondary,
-        :categories => cats.join(', '),
+        :categories => cats_str,
         :neighborhood => neighborhood(item),
         :rating => _rating,
         :rating_count => _rating_count,

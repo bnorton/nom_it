@@ -71,8 +71,9 @@ class Category < MongoRuby
   
   def self.new_categories(top_level,cats=[],assoc=:none)
     return if top_level.blank?
-    ids = []
-    top = Category.find_or_create_by_name(top_level)
+    cats = [] unless cats.respond_to?(:each)
+    ids  = []
+    top  = Category.find_or_create_by_name(top_level)
     cats.each do |c|
       ids << Category.find_or_create_by_primary_and_secordary(top, c)
     end
