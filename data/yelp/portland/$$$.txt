@@ -1,0 +1,509 @@
+1. Genoa Restaurant
+Category: Italian
+Neighborhoods: Southeast Portland, Belmont, Sunnyside
+53 reviews
+2832 SE Belmont St
+Portland, OR 97214
+(503) 238-1464
+==========
+2. Natural Selection
+Categories: Modern European, Vegan, Vegetarian
+Neighborhoods: Northeast Portland, Concordia, Alberta Arts District
+34 reviews
+3033 NE Alberta St
+Portland, OR 97211
+(503) 288-5883
+==========
+3. DOC Restaurant
+Category: Italian
+Neighborhoods: Northeast Portland, Concordia
+58 reviews
+5519 NE 30th Ave
+Portland, OR 97211
+(503) 946-8592
+==========
+4. Beast
+Categories: French, American (New)
+Neighborhoods: Northeast Portland, Concordia, Alberta Arts District
+203 reviews
+5425 NE 30th Ave
+Portland, OR 97211
+(503) 841-6968
+==========
+5. 3 Doors Down Cafe
+Category: Italian
+Neighborhoods: Southeast Portland, Hawthorne, Sunnyside
+80 reviews
+1429 SE 37th Ave
+Portland, OR 97214
+(503) 236-6886
+==========
+6. Andina
+Categories: Tapas Bars, Gluten-Free, Peruvian
+Neighborhood: Pearl District
+601 reviews
+1314 NW Glisan St
+Portland, OR 97209
+(503) 228-9535
+==========
+7. Le Pigeon
+Categories: French, American (New)
+Neighborhoods: Lower Burnside, Northeast Portland, Central Eastside, Buckman
+277 reviews
+738 E Burnside St
+Portland, OR 97214
+(503) 546-8796
+==========
+8. Bamboo Sushi
+Categories: Sushi Bars, Japanese
+Neighborhoods: Southeast Portland, Buckman
+307 reviews
+310 SE 28th Ave
+Portland, OR 97214
+(503) 232-5255
+==========
+9. Irving St. Kitchen
+Categories: American (New), Lounges
+Neighborhood: Pearl District
+142 reviews
+701 NW 13th St
+Portland, OR 97209
+(503) 343-9440
+==========
+10. Caffe Mingo
+Category: Italian
+Neighborhoods: Alphabet District, Northwest
+71 reviews
+807 NW 21st Ave
+Portland, OR 97209
+(503) 226-4646
+==========
+11. Veritable Quandary
+Categories: Nightlife, American (New), Breakfast & Brunch
+Neighborhoods: Southwest Portland, Downtown
+291 reviews
+1220 SW 1st Ave
+Portland, OR 97204
+(503) 227-7342
+==========
+12. Tabla
+Categories: Italian, Mediterranean, Tapas/Small Plates
+Neighborhoods: Northeast Portland, Kerns
+111 reviews
+200 NE 28th Ave
+Portland, OR 97232
+(503) 238-3777
+==========
+13. June
+Category: American (New)
+Neighborhoods: Northeast Portland, Kerns
+50 reviews
+2215 E Burnside St
+Portland, OR 97214
+(503) 477-4655
+==========
+14. New Seasons Market
+Categories: Grocery, Sandwiches, Health Markets
+Neighborhoods: Southeast Portland, Sellwood
+34 reviews
+1214 SE Tacoma St
+Portland, OR 97202
+(503) 230-4949
+==========
+15. Laurelhurst Market
+Categories: Steakhouses, Meat Shops
+Neighborhoods: Northeast Portland, Kerns
+217 reviews
+3155 E Burnside St
+Portland, OR 97214
+(503) 206-3097
+==========
+16. Ned Ludd
+Category: American (New)
+Neighborhoods: Northeast Portland, King
+109 reviews
+3925 NE Martin Luther King Jr Blvd
+Portland, OR 97212
+(503) 288-6900
+==========
+17. Paley's Place
+Categories: French, Wine Bars
+Neighborhoods: Alphabet District, Northwest
+182 reviews
+1204 NW 21st Ave
+Portland, OR 97209
+(503) 243-2403
+==========
+18. Wildwood Restaurant & Bar
+Category: American (New)
+Neighborhoods: Alphabet District, Northwest
+140 reviews
+1221 NW 21st Ave
+Portland, OR 97209
+(503) 248-9663
+==========
+19. Cocotte
+Categories: French, Bars
+Neighborhoods: Northeast Portland, Concordia
+37 reviews
+2930 NE Killingsworth St
+Portland, OR 97211
+(503) 227-2669
+==========
+20. Park Kitchen
+Categories: American (New), Bars
+Neighborhood: Pearl District
+95 reviews
+422 NW 8th Avenue
+Portland, OR 97209
+(503) 223-7275
+==========
+21. Morton's The Steakhouse
+Category: Steakhouses
+Neighborhoods: Southwest Portland, Downtown
+35 reviews
+213 SW Clay St
+Portland, OR 97201
+(503) 248-2100
+==========
+22. Beaker & Flask
+Categories: Lounges, American (New)
+Neighborhoods: Industrial District, Southeast Portland, Central Eastside, Buckman
+167 reviews
+727 SE Washington St
+Portland, OR 97214
+(503) 235-8180
+==========
+23. Giorgio's Restaurant
+Category: Italian
+Neighborhood: Pearl District
+16 reviews
+1131 NW Hoyt St
+Portland, OR 97209
+(503) 221-1888
+==========
+24. South Park Seafood Grill & Wine Bar
+Category: Seafood
+Neighborhoods: Southwest Portland, Downtown
+138 reviews
+901 SW Salmon St
+Portland, OR 97205
+(503) 326-1300
+==========
+25. Meriwether's Restaurant & Skyline Farm
+Category: American (New)
+Neighborhoods: Alphabet District, Northwest
+133 reviews
+2601 NW Vaughn St
+Portland, OR 97210
+(503) 228-1250
+==========
+26. Restaurant Murata
+Categories: Japanese, Sushi Bars
+Neighborhoods: Southwest Portland, Downtown
+61 reviews
+200 SW Market St
+Portland, OR 97201
+(503) 227-0080
+==========
+27. Masu Sushi
+Categories: Sushi Bars, Japanese
+Neighborhood: Downtown
+170 reviews
+406 SW 13th Ave
+Portland, OR 97205
+(503) 221-6278
+==========
+28. Clarklewis
+Categories: American (New), Wine Bars
+Neighborhoods: Industrial District, Central Eastside, Buckman
+107 reviews
+1001 SE Water Ave
+Portland, OR 97214
+(503) 235-2294
+==========
+29. Portland City Grill
+Categories: American (New), Steakhouses
+Neighborhoods: Southwest Portland, Downtown
+508 reviews
+111 SW 5th Ave
+Portland, OR 97204
+(503) 450-0030
+==========
+30. Grüner
+Category: German
+Neighborhoods: Southwest Portland, Downtown
+127 reviews
+527 SW 12th Ave
+Portland, OR 97205
+(503) 241-7163
+==========
+31. Jake's Famous Crawfish
+Category: Seafood
+Neighborhood: Downtown
+358 reviews
+401 SW 12th Ave
+Portland, OR 97205
+(503) 226-1419
+==========
+32. Ciao Vito
+Category: Italian
+Neighborhoods: Northeast Portland, Concordia, Alberta Arts District
+71 reviews
+2203 NE Alberta St
+Portland, OR 97211
+(503) 282-5522
+==========
+33. Higgins Restaurant
+Categories: French, American (New)
+Neighborhoods: Southwest Portland, Downtown
+180 reviews
+1239 SW Broadway
+Portland, OR 97205
+(503) 222-9070
+==========
+34. El Gaucho
+Category: Steakhouses
+Neighborhoods: Southwest Portland, Downtown
+122 reviews
+319 SW Broadway
+Portland, OR 97205
+(503) 227-8794
+==========
+35. Metrovino
+Category: American (New)
+Neighborhood: Pearl District
+73 reviews
+1139 NW 11th Ave
+Portland, OR 97209
+(503) 517-7778
+==========
+36. The Heathman Restaurant
+Categories: French, American (New), Hotels
+Neighborhoods: Southwest Portland, Downtown
+121 reviews
+1001 SW Broadway
+Portland, OR 97205
+(503) 790-7126
+==========
+37. Castagna Restaurant
+Category: American (New)
+Neighborhoods: Southeast Portland, Hosford-Abernathy
+51 reviews
+1752 SE Hawthorne Blvd
+Portland, OR 97214
+(503) 231-7373
+==========
+38. Bluehour
+Categories: French, Lounges, Italian
+Neighborhood: Pearl District
+199 reviews
+250 NW 13th Ave
+Portland, OR 97209
+(503) 226-3394
+==========
+39. Aviary
+Categories: Asian Fusion, American (New), Tapas/Small Plates
+Neighborhoods: Northeast Portland, Alberta Arts District, Vernon
+31 reviews
+1733 NE Alberta St
+Portland, OR 97211
+(503) 287-2400
+==========
+40. RingSide Steakhouse
+Categories: Steakhouses, Seafood
+Neighborhood: Northwest
+189 reviews
+2165 W Burnside
+Portland, OR 97210
+(503) 223-1513
+==========
+41. Urban Fondue
+Category: Fondue
+Neighborhoods: Alphabet District, Northwest
+3.5 star rating
+77 reviews
+2114 NW Glisan St
+Portland, OR 97210
+(503) 242-1400
+==========
+42. Lincoln
+Category: American (New)
+Neighborhoods: Boise, Mississippi
+4.0 star rating
+82 reviews
+3808 N Williams Ave
+Portland, OR 97227
+(503) 288-6200
+==========
+43. Ruth's Chris Steak House
+Category: Steakhouses
+Neighborhoods: Southwest Portland, Downtown
+4.0 star rating
+60 reviews
+850 SW Broadway
+Portland, OR 97205
+(503) 221-4518
+==========
+44. Urban Farmer Restaurant
+Category: Steakhouses
+Neighborhoods: Southwest Portland, Downtown
+3.5 star rating
+202 reviews
+525 SW Morrison St
+Portland, OR 97255
+(503) 222-4900
+==========
+45. Chart House
+Categories: Seafood, Steakhouses
+Neighborhoods: Hillsdale, Southwest Portland
+3.5 star rating
+53 reviews
+5700 SW Terwilliger Blvd
+Portland, OR 97239
+(503) 246-6963
+==========
+46. Sinju
+Categories: Japanese, Sushi Bars
+Neighborhood: Pearl District
+3.5 star rating
+74 reviews
+1022 NW Johnson St
+Portland, OR 97209
+(503) 223-6535
+==========
+47. Oba
+Category: Latin American
+Neighborhood: Pearl District
+3.5 star rating
+201 reviews
+555 NW 12th Ave
+Portland, OR 97209
+(503) 228-6161
+==========
+48. The Woodsman Tavern
+Category: American (New)
+Neighborhoods: Southeast Portland, Clinton, Richmond
+4.0 star rating
+13 reviews
+4537 SE Division St
+Portland, OR 97206
+(971) 373-8264
+==========
+49. Departure
+Category: Asian Fusion
+Neighborhoods: Southwest Portland, Downtown
+3.5 star rating
+227 reviews
+525 SW Morrison St, 15th Fl
+Portland, OR 97204
+(503) 802-5370
+==========
+50. Morrison Street Bar & Grill
+Category: American (Traditional)
+Neighborhoods: Southeast Portland, Belmont, Buckman
+3.5 star rating
+7 reviews
+1205 SE Morrison St
+Portland, OR 97214
+(503) 232-3275
+==========
+51. Ringside Fish House
+Category: Seafood
+Neighborhoods: Southwest Portland, Downtown
+3.0 star rating
+24 reviews
+838 SW Park Ave
+Portland, OR 97205
+(503) 227-3900
+==========
+52. Patanegra
+Categories: Spanish, Tapas Bars, Basque
+Neighborhoods: Alphabet District, Northwest
+3.5 star rating
+47 reviews
+1818 NW 23rd Pl
+Portland, OR 97210
+(503) 227-7282
+==========
+53. Le Bouchon
+Category: French
+Neighborhood: Pearl District
+3.5 star rating
+34 reviews
+517 NW 14th Ave
+Portland, OR 97209
+(503) 248-2193
+==========
+54. Brazil Grill
+Category: Brazilian
+Neighborhoods: Southwest Portland, Downtown
+3.5 star rating
+56 reviews
+1201 SW 12th Ave
+Portland, OR 97255
+(503) 222-0002
+==========
+55. London Grill
+Category: American (Traditional)
+Neighborhoods: Southwest Portland, Downtown
+3.5 star rating
+24 reviews
+309 SW Broadway
+Portland, OR 97205
+(503) 295-4110
+==========
+56. McCormick & Schmick's Seafood Restaurants
+Category: Seafood
+Neighborhoods: Southwest Portland, Downtown
+3.0 star rating
+98 reviews
+0309 SW Montgomery St
+Portland, OR 97201
+(503) 220-1865
+==========
+57. Couture Ultra Lounge
+Categories: American (New), Lounges
+Neighborhood: Old Town - Chinatown
+3.0 star rating
+54 reviews
+28 NW 4th Ave
+Portland, OR 97209
+(503) 206-8866
+==========
+58. Trader Vic's Portland
+Categories: American (New), Lounges, Hawaiian
+Neighborhood: Pearl District
+3.0 star rating
+54 reviews
+1203 NW Glisan St
+Portland, OR 97209
+(503) 467-2277
+==========
+59. The Melting Pot
+Category: Fondue
+Neighborhoods: Southwest Portland, Downtown
+3.0 star rating
+79 reviews
+SW 6th & SW Main
+Portland, OR 97204
+(503) 517-8960
+==========
+60. Plainfield's Mayur Restaurant
+Categories: Vegetarian, Indian, American (New)
+Neighborhood: Goose Hollow
+3.0 star rating
+13 reviews
+852 SW 21st Ave
+Portland, OR 97205
+(503) 223-2995
+==========
+61. Portland Spirit
+Categories: Boating, Boat Charters, Restaurants
+Neighborhoods: Central Eastside, Hosford-Abernathy
+3.0 star rating
+31 reviews
+110 SE Caruthers St
+Portland, OR 97214
+(503) 224-3900
+==========

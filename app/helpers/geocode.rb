@@ -8,8 +8,8 @@ DELIM = /<\^&/
 class Geocode
   class << self
     
-    def san_francisco
-      Geocode.scan_regions(['sanfrancisco'])
+    def current_regions
+      Geocode.scan_regions(['sandiego','austin'])
     end
     
     # write each region to its own file
@@ -19,17 +19,21 @@ class Geocode
         @@path = "#{BASE_DIR}/#{region}"
         these_locations = process_directory(@@path)
         out = "#{path}/out/#{Time.now.strftime("%Y|%m|%d|%H|%M|%S_")}#{region}.txt"
-        File.open(out, 'w+') { |f| 
-          f.write(these_locations.to_json)
-        }
+        begin 
+          File.open(out, 'w+') { |f| 
+            f.write(these_locations.to_json)
+          }
+        rescue Exception
+        rescue => e
+        end
       end
     end
     
     def process_directory(path_to)
       locations = []
       Dir.foreach(path_to) do |file_name|
-        unless ['.','..'].include? file_name
-          puts file_name
+        unless ['.','..','out'].include? file_name
+          puts "#{path_to} #{file_name}"
           File.open("#{@@path}/#{file_name}") do |file|
             process_file_into!(file, locations, file_name)
           end
@@ -51,15 +55,32 @@ class Geocode
     # return a string of feature1\nfeature2\n
     def build_item(file)
       item = ""
-      while true
-        line = file.gets         # happens at the end
-        unless line =~ /^[=]+$/ || line.nil?
-          item << line
-        else
-          break
+      begin
+        while true
+          line = file.gets         # happens at the end
+          unless line =~ /^[=]+$/ || line.nil?
+            item << line
+          else
+            break
+          end
         end
+        item.gsub(/\n/,'<^&')
+      rescue Exception => e
+        puts "Exception"
+        puts file.inspect
+        puts item.inspect
+        puts e.message
+      rescue Errno::EISDIR => e
+        puts "Errno::EISDIR"
+        puts file.inspect
+        puts item.inspect
+        puts e.message
+      rescue => e
+        puts "e"
+        puts file.inspect
+        puts item.inspect
+        puts e.message
       end
-      item.gsub(/\n/,'<^&')
     end
     
     def fetch_yahoo_data(addr)
