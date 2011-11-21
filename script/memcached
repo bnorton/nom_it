@@ -1,0 +1,9 @@
+#!/bin/bash
+
+apt-get install -y  memcached
+
+/etc/init.d/memcached restart
+
+apt-get install -y libsasl2-2 libsasl2-dev
+
+rvmsudo gem install memcached
