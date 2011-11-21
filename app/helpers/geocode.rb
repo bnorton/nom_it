@@ -9,7 +9,7 @@ class Geocode
   class << self
     
     def current_regions
-      Geocode.scan_regions(['austin','portland'])
+      Geocode.scan_regions(['portland'])
     end
     
     # write each region to its own file

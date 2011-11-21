@@ -26,7 +26,7 @@ socket		= /var/run/mysqld/mysqld.sock
 port		= 3306
 socket		= /var/run/mysqld/mysqld.sock
 skip-external-locking
-key_buffer_size = 256M
+key_buffer_size = 128M
 max_allowed_packet = 1M
 table_open_cache = 256
 sort_buffer_size = 1M
@@ -36,7 +36,7 @@ myisam_sort_buffer_size = 64M
 thread_cache_size = 8
 query_cache_size= 16M
 # Try number of CPU's*2 for thread_concurrency
-thread_concurrency = 8
+thread_concurrency = 4
 
 # Don't listen on a TCP/IP port at all. This can be a security enhancement,
 # if all processes that need to connect to mysqld run on the same host.
@@ -137,10 +137,10 @@ no-auto-rehash
 #safe-updates
 
 [myisamchk]
-key_buffer_size = 128M
-sort_buffer_size = 128M
-read_buffer = 2M
-write_buffer = 2M
+key_buffer_size = 64M
+sort_buffer_size = 64M
+read_buffer = 16M
+write_buffer = 16M
 
 [mysqlhotcopy]
 interactive-timeout
