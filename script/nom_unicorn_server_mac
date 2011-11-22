@@ -1,0 +1,49 @@
+#!/bin/sh
+
+is_running(){
+  local prog=$1
+  
+  if [ `ps auxww | grep $prog | wc -l` -ge 2 ]
+  then
+      return 0
+  else
+      return 1
+  fi
+}
+
+rvm use ree@nom
+
+if ( is_running "nginx" )
+then
+    echo "Nginx is already running"
+else
+    echo "Starting nginx in background..."
+    
+fi
+
+if ( is_running "memcached" )
+then
+    echo "Memcached is already running"
+else
+    echo "Starting memcached in background..."
+    memcached &
+fi
+
+if ( is_running "mongod" )
+then
+    echo "mongodb already started, using existing instance"
+else
+    echo "Starting mongodb in background"
+    mongod --quiet &
+fi
+
+if ( is_running "unicorn_rails" )
+then
+    echo "unicorn already started killing"
+    killall unicorn_rails
+    sleep 1
+fi
+
+echo "starting unicorn"
+unicorn -D
+
