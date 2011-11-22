@@ -55,36 +55,40 @@ class RankingAverage < MongoRuby
   def self.new_ranking(nid,rating)
     RankingAverage.eval("new_average_rank('#{nid}',#{rating})")
   end
-  
+
   def self.update_ranking(nid,old_r,new_r)
     old_r = self.valid(old_r); new_r = self.valid(new_r)
     RankingAverage.eval("update_average_rank('#{nid}',#{old_r},#{new_r})")
   end
-  
+
   def self.remove_ranking(nid,old_value)
     old_value = self.valid(old_value)
     RankingAverage.eval("remove_average_rank('#{nid}',#{old_value})")
   end
-  
-  ## methods that find ratings or totals
-  def self.find_by_nid(nid,key='',options={})
-    item = RankingAverage.find_one({ :nid => nid })
-    return 0 if item.nil?
-    options[:total] ? [item['a'], item['c']] : item[key]
-  end
-  
+
   def self.ranking(nid)
-    find_by_nid(nid,key='a')
+    RankingAverage.for_location_nid(nid,key='a')
   end
-  
+
   def self.total(nid)
-    find_by_nid(nid,key='c')
+    RankingAverage.for_location_nid(nid,key='c')
   end
-  
+
   def self.ranking_total(nid)
-    find_by_nid(nid,options={:total=>true})
+    RankingAverage.for_location_nid(nid,options={:total=>true})
   end
-  
+
+  private
+
+    ## methods that find ratings or totals
+  def self.for_location_nid(nid,key='',options={})
+    item = RankingAverage.find_one({ :nid => nid })
+    return {} if item.nil?
+    return {:average => item['a'], :total => item['c']} if options[:total]
+    tkey = key == 'a' ? :average : :total
+    return { tkey => item[key] }
+  end
+
   def self.valid(value)
     value = self.max if value > self.max
     value = self.min if value < self.min

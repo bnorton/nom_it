@@ -1,9 +1,9 @@
 class FollowersController < ApplicationController
-  
-  NUMBER_ARR = /^([0-9]+)(,[0-9]+)*$/  
-  
+
+  NUMBER_ARR = /^([0-9]+)(,[0-9]+)*$/
+
   respond_to :json
-  
+
   before_filter :lat_lng_user
   before_filter :parse_params
   before_filter :check_params,            :only => [:create,:destroy,:followers,:following]
@@ -11,14 +11,14 @@ class FollowersController < ApplicationController
   before_filter :following_params,        :only => [:followers,:following]
   before_filter :authentication_required, :only => [:create,:destroy]
   before_filter :validate_nids,           :only => [:followers,:followers]
-  
+
   def create
     follower  = Follower.find_or_create(@user_nid,@identifier,@items)
     condition = !follower.blank?
     response  = ok_or_not(condition,{:follower=>follower,:follow=>true})
     respond_with response
   end
-  
+
   def destroy
     response = if Follower.unfollow(@user_nid,@identifier)
       Status.unfollowed
@@ -27,18 +27,18 @@ class FollowersController < ApplicationController
     end
     respond_with response
   end
-  
-  # ids of the people who I follow.
+
   def followers
-    nids = Follower.followers_nids(@user_nid)
+    nids = Follower.followers(@user_nid)
     respond_with response_from_nids(nids,:to_user_nid)
   end
-  
-  # ids of the people who follow some `id`
+
   def following
-    nids = Follower.follows_nid_nids(@user_nid)
+    nids = Follower.following(@user_nid)
     respond_with response_from_nids(nids,:user_nid)
   end
+  
+  private
   
   def response_from_nids(nids,key)
     list = []
@@ -49,7 +49,7 @@ class FollowersController < ApplicationController
     condition = !list.empty?
     ok_or_not(condition,{:follower=>list,:none=>true})
   end
-  
+
   def ok_or_not(condition,options={})
     if condition && follower = options[:follower] || User.find_by_nid_or_email(@user_nid)
       Status.OK(follower)
@@ -61,7 +61,7 @@ class FollowersController < ApplicationController
       Status.user_not_authorized
     end
   end
-  
+
   def parse_params
     @to_user_nid = params[:to_user_nid] || params[:new]
     @email = params[:email]
@@ -75,7 +75,7 @@ class FollowersController < ApplicationController
       :twid => @twid 
     }
   end
-  
+
   def followers_params
     if @user_nid.blank? || @identifier.blank?
       respond_with Status.couldnt_follow_or_unfollow
@@ -93,7 +93,7 @@ class FollowersController < ApplicationController
     @lng  = params[:lng]
     @user_nid = params[:user_nid]
   end
-  
+
   def authentication_required
     
   end

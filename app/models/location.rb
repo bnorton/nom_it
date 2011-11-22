@@ -1,11 +1,14 @@
 class Location < ActiveRecord::Base
-  
+
   COMPACT = "id,nid,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
-  
+
   has_many :images
   has_one  :geolocation
   has_one  :statistic
-  
+
+  scope :OL, lambda {|offset,limit|
+    offset(offset).limit(limit)
+  }
   scope :compact, lambda {
     select(COMPACT)
   }
@@ -53,11 +56,11 @@ class Location < ActiveRecord::Base
     street = opt[:street]
     city = opt[:city]
     if nid.present?
-      result = compact.find_by_nid(nid).limit(lim).as_json
+      result = compact.OL(start,lim).find_by_nid(nid)
       built = Array(Location.detail_for_nid(result['nid'],location=result))
     else
       if opt[:lat] && opt[:lng]
-        results = Geolocation.search(opt)
+        results = Geolocation.search(opt,start,lim)
         what = :geolocation
       else
         results = search_by_name_street_city(name,street,city,lim)
@@ -75,14 +78,18 @@ class Location < ActiveRecord::Base
     else
       detail = find_by_nid(nid).as_json
     end
+    meta = Metadata.for_nid(nid)
     Metadata.returned(nid)
     thumb = Thumb.detail_for_nid(nid)
-    meta = Metadata.for_nid(nid)
-    geo = geolocation || Geolocation.for_nid(nid).as_json
+    images = Image.for_location_nid(nid)
+    average = RankingAverage.ranking_total(nid)
+    geo = geolocation || Geolocation.for_location_nid(nid)
+    detail.merge!(thumb)
     detail.merge({
-      :thumbs => thumb,
       :metadata => meta,
-      :geolocation => geo
+      :geolocation => geo,
+      :images => images,
+      :ranking => average
     })
   end
   
@@ -179,3 +186,84 @@ end
   #   t.string   "timeofday"
   #   t.string   "metadata_id"
   # end
+  
+  
+  
+  # detail_for_nid => {
+  #   "name"=>"Roppolo's Pizzeria", 
+  #   "is_new"=>"false", 
+  #   "fsq_id"=>"null", 
+  #   "city"=>"Austin", 
+  #   "address"=>"316 E 6th St Austin, TX 78701-3628", 
+  #   "woeid"=>"12792283", 
+  #   "created_at"=>"2011-11-21T03:14:31Z", 
+  #   "ranking"=>
+  #   {
+  #   }, 
+  #   "location_hash"=>"dfbf46227f1fe4d375148ce3c00486ac37ef26c1c2281f3a4b027c211e481d6c", 
+  #   "country"=>"United States", 
+  #   "cost"=>"$", 
+  #   "code"=>"null", 
+  #   "area_code"=>"78701-3628", 
+  #   "updated_at"=>"2011-11-21T03:14:31Z", 
+  #   "creator"=>"null", 
+  #   "metadata"=>
+  #   {
+  #     "location_nid"=>"4ec9c2173c61671ebe0005ff", 
+  #     "yelp_rating"=>2.5, 
+  #     "ret"=>0, 
+  #     "rec_c"=>0, 
+  #     "rank"=>0, 
+  #     "meh"=>0, 
+  #     "up"=>0, 
+  #     "views"=>1, 
+  #     "categories"=>
+  #     [
+  #       "pizza",
+  #       "italian"
+  #     ], 
+  #     "yelp_count"=>94, 
+  #     "rank_c"=>0
+  #   }, 
+  #   "url"=>"null", 
+  #   "timeofday"=>"dessert | latenight", 
+  #   "street2"=>"null", 
+  #   "schemaless"=>"null", 
+  #   "primary"=>"4ec5ad3f3c6167f601000027", 
+  #   "json_encode"=>"null", 
+  #   "street"=>"316 E 6th St", 
+  #   "revision_nid"=>"null", 
+  #   "id"=>13065, 
+  #   "gowalla_name"=>"null", 
+  #   "cross_street"=>"Between San Jacinto Blvd and Trinity St", 
+  #   "geolocation"=>
+  #   {
+  #     "location_nid"=>"4ec9c2173c61671ebe0005ff", 
+  #     "lng"=>-97.7401351928711, 
+  #     "lat"=>30.2673301696777
+  #   }, 
+  #   "images"=>
+  #   [
+  #   ], 
+  #   "phone"=>"512-476-1490", 
+  #   "neighborhoods"=>"6th Street District | Downtown", 
+  #   "thumbs"=>[], 
+  #   "thumb_count"=>
+  #   {
+  #     "up" => 0, 
+  #     "meh" => 0
+  #   }
+  #   "fsq_name"=>"null", 
+  #   "facebook"=>"null", 
+  #   "yid"=>"2474197075808616171", 
+  #   "secondary"=>"4ec954593c61671c7e0000a9", 
+  #   "nid"=>"4ec9c2173c61671ebe0005ff", 
+  #   "metadata_nid"=>"null", 
+  #   "gowalla_url"=>"null", 
+  #   "twitter"=>"null", 
+  #   "state"=>"Texas"
+  # } 
+  # 
+  
+  
+  

@@ -74,7 +74,7 @@ describe "follower" do
       _FBID = 12345
       newu   = User.find_by_email(@random_email)
       newu.facebook = _FBID
-      newu.save!
+      newu.save
       fbuser = User.find_by_facebook(_FBID)
       fbuser.should_not be_blank
       fbuser.has_joined.should == false
@@ -89,6 +89,9 @@ describe "follower" do
       fbuser.should_not be_blank
       fbuser.has_joined.should == true
     end
+    after do
+      User.find_by_email(@brian[:email]).destroy
+    end
   end
   describe "followers listing" do
     before do
@@ -96,17 +99,15 @@ describe "follower" do
       @one = User.find_by_email(@brian[:email])
       User.register(@mark[:email],@mark[:password],@mark[:screen_name])
       @two = User.find_by_email(@mark[:email])
-      User.register('some_email@gmail.com','password','samplename')
-      @thr = User.find_by_email('some_email@gmail.com')
+      User.register('some_other_email@gmail.com','password','samplename')
+      @thr = User.find_by_email('some_other_email@gmail.com')
     end
     it "should find followers that have followed a user" do
       Follower.find_or_create(@one.nid,@two.nid,@mark)
-      ones_followers = Follower.users_that_i_follow(@one.nid)
+      ones_followers = Follower.following(@one.nid)
       ones_followers.length.should == 1
-      
       Follower.find_or_create(@one.nid,@thr.nid,@brian)
-      
-      @ones_followers = Follower.users_that_i_follow(@one.nid)
+      @ones_followers = Follower.following(@one.nid)
       @ones_followers.length.should == 2
       valid, i = [], 0
       while i < @ones_followers.length
@@ -123,19 +124,19 @@ describe "follower" do
       valid[1].should == true
       
       # users that follow me should not have followers
-      twos_followers = Follower.users_that_i_follow(@two.nid)
+      twos_followers = Follower.following(@two.nid)
       twos_followers.length.should == 0
       
-      thrs_followers = Follower.users_that_i_follow(@thr.nid)
+      thrs_followers = Follower.following(@thr.nid)
       thrs_followers.length.should == 0
     end
     it "should find followers that a user follows" do
       Follower.find_or_create(@two.nid,@one.nid,@mark)
       Follower.find_or_create(@two.nid,@thr.nid,@brian)
       
-      Follower.users_that_i_follow(@two.nid).length.should  == 2
-      Follower.users_that_follow_me(@one.nid).length.should == 1
-      Follower.users_that_follow_me(@thr.nid).length.should == 1
+      Follower.following(@two.nid).length.should == 2
+      Follower.followers(@one.nid).length.should == 1
+      Follower.followers(@thr.nid).length.should == 1
     end
     it "should not find users that have not yet joined" do
       sR = 'some_random_email2@gmail.com'
@@ -145,19 +146,19 @@ describe "follower" do
       some.should_not be_blank
       some.has_joined.should == false
       
-      Follower.users_that_i_follow(@two.nid).length.should  == 0
-      Follower.users_that_follow_me(@two.nid).length.should == 0
+      Follower.following(@two.nid).length.should  == 0
+      Follower.followers(@two.nid).length.should == 0
     end
     it "should find users that were not joined and that are now members" do
       sR = 'some_random_email2@gmail.com'
       random_user = {:screen_name=>'random_user',:email=>sR}
       Follower.find_or_create(@two.nid,random_user[:email],random_user)
-      Follower.users_that_i_follow(@two.nid).length.should  == 0
-      Follower.users_that_follow_me(@two.nid).length.should == 0
+      Follower.following(@two.nid).length.should  == 0
+      Follower.followers(@two.nid).length.should == 0
       
       User.register(random_user[:email],'password',random_user[:screen_name])
-      Follower.users_that_i_follow(@two.nid).length.should  == 1
-      Follower.users_that_follow_me(@two.nid).length.should == 0
+      Follower.following(@two.nid).length.should  == 1
+      Follower.followers(@two.nid).length.should == 0
     end
     after do
       @one.destroy

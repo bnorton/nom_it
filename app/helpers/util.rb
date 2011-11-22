@@ -70,6 +70,19 @@ class Util
       end
     end
     
+    def ensure_limit(start,limit,min=5,max=20)
+      start = start.to_i
+      start = start > 0 ? start : 0
+      limit = limit.to_i
+      limit = limit <= min ? start + min : limit > start + max ? start + max : limit
+      [start,limit]
+    end
+    
+    def limit(num,max=20,min=5)
+      lim = lim.to_i
+      lim < min ? min : lim > max ? max : lim
+    end
+    
     def BSONID
       BSON::ObjectId.new
     end

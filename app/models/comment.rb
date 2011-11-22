@@ -5,28 +5,34 @@ class Comment < MongoRuby
   ############ user_nid  |  about_user_nid | location_nid  |  recommendation_nid  |  parent_comment_nid
   attr_accessor :unid,      :abuid,         :lnid,            :rnid,                 :pcid
   attr_accessor :text, :hash
-  
+
   def self.dbcollection
     "comments"
   end
-  
+
   def self.removed_content_message
     "the user has removed this comment."
   end
-  
+
   def self.create_comment_about_user(opt)
     return false unless Comment.check_user(opt,true) && opt[:text]
   end
-  
+
   def self.create_comment_for_location(opt)
     return false unless Comment.check_location(opt) && opt[:text]
     self.create(opt)
   end
-  
+
   def self.create_comment_for_recommendation(opt)
     return false unless Comment.check_recommendation(opt) && opt[:text]
     self.create(opt)
   end
+
+  def self.for_location_nid(lnid,options={})
+    lnid = Util.STRINGify(lnid)
+    Comment.for_all({ :lnid => lnid },options)
+  end
+
   
   # precedence nid > text > uid,lid,rid > uid,lid > uid > lid > rid
   #
@@ -49,17 +55,17 @@ class Comment < MongoRuby
       false
     end
   end
-  
+
   # can only destroy one since the id is globally unique
   def self.destroy_nid(comment_nid)
     return false unless (comment_nid = Util.STRINGify(comment_nid))
     Comment.set(comment_nid,:text,Comment.removed_content_message)
   end
-  
+
   def self.text_search(opt={})
     false
   end
-  
+
   private
   # find all my comments on a specific item
   def self.search_by_unid_lnid_rnid(unid,lnid,rnid)
@@ -68,13 +74,13 @@ class Comment < MongoRuby
     rnid = Util.STRINGify(rnid)
     Comment.find({ :unid => unid, :lnid => lnid, :rnid => rnid })
   end
-  
+
   def self.search_by_unid_lnid(unid,lnid)
     unid = Util.STRINGify(unid)
     lnid = Util.STRINGify(lnid)
     Comment.find({ :unid => unid, :lnid => lnid })
   end
-  
+
   # simply find a comments nid
   def self.search_nid(nid)
     nid = Util.STRINGify(nid)
@@ -83,20 +89,13 @@ class Comment < MongoRuby
   
   def self.for_user_nid(unid,options={})
     unid = Util.STRINGify(unid)
-    Comment.for_all({:unid => unid},options)
-  end
-  
-  def self.for_location_nid(lnid,options={})
-    lnid = Util.STRINGify(lnid)
-    Comment.for_all({:lnid => lnid},options)
+    Comment.for_all({ :unid => unid },options)
   end
   
   def self.for_recommendation_nid(rnid,options={})
     rnid = Util.STRINGify(rnid)
-    Comment.for_all({:rnid => rnid},options)
+    Comment.for_all({ :rnid => rnid },options)
   end
-  
-  private
   
   def self.check_user(opt,direct=false)
     return false if direct && opt[:about_user_nid].blank?
@@ -124,7 +123,6 @@ class Comment < MongoRuby
       :unid  => Util.STRINGify(opt[:user_nid]),
       :lnid  => Util.STRINGify(opt[:location_nid])
     }
-    
     hash.merge!({:pcid => Util.STRINGify(opt[:parent_nid])}) if opt[:parent_nid]
     hash.merge!({:abuid => opt[:about_user_nid]}) if opt[:about_user_nid]
     hash.merge!({:rnid  => Util.STRINGify(opt[:recommendation_nid])})  if opt[:recommendation_nid]
@@ -133,7 +131,7 @@ class Comment < MongoRuby
   end
   
   def self.for_all(finder,options={})
-    the_limit = options[:limit] || 20
+    the_limit = Util.limit(options[:limit])
     Comment.find(finder).sort([[ :_id, MONGO_ASC ]]).limit(the_limit)
   end
   

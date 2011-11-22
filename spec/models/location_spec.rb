@@ -4,8 +4,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe "locations" do
   describe "searching" do
     before do
-      @lat1 = 37.72381
-      @lng1 = -122.403
+      @lat1 = 40.72381
+      @lng1 = -127.403
       @lat2 = 37.82381
       @lng2 = -122.503
       @nid1 = Util.ID
@@ -122,74 +122,3 @@ describe "locations" do
   end
 end
 
-{
-  "location_nid"=>"4ebdd28e3c61672a3500000d", 
-  :thumbs=>
-  {
-    
-  }, 
-  :metadata=>nil, 
-  :geolocation=>
-  {
-    "primary"=>"", 
-    "secondary"=>""
-  }
-}
-
-# {
-#   "address"=>"201 11th st", 
-#   "city"=>"seal beach", 
-#   ...
-#   "id"=>510, 
-#   "name"=>"location name 3", 
-#   "nid"=>"4ebdd13c3c61672a0b000012",
-#   "updated_at"=>"2011-11-12T01:51:56Z", 
-#   :thumbs => {
-#     ...
-#   }, 
-#   :metadata =>
-#   {
-#     "ret"=>1, 
-#     :nid=>"4ebdd13c3c61672a0b000012"
-#   }, 
-#   :geolocation=>
-#   {
-#     "cost"=>"null", 
-#     "created_at"=>"2011-11-12T01:51:56Z", 
-#     "id"=>414, 
-#     "lat"=>37.82381057739258, 
-#     "lng"=>-122.50299835205078, 
-#     "location_nid"=>"4ebdd13c3c61672a0b000012", 
-#     "updated_at"=>"2011-11-12T01:51:56Z", 
-#     "primary"=>"", 
-#     "secondary"=>""
-#   }
-# }
-
-
-# {
-#   "location_nid"=>"4ebdd9183c61672ac400000d", 
-#   :thumbs=>{
-#    ...
-#   },
-#   :metadata=>
-#   {
-#     "ret"=>1, 
-#     :nid=>"4ebdd9183c61672ac400000d"
-#   }, 
-#   :geolocation=>
-#   {
-#     "cost"=>"null", 
-#     "created_at"=>"2011-11-12T02:25:28Z", 
-#     "id"=>739, 
-#     "lat"=>37.72380828857422, 
-#     "lng"=>-122.40299987792969, 
-#     "location_nid"=>"4ebdd9183c61672ac400000d", 
-#     "updated_at"=>"2011-11-12T02:25:28Z", 
-#     "primary"=>"", 
-#     "secondary"=>""
-#   }
-# }
-  
-  
-  

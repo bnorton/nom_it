@@ -13,7 +13,6 @@ class Detail < MongoRuby
   end
   
   def self.for_whatever(key,item,lim)
-    lim = lim > 50 ? 50 : lim < 5 ? 5 : lim.to_i
     found = Detail.find({key => item}).limit(lim)
     Util.parse(found,{:key=>:token}) if found
   end

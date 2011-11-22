@@ -36,7 +36,7 @@ class GeolocationsController < ApplicationController
       :lng   => lng,
       :dist  => params[:dist] || DEFAULT_DISTANCE,
       :start => params[:start],
-      :limit => params[:limit]}
+      :limit => Util.limit(params[:limit])}
   end
   
   def primary

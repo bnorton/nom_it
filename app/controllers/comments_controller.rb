@@ -55,7 +55,7 @@ class CommentsController < ApplicationController
   def check_params
     @nid = params[:comment_nid]
     @start = params[:start]
-    @limit = params[:limit]
+    @limit = Util.limit(params[:limit])
     if @nid.blank?
       respond_with Status.comments_not_found
     end

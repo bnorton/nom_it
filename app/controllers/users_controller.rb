@@ -62,7 +62,7 @@ class UsersController < ApplicationController
   
   def search
     @query ||= @screen_name || @email
-    results   = User.search_by_all(@query)
+    results   = User.search_by_all(@query,@limit)
     condition = results.present?
     response  = ok_or_not(condition,{:results=>results,:search=>true})
     respond_with response
@@ -127,7 +127,7 @@ class UsersController < ApplicationController
   
   def user_params
     @nid_them=params[:their_nid]
-    @limit  = params[:limit]
+    @limit  = Util.limit(params[:limit],10)
     @email  = params[:email] || params[:nid]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]

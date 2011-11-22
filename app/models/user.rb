@@ -5,6 +5,9 @@ class User < ActiveRecord::Base
   has_many :images
   has_many :recommendations
   
+  scope :OL, lambda {|offset,limit|
+    offset(offset).limit(limit)
+  }
   scope :public_fields, lambda {
     select(User.fields)
   }
@@ -36,22 +39,21 @@ class User < ActiveRecord::Base
   scope :find_by_not_yet_joined, lambda {|identifier|
     find_by_any_means(identifier).hasnt_joined
   }
-  scope :detail, lambda {|nid|
-    find_by_nid_or_email(nid)
+  scope :detail_for_nids, lambda {|nids,lim|
+    public_fields.where(["nid in (?)", nids.split(',')]).limit(lim)
   }
-  scope :detail_for_nids, lambda {|nids|
-    public_fields.where(["nid in (?)", nids.split(',')])
+  scope :find_by_like_name, lambda {|name,lim|
+    public_fields.where(["name like ?", "%#{name}%"]).has_joined.limit(lim)
   }
-  scope :find_by_like_name, lambda {|name|
-    public_fields.where(["name like ?", "%#{name}%"]).has_joined
-  }
-  scope :find_by_username, lambda {|username|
-    public_fields.where(["screen_name=?", username]).has_joined
-  }
-  scope :search_by_all, lambda {|identifier|
+  scope :search_by_all, lambda {|identifier,limit|
     list = [identifier,identifier,identifier]
     public_fields.where(["name like ? or nid=? or email=? or screen_name=?", "%#{identifier}%",*list]).has_joined
   }
+  
+  def self.for_nid(nid)
+    nid = Util.STRINGify(nid)
+    public_fields.find_by_nid(nid)
+  end
   
   def self.token_match?(nid, token)
     begin
@@ -73,7 +75,7 @@ class User < ActiveRecord::Base
       if user && user.password == Digest::SHA2.hexdigest(user['salt'].to_s + password, 256)
         user.session_id = User.new_session_id
         user.last_seen  = Time.now
-        return true if user.save!
+        return true if user.save
       end
     end
   end
@@ -90,10 +92,7 @@ class User < ActiveRecord::Base
     user.city = city
     user.session_id = User.new_session_id
     user.nid      ||= Util.ID
-    begin
-      user.save!
-    rescue ActiveRecord::RecordNotUnique
-    end
+    user.save
     User.private_fields.find_by_email(email)
   end
   
@@ -112,7 +111,7 @@ class User < ActiveRecord::Base
     user.has_joined= true
     user.session_id = User.new_session_id
     user.nid    ||= Util.ID
-    user.save!
+    user.save
   end
   
   def self.register_with_twitter(twHash,username='',email='')
@@ -129,7 +128,7 @@ class User < ActiveRecord::Base
     user.token_expires = Time.now + 14.days
     user.has_joined= true
     user.nid     ||= Util.ID
-    user.save!
+    user.save
   end
     
   def self.new_or_hasnt_joined(identifier)
@@ -159,7 +158,7 @@ class User < ActiveRecord::Base
     ##    are here because someone followed them via some identifier  ##
     user.has_joined = false                                           ##
     ## end warning #####################################################
-    if user.save!
+    if user.save
       User.find_by_token(token)
     end
   end

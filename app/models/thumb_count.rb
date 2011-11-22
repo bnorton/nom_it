@@ -51,7 +51,7 @@ class ThumbCount < MongoRuby
   def self.for_nid(nid)
     nid = Util.STRINGify(nid)
     item = ThumbCount.find_one({ :_id => nid })
-    return {} if item.nil?
+    return { :up => 0, :meh => 0 } if item.nil?
     { :up => item['up'], :meh => item['meh'] }
   end
   

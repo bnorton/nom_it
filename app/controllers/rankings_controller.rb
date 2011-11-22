@@ -80,12 +80,12 @@ class RankingsController < ApplicationController
   
   def user_params
     render_insufficient unless (@user_nid = params[:user_nid])
-    @limit = params[:limit] || 20
+    @limit = Util.limit(params[:limit])
   end
   
   def location_params
     render_insufficient unless (@location_nid = params[:location_nid])
-    @limit = params[:limit] || 20
+    @limit = Util.limit(params[:limit])
   end
   
   # verifies the params of user_nid, nid, and rank

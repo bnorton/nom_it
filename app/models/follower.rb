@@ -3,10 +3,7 @@ class Follower < ActiveRecord::Base
 # for every user that ""I follow"" there will be an entry for my 'id' in the user column
 # for every user that ""follows me"" there will be an entry for my 'id' in the to column
   
-  IFOLLOW      = "to_user_nid"   # the field that is needed when looking for users that I follow
-  FOLLOWS_ME   = "user_nid"
-  SINGLE_TABLE = "id,to_user_nid,to_name,user_nid,user_name,user_city,undirected,updated_at"
-  
+  FOLLOW_FIELDS = "to_user_nid,to_name,user_nid,user_name,user_city,undirected"   # the field that is needed when looking for users that I follow
   belongs_to :user
   
   ##  follower_3
@@ -16,88 +13,75 @@ class Follower < ActiveRecord::Base
   ##  | me | <---> follower_1
   ##   ----
   ##
-  scope :iids, lambda {
-    select(IFOLLOW) }
-  scope :fids, lambda {
-    select(FOLLOWS_ME) }
-  scope :info, lambda {
-    select(SINGLE_TABLE) }
-  
+  scope :OL, lambda {|offset,limit|
+    offset(offset).limit(limit)
+  }
+  scope :fields, lambda {
+    select(FOLLOW_FIELDS) 
+  }
   scope :valid, lambda {
-    where(["approved=1"])
+    where(["`approved`=1"])
   }
-  
-  scope :followers__, lambda {|user_nid|
-    valid.where(["user_nid in (?)",user_nid.split(',')]) }
-  scope :followers, lambda {|user_nid|
-    info.followers__(user_nid) }
-  scope :followers_nids, lambda {|user_nid|
-    iids.followers__(user_nid) }
-  
-  scope :follows_nid__, lambda {|nid|
-    valid.where(["to_user_nid in (?)",nid.split(',')]) }
-  scope :follows_nid, lambda {|nid|
-    info.follows_nid__(nid) }
-  scope :follows_nid_nids, lambda {|nid|
-    fids.follows_nid__(nid) }
-  
-  scope :find_by_me_them_who_ifollow, lambda {|user_nid,to_user_nid|
-    valid.where(["user_nid=? and to_user_nid=?",user_nid,to_user_nid])
-  }
-  scope :find_by_me_them_follows_me, lambda {|user_nid,to_user_nid|
-    valid.where(["to_user_nid=? and user_nid=?",user_nid,to_user_nid])
-  }
-  
+
   def self.find_or_create(nid,their_identifier,items)
     options = {}
     other = User.find_by_any_means_necessary(their_identifier)
     if other.blank?
       other = User.create_should_join(items)
-      options.merge!({:hasnt_joined=>true})
       return if other.blank?
+      options.merge!({ :hasnt_joined => true })
     end
     Follower.new_follower(nid,other,options)
   end
-  
+
+  def self.followers(user_nid,start=0,limit=50)
+    start,limit = Util.ensure_limit(start,limit)
+    return [] if user_nid.blank?
+    user_nid = Util.STRINGify(user_nid)
+    Follower.fields.valid.OL(start,limit).find_all_by_to_user_nid(user_nid)
+  end
+
+  def self.following(user_nid,start=0,limit=50)
+    start,limit = Util.ensure_limit(start,limit)
+    return [] if user_nid.blank?
+    user_nid = Util.STRINGify(user_nid)
+    Follower.fields.valid.OL(start,limit).find_all_by_user_nid(user_nid)
+  end
+
   private
   
   def self.new_follower(user_nid,other,options={})
     me = User.private_nid(user_nid).try(:first)
     return false if me.blank? || other.blank?
-    my_name   = me.name || me.screen_name
-    other_name= other.name || other.screen_name
+    my_name = me.name || me.screen_name
+    other_name = other.name || other.screen_name
     f = Follower.new_or_old(user_nid,other.nid)
-    f.user_nid      = me.nid
-    f.user_name    = my_name
-    f.user_city    = me.city
-    f.to_user_nid   = other.nid
-    f.to_name      = other_name
+    f.user_nid = me.nid
+    f.user_name = my_name
+    f.user_city = me.city
+    f.to_user_nid = other.nid
+    f.to_name = other_name
     if options[:hasnt_joined]
       f.approved = false
     else
       f.approved = true
     end
-    begin
-      if f.save!
-        flag = true
-      end
-    rescue ActiveRecord::RecordNotUnique
-      flag = true
-    end
-    User.detail(other.nid) if flag
+    f.save
+    User.for_nid(other.nid)
   end
   
   def self.user_has_joined(to_nid)
     return if (to = Follower.find_by_to_user_nid(to_nid)).blank?
     Array(to).each do |t|
       t.approved = true
-      t.save!
+      t.save
     end
   end
   
+  # user_nid is following to_user_nid
   def self.unfollow(user_nid,to_user_nid)
     to_user_nid     = User.find_by_any_means_necessary(to_user_nid)
-    follower = Follower.find_by_me_them_who_ifollow(user_nid,to_user_nid.try(:nid))
+    follower = Follower.find_by_user_nid_and_to_user_nid(user_nid,to_user_nid.nid)
     return false if follower.blank? || to_user_nid.blank?
     follower.delete!
   end
@@ -105,29 +89,24 @@ class Follower < ActiveRecord::Base
   def self.block_follower(user_nid,to_user_nid)
     user_nid = Util.STRINGify(user_nid)
     to_user_nid = Util.STRINGify(to_user_nid)
-    to_user_nid = User.find_by_any_means_necessary(to_user_nid)
-    follower = Follower.find_by_me_them_follows_me(user_nid,to_user_nid.try(:nid))
+    to_user_nid = User.find_by_any_means_necessary(to_user_nid).nid
+    follower = fields.find_by_to_user_nid_and_user_nid(user_nid,to_user_nid)
     return false if follower.blank? || to_user_nid.blank?
     follower.approved = false
-    follower.save!
+    follower.save
   end
   
-  def self.users_that_follow_me(user_nid)
-    return [] if user_nid.blank?
-    user_nid = Util.STRINGify(user_nid)
-    Follower.follows_nid_nids(user_nid)
-  end
-  
-  def self.users_that_i_follow(user_nid)
-    return [] if user_nid.blank?
-    user_nid = Util.STRINGify(user_nid)
-    Follower.followers_nids(user_nid)
+  def self.for_user_nid(user_nid,start=0,limit=20)
+    {
+      :followers => Follower.OL(start,limit).find_all_by_to_user_nid(user_nid),
+      :following => Follower.OL(start,limit).find_all_by_user_nid(user_nid)
+    }
   end
   
   def self.new_or_old(user_nid,to_user_nid)
     user_nid = Util.STRINGify(user_nid)
-    to_user_nid = Util.STRINGify(user_nid)
-    Follower.find_by_me_them_follows_me(user_nid,to_user_nid).first || Follower.new
+    to_user_nid = Util.STRINGify(to_user_nid)
+    Follower.fields.valid.find_by_user_nid_and_to_user_nid(user_nid,to_user_nid) || Follower.new
   end
 end
 

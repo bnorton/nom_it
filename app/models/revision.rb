@@ -5,7 +5,10 @@ class Revision < ActiveRecord::Base
   
   belongs_to :user
   belongs_to :location
-  
+
+  scope :OL, lambda {|offset,limit|
+    offset(offset).limit(limit)
+  }
   scope :basic, lambda {
     select(BASIC)
   }

@@ -48,29 +48,29 @@ describe "ranking" do
       end
       it "should propagate the new_ranks out to the average as well" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(1.0)
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
         Ranking.new_rank(@nid1,@uid2,2,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(1.5)
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.5)
         Ranking.new_rank(@nid1,@uid3,3,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(2.0) 
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0) 
       end
       it "should update the rank when it is a different value from from the original" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(1.0) 
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0) 
         Ranking.new_rank(@nid1,@uid1,2,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(2.0) 
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0) 
         Ranking.new_rank(@nid1,@uid1,5,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(5.0) 
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(5.0) 
       end
       it "should keep the same count when the rating is updated" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(1.0)
-        RankingAverage.total(@nid1).should  == 1
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
+        RankingAverage.total(@nid1)[:total].should  == 1
         Ranking.for_unid(@uid1).count.should == 1
         
         Ranking.new_rank(@nid1,@uid1,2,'sample').should == true
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(2.0)
-        RankingAverage.total(@nid1).should  == 1
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0)
+        RankingAverage.total(@nid1)[:total].should  == 1
         Ranking.for_unid(@uid1).count.should == 1
       end
       it "should update the average when the value is reused for another location" do
@@ -78,14 +78,14 @@ describe "ranking" do
         Ranking.new_rank(@nid2,@uid1,1,'sample').should == true
         Ranking.new_rank(@nid3,@uid1,1,'sample').should == true
         
-        RankingAverage.ranking(@nid1).should be_within(0.001).of(1.0)
-        RankingAverage.ranking(@nid2).should be_within(0.001).of(1.0)
-        RankingAverage.ranking(@nid3).should be_within(0.001).of(1.0)
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
+        RankingAverage.ranking(@nid2)[:average].should be_within(0.001).of(1.0)
+        RankingAverage.ranking(@nid3)[:average].should be_within(0.001).of(1.0)
         
-        RankingAverage.total(@nid1).should  == 1
-        RankingAverage.total(@nid2).should  == 1
+        RankingAverage.total(@nid1)[:total].should  == 1
+        RankingAverage.total(@nid2)[:total].should  == 1
         
-        RankingAverage.total(@nid3).should  == 1
+        RankingAverage.total(@nid3)[:total].should  == 1
       end
     end
   end

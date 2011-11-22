@@ -17,14 +17,15 @@ class Image < ActiveRecord::Base
   :bucket => 'img.justnom',
   :use_timestamp => false
   
-  def self.for_image_nid(image_nid,options={})
+  def self.for_nid(image_nid,options={})
     Image.build_image(Image.find_by_nid(image_nid),options)
   end
   
-  def self.for_location_nid(location_nid,options={})
-    return {} if location_nid.blank?
+  def self.for_location_nid(nid,options={})
+    return {} if nid.blank?
+    lim = options[:limit].to_i || 6
     images = []
-    raw_images = Image.limit(9).find_all_by_location_nid(location_nid)
+    raw_images = Image.limit(lim).find_all_by_location_nid(nid)
     raw_images.each do |img|
       images << Image.build_image(img,options)
     end

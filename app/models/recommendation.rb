@@ -1,18 +1,14 @@
 class Recommendation < ActiveRecord::Base
   require 'base64'
   
-  has_attached_file :photo,
-    :styles => {
-    :thumb  => "100x100",
-    :medium => "200x200",
-    :large => "600x400"
-  }
-  
   belongs_to :user
   belongs_to :location
   
   COMPACT = "id,nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,updated_at,image"
   
+  scope :OL, lambda {|offset,limit|
+    offset(offset).limit(limit)
+  }
   scope :compact, lambda {
     Recommendation.select(COMPACT)
   }
@@ -44,12 +40,12 @@ class Recommendation < ActiveRecord::Base
     r.location_name = this[:name]
     r.location_city = this[:city]
     r.nid      = Util.ID
-    if r.save!
+    if r.save
       Metadata.recommended(r.nid) # for item analytics
       token = Base64.encode64(r.id.to_s)
       token = token.gsub('=','').gsub('\n','')
       r.token = token
-      r.save!
+      r.save
       [token,User.find_by_token(token)]
     end
   end
