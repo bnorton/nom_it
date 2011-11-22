@@ -36,9 +36,7 @@ class Correlate
       this.area_code = corr['zipc']
       this.country = corr['country']
       this.nid = Util.ID;
-      begin
-        this.save!
-      rescue ActiveRecord::RecordNotUnique
+      this.save
       end
       
       location_id = Location.find_by_fsq_id(fsqid)
@@ -48,9 +46,7 @@ class Correlate
       this = Geolocation.find_or_initialize_by_location_id(location_id)
       this.lat = corr['lat']
       this.lng = corr['lng']
-      begin
-        this.save!
-      rescue ActiveRecord::RecordNotUnique
+      this.save
       end
       
       corr = location['statistics']
@@ -60,9 +56,7 @@ class Correlate
       this.yelp_rating  = corr['rating']
       this.gowalla_checkins = corr['gowcheckins']
       this.gowalla_users = corr['gowusers']
-      begin
-        this.save!
-      rescue ActiveRecord::RecordNotUnique
+      this.save
       end
       
       trends[fsqid] = {
