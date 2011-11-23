@@ -1,8 +1,6 @@
 
 class UsersController < ApplicationController
   
-  NUMBER_ARR = /^([0-9A-Za-z]+)(,[0-9A-Za-z]+)*$/  
-  
   respond_to :json
   
   before_filter :lat_lng_user
@@ -10,8 +8,7 @@ class UsersController < ApplicationController
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
-  before_filter :validate_nids,      :only => [:detail,:thumbs,:thumbed]
-  
+  before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed]
   before_filter :authentication_required, :only => [:me,:thumb_create]
   
   def check
@@ -49,7 +46,7 @@ class UsersController < ApplicationController
   end
   
   def me
-    me = User.me(@token)
+    me = User.me(@auth_token)
     respond_with Status.OK(me)
   end
   
@@ -73,34 +70,6 @@ class UsersController < ApplicationController
     followers = Follower.followers_nids(@user_nid)
     recommends = Recommended.for_user_nid_list(@user_nid)
     
-    
-  end
-  
-  # thumb a user
-  def thumb_create
-    val = params[:value]
-    response = if val && Thumb.new_thumb(@nid,@nid_them,val)
-      Status.thumb_created
-    else
-      Status.couldnt_create_new_thumb
-    end
-    respond_with response
-  end
-  
-  # the users that have thumbed another user  (return people)
-  def thumbs
-    thumbz,count = Thumb.detail_for_nid(@nid,@limit,:user)
-    response = if thumbz.length > 0
-      Status.thumbs(thumbz).merge({:thumb_count => count})
-    else
-      Status.insufficient_arguments
-    end
-    respond_with response
-  end
-  
-  # things that the user has thumbed (return locatons)
-  def thumbed
-    
   end
   
   private
@@ -114,7 +83,7 @@ class UsersController < ApplicationController
       if condition
         Status.search_result(results)
       else
-        Status.not_found
+        Status.not_found 'users'
       end
     else
       Status.user_not_authorized
@@ -122,15 +91,15 @@ class UsersController < ApplicationController
   end
   
   def login_required
-    if (@email.blank? || @nid.blank?) || @password.blank?
+    if !(@email.present? || @user_nid.present?) || @password.blank?
       respond_with Status.user_not_authorized
     end
   end
   
   def user_params
-    @nid_them=params[:their_nid]
+    @to_user_nid=params[:to_user_nid]
     @limit  = Util.limit(params[:limit],10)
-    @email  = params[:email] || params[:nid]
+    @email  = params[:email]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
     @TWHash = params[:twhash]
@@ -139,10 +108,8 @@ class UsersController < ApplicationController
   end
   
   def auth_params
-    @nid = params[:nid]
-    @email_or_nid = @nid || @email
+    @email_or_nid = @user_nid || @email
     @password = params[:password]
-    @token = @oauth_token = params[:token]
     @registration_type = params[:regtype] || 'nom'
   end
   
@@ -156,22 +123,19 @@ class UsersController < ApplicationController
   end
   
   def validate_nids
-    @nid  = params[:nid]
-    @nids = params[:nids] || []
-    @nids << @nid if @nid.present?
-    if @nids.blank? || !(@nids =~ NUMBER_ARR)
+    @user_nid  = params[:user_nid]
+    @user_nids = params[:user_nids] || []
+    @user_nids << @user_nids if @nid.present?
+    if @user_nids.blank? || !(@user_nids =~ NID_LIST)
       respond_with Status.insufficient_arguments
     end
   end
   
-  def validate_token
-    unless @token.present? && User.token_match?(@nid,@token)
+  def authentication_required
+    @auth_token = params[:auth_token]
+    unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
       respond_with Status.user_not_authorized
     end
-  end
-  
-  def authentication_required
-    validate_token
   end
   
   def lat_lng_user

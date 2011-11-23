@@ -18,23 +18,26 @@ class Image < ActiveRecord::Base
   :use_timestamp => false
   
   def self.for_nid(image_nid,options={})
-    Image.build_image(Image.find_by_nid(image_nid),options)
+    Rails.cache.fetch("single_image_nid_#{image_nid}_size#{options[:size] || :medium}", :expires_in => 1.day) do
+      Image.build_image(Image.find_by_nid(image_nid),options)
+    end
   end
   
-  def self.for_location_nid(nid,options={})
-    return {} if nid.blank?
-    lim = options[:limit].to_i || 6
-    images = []
-    raw_images = Image.limit(lim).find_all_by_location_nid(nid)
-    raw_images.each do |img|
-      images << Image.build_image(img,options)
+  def self.for_location_nid(nid)
+    Rails.cache.fetch("up_to_10_images_for_location_#{nid}", :expires_in => 15.minutes) do
+      return {} if nid.blank?
+      images = []
+      raw_images = Image.limit(10).find_all_by_location_nid(nid)
+      raw_images.each do |img|
+        images << Image.build_image(img)
+      end
+      images
     end
-    images
   end
   
   private
   
-  def self.build_image(image,options)
+  def self.build_image(image,options={})
     return false unless image = image.image
     size = options[:size] if IMAGE_KEYS.include? options[:size]
     size ||= :medium

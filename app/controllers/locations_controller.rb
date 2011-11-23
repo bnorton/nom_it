@@ -1,47 +1,39 @@
 class LocationsController < ApplicationController
   
   respond_to :json
-  
+
   before_filter :lat_lng_user
   before_filter :validate_nids, :only => [:detail] 
-  before_filter :authentication_required, :only => [:edit,:create]
+  before_filter :authentication_required, :only => [:create]
   before_filter :needs_for_create, :only => [:create]
   before_filter :needs_for_search, :only => [:search,:here]
-  
+
   DEFAULT_DISTANCE = 0.5
-  
+
   def here
     search
   end
-  
+
   def search
     found = Location.search(@geo_opt)
     response = unless found.blank?
-      Status.locations(found)
+      Status.OK(found,{:result_name=>:locations})
     else
-      Status.no_locations_found
+      Status.not_found 'locations'
     end
     respond_with response
     
   end
-  
+
   def detail
     response = if (locations = Location.detail_for_nids(@locations))
-      Status.locations(locations)
+      Status.OK(locations,{:result_name=>:locations})
     else
-      Status.no_locations_found
+      Status.not_found 'locations'
     end
     respond_with response
   end
-  
-  # # required
-  # @nid
-  # @token
-  # @name
-  # @primary
-  # (@lat AND @lng) OR (@addr AND @city)
-  # # optional
-  # @text
+
   def create
     response = if (loc = Location.create_item(@creation,@optional))
       Status.item_created(loc)
@@ -50,34 +42,37 @@ class LocationsController < ApplicationController
     end
     respond_with response
   end
-  
+
   def validate_nids
-    @locations  = params[:nids] || []
-    @locations << params[:nid]
-    @locations = @locations.respond_to?(:split) ? @locations.split(',') : @locations
-    flag = false
-    unless @locations.is_a?(Array) && @locations.length > 0
-      respond_with Status.location_not_properly_formatted({:plural=>true}) if flag
+    if (@locations = params[:location_nids]) =~ NID_LIST
+      @locations = @locations.split(',')
+    else
+      @locations = []
+    end
+    @location = params[:location_nid]
+    @locations << @location if @location =~ NID
+    unless @locations.is_a? Array && @locations.length > 0
+      respond_with Status.location_not_properly_formatted({ :plural=>true })
     end
   end
-  
+
   def optional_for_create
     @why = params[:why]
     @optional = {
       :why => @why
     }
   end
-  
+
   def needs_for_create
-    @nid = params[:nid]
-    @token = params[:token]
+    @user_nid = params[:user_nid]
+    @auth_token = params[:auth_token]
     @name = params[:name]
     @text = params[:text]
     
     categories
     
     r = nil
-    unless (@nid && @token)
+    unless (@user_nid && @auth_token)
       r = Status.insufficient_arguments({:message => 'needs acting user and auth_token'})
     end
     unless (@name && @primary)
@@ -89,7 +84,7 @@ class LocationsController < ApplicationController
     
     @creation = {
       :nid => @nid,
-      :token => @token,
+      :auth_token => @auth_token,
       :name => @name,
       :text => @text,
     }
@@ -97,10 +92,8 @@ class LocationsController < ApplicationController
     @creation.merge!(@categories)
     @categories
   end
-  
+
   def geolocation_params
-    @lat = params[:lat]
-    @lng = params[:lng]
     @dist = params[:dist]
     @addr = params[:addr]
     @city = params[:city]
@@ -116,11 +109,11 @@ class LocationsController < ApplicationController
       :addr => @addr
     }
   end
-  
+
   def needs_for_search
     @geo_opt = geolocation_params.merge(categories)
   end
-  
+
   def categories
     @primary = params[:primary]
     @secondary = params[:secondary]
@@ -129,11 +122,14 @@ class LocationsController < ApplicationController
       :secondary => @secondary
     }
   end
-  
+
   def authentication_required
-    # token from the db must match
+    @auth_token = params[:auth_token]
+    unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
+      respond_with Status.user_auth_invalid
+    end
   end
-  
+
   def lat_lng_user
     @lat  = params[:lat]
     @lng  = params[:lng]

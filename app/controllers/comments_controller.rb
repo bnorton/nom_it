@@ -5,6 +5,7 @@ class CommentsController < ApplicationController
   before_filter :lat_lng_user
   before_filter :check_params,  :only => [:recommendation,:location,:user]
   before_filter :search_params, :only => [:search,:create]
+  before_filter :authentication_required, :only => [:create]
   
   def recommendation
     comments 'recommendation'
@@ -29,17 +30,17 @@ class CommentsController < ApplicationController
       Comment.create_comment_for_recommendation(@search)
     elsif @search[:location_nid]
       Comment.create_comment_for_location(@search)
-    elsif @search[:about_user_nid]
+    elsif @search[:to_user_nid]
       Comment.create_comment_about_user(@search)
     end
-    message = nid ? [{:comment_nid=>Util.STRINGify(nid)}] : nil
-    respond_with ok_or_not(message)
+    message = nid ? {:comment_nid=>Util.STRINGify(nid)} : nil
+    respond_with ok_or_not(message), :location => nil
   end
   
   private 
   
   def comments(method_name)
-    comments = Comment.send("for_#{method_name}_nid".to_sym, @nid, {:start=>@start,:limit=>@limit})
+    comments = Comment.send(:"for_#{method_name}_nid", @comment_nid, {:start=>@start,:limit=>@limit})
     prepared = Util.prepare(comments)
     respond_with ok_or_not(prepared)
   end
@@ -48,15 +49,15 @@ class CommentsController < ApplicationController
     unless comments.blank?
       Status.OK(comments,{:result_name=>:comments})
     else
-      Status.comments_not_found
+      Status.not_found 'comments'
     end
   end
   
   def check_params
-    @nid = params[:comment_nid]
+    @comment_nid = params[:comment_nid]
     @start = params[:start]
     @limit = Util.limit(params[:limit])
-    if @nid.blank?
+    if @comment_nid.blank?
       respond_with Status.comments_not_found
     end
   end
@@ -79,6 +80,13 @@ class CommentsController < ApplicationController
     @lat  = params[:lat]
     @lng  = params[:lng]
     @user_nid = params[:user_nid]
+  end
+
+  def authentication_required
+    @auth_token = params[:auth_token]
+    unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
+      respond_with Status.user_auth_invalid
+    end
   end
 
 end

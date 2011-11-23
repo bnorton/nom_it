@@ -40,7 +40,6 @@ class MongoRuby
   
   def self.incr(nid,what,ct=1)
     return false unless nid && what
-    nid = Util.STRINGify(nid)
     begin
       self.collection.update({ :_id => nid }, { '$inc' => { what => ct }}, {:upsert => true}) ? true : false
     rescue Exception
@@ -50,7 +49,6 @@ class MongoRuby
   
   def self.set(nid,what,val)
     return false unless nid && what && val
-    nid = Util.STRINGify(nid)
     begin
       self.collection.update({ :_id => nid }, {'$set' => { what => val }}) ? true : false
     rescue Exception

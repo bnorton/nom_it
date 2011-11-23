@@ -37,13 +37,13 @@ class Thumb < MongoRuby
     Thumb.find_by({ :unid => unid }, lim) || {}
   end
   
-  def self.detail_for_nid(nid,lim=10)
+  def self.detail_for_nid(nid,lim=10,what=:user_nid)
     nid = Util.STRINGify(nid)
     result = []
     thumbs = Thumb.for_nid(nid,lim)
     if thumbs.count > 0
       while (thumb = thumbs.next).present?
-        result << Util.nidify(thumb,:location_nid)
+        result << Util.nidify(thumb,what)
       end
     end
     {

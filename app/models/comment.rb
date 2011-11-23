@@ -58,7 +58,7 @@ class Comment < MongoRuby
 
   # can only destroy one since the id is globally unique
   def self.destroy_nid(comment_nid)
-    return false unless (comment_nid = Util.STRINGify(comment_nid))
+    return false unless (comment_nid = Util.BSONify(comment_nid))
     Comment.set(comment_nid,:text,Comment.removed_content_message)
   end
 
@@ -83,7 +83,7 @@ class Comment < MongoRuby
 
   # simply find a comments nid
   def self.search_nid(nid)
-    nid = Util.STRINGify(nid)
+    nid = Util.BSONify(nid)
     Comment.find({ :_id => nid })
   end
   

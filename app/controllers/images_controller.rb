@@ -1,11 +1,12 @@
 class ImagesController < ApplicationController
   
   respond_to :json
-  
+
   before_filter :lat_lng_user
-  before_filter :new_image_params, :only => [:create]
-  before_filter :image_presence, :only => [:create]
-  
+  before_filter :new_image_params
+  before_filter :image_presence
+  before_filter :authentication_required
+
   def create
     @image = Image.new(params[:image])
     @image.nid = Util.ID
@@ -14,7 +15,7 @@ class ImagesController < ApplicationController
     resp = if @image.save
       Status.image_saved(@image.nid)
     else
-      Status.image_not_saved
+      Status.item_not_created 'image'
     end
     respond_with_location resp
   end
@@ -42,15 +43,23 @@ class ImagesController < ApplicationController
       respond_with_location Status.insufficient_arguments({ :message=>"image upload should have an acting `user_nid` and a target `location_nid`"})
     end
   end
-  
+
+  # redirect the user to root upon form posting
   def respond_with_location(resp)
     respond_with resp, :location => '/'
   end
-  
+
   def lat_lng_user
     @lat  = params[:lat]
     @lng  = params[:lng]
     @user_nid = params[:user_nid]
+  end
+
+  def authentication_required
+    @auth_token = params[:auth_token]
+    unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
+      respond_with Status.user_auth_invalid
+    end
   end
 
 end

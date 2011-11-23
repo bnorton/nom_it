@@ -72,27 +72,25 @@ class Location < ActiveRecord::Base
   end
   
   def self.detail_for_nid(nid,location=nil,geolocation=nil)
-    Rails.cache.fetch("location_detail_#{nid}", :timeout => 1.minutes) do
-      nid = Util.STRINGify(nid)
-      if location.present?
-        detail = location.as_json
-      else
-        detail = find_by_nid(nid).as_json
-      end
-      meta = Metadata.for_nid(nid)
-      Metadata.returned(nid)
-      thumb = Thumb.detail_for_nid(nid)
-      images = Image.for_location_nid(nid)
-      average = RankingAverage.ranking_total(nid)
-      geo = geolocation || Geolocation.for_location_nid(nid)
-      detail.merge!(thumb)
-      detail.merge({
-        :metadata => meta,
-        :geolocation => geo,
-        :images => images,
-        :ranking => average
-      })
+    nid = Util.STRINGify(nid)
+    if location.present?
+      detail = location.as_json
+    else
+      detail = find_by_nid(nid).as_json
     end
+    meta = Metadata.for_nid(nid)
+    Metadata.returned(nid)
+    thumb = Thumb.detail_for_nid(nid)
+    images = Image.for_location_nid(nid)
+    average = RankingAverage.ranking_total(nid)
+    geo = geolocation || Geolocation.for_location_nid(nid)
+    detail.merge!(thumb)
+    detail.merge({
+      :metadata => meta,
+      :geolocation => geo,
+      :images => images,
+      :ranking => average
+    })
   end
   
   def self.full_detail_for_nids(nids)
@@ -117,19 +115,6 @@ class Location < ActiveRecord::Base
       end
     end
     real_result
-  end
-  
-  def self.details_from_search(search)
-    locations = Location.parse_nids search
-    Location.detail_for_nids(locations)
-  end
-  
-  def self.parse_nids(search)
-    locations = []
-    search.each do |locid|
-      locations << locid.location_nid
-    end
-    locations.join(',')
   end
   
   def self.integer_cost(str)
