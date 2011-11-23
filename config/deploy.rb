@@ -37,8 +37,15 @@ set :user,            "root"
 set :group,           "root"
 set :use_sudo,        false
 
+set :memcached_servers, ['68.233.24.84']
+
+set :mysql_master_host,  "localhost"
+set :mysql_user_name,    "root"
+set :mysql_password,     '"%planb56b6!"'
+set :mysql_database,     "#{application}_production"
+
 role :web,    '68.233.24.84', "justnom.it"
-role :app,    '68.233.24.84',"justnom.it"
+role :app,    '68.233.24.84', "justnom.it"
 role :db,     '68.233.24.84'
 role :db,     'justnom.it', :primary => true
 
@@ -85,6 +92,7 @@ namespace :deploy do
   task :update do
     transaction do
       update_code
+      setup_config
     end
   end
 
@@ -92,24 +100,39 @@ namespace :deploy do
   task :setup_config, :except => { :no_release => true } do
     mongodb_yaml_template = <<-YAML
       production:
-        database_name: #{application}_production
-      development:
-        database_name: #{application}_development
-      test:
-        database_name: #{application}_test
+        dbdatabase: #{mysql_database}
     YAML
-    
+
     mencached_yaml_template = <<-YAML
-      
+      production:
+        servers: [#{memcached_servers.join(', ')}]
     YAML
-    
+
+    mysql_yaml_template = <<-YAML
+      production:
+        adapter: mysql
+        username: #{mysql_user_name}
+        password: #{mysql_password}
+        database: #{mysql_database}
+        host: #{mysql_master_host}
+        reconnect: true
+        encoding:  utf8
+        collation: utf8_general_ci
+    YAML
+
+    mongodb_yml = ERB.new(mongodb_yaml_template).result(binding)
+    memcached_yml = ERB.new(memcached_yml_template).result(binding)
+    mysql_yml = ERB.new(mysql_yaml_template).result(binding)
+
+    put mongodb_yml, "#{latest_release}/config/mongodb.yml"
+    put memcached_yml, "#{latest_release}/config/memcached.yml"
+    put mysql_yml, "#{latest_release}/config/database.yml"
+
   end
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    # git fetch origin; git reset --hard #{branch}"
     run "cd #{current_path}; git fetch origin ; git reset --hard #{branch}"
-    # run "cd #{current_path}; git checkout #{branch}; git pull origin #{branch}"
     finalize_update
   end
 
