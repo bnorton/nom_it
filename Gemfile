@@ -4,15 +4,17 @@ gem 'rails'
 
 gem 'aws-s3'
 
+gem 'mongo'
+
 gem 'mysql'
 gem 'mysql2'
 gem 'ruby-mysql' 
 
-gem 'twilio-ruby'
-
 gem 'memcache'
 gem 'memcache-client'
 gem 'dalli'
+
+gem 'twilio-ruby'
 
 gem 'bson',     '<= 1.4.0'
 gem 'bson_ext', '1.4.0'
@@ -20,11 +22,11 @@ gem 'bson_ext', '1.4.0'
 gem 'json'
 gem 'httparty'
 
-gem 'mongo'
-
 gem "paperclip", "~> 2.4"
 
 gem 'placefinder'
+
+gem 'newrelic_rpm'
 
 group :assets do
   gem 'sass-rails',   '~> 3.1.4'
