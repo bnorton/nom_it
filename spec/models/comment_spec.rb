@@ -38,12 +38,6 @@ describe "comments" do
       Comment.create_comment_for_recommendation(@nidfail).should == false
       Comment.create_comment_for_location(@nidfail).should == false
     end
-    it "should reject a search if none of the correct parameters are not specified" do
-      pending
-    end
-    it "should not find any items that match any of the query items from this run" do
-      pending
-    end
   end
   describe "create" do
     before do
@@ -107,7 +101,13 @@ describe "comments" do
         (Comment.collection.count - @before).should == 3
       end
       it "should then find the created items based on the search criteria" do
-        pending
+        Comment.create_comment_for_recommendation(@recommendation1).class.should == String
+        Comment.create_comment_for_recommendation(@recommendation2).class.should == String
+        Comment.for_recommendation_nid(@recommendation1[:recommendation_nid]).count.should == 2
+        Comment.for_recommendation_nid(@recommendation1[:recommendation_nid]).first['text'].should == 'sample comment'
+        c=Comment.for_recommendation_nid(@recommendation2[:recommendation_nid])
+        c.next
+        c.next['text'].should == 'sample comment2 from user 3'
       end
     end
   end
@@ -136,48 +136,15 @@ describe "comments" do
       (Comment.collection.count - @after).should == 0
     end
     it "should remove all comments that match the unid, lnid (all of a users comments about a location)" do
-      pending "should destroy based on the comment_nid only"
-      r = @recommendation1
-      finder = {:user_nid => r[:user_nid], :location_nid => r[:location_nid]}
-      Comment.destroy(finder)
-      (Comment.collection.count - @after).should == 0
-      comment = Comment.search(finder).first
+      (Comment.collection.count - @before).should == 2
+      Comment.destroy_nid(@id1)
+      comment = Comment.search({:comment_nid => @id1}).first
       comment['text'].should == Comment.removed_content_message
       
-      r = @recommendation2
-      finder = {:user_nid => r[:user_nid], :location_nid => r[:location_nid]}
-      Comment.destroy(finder)
+      Comment.destroy_nid(@id2)
       (Comment.collection.count - @after).should == 0
-      comment = Comment.search(finder).first
+      comment = Comment.search({:comment_nid => @id2}).first
       comment['text'].should == Comment.removed_content_message
-    end
-    it "should remove all comments that match the recommendation_nid, unid, lnid (all of a users comments about a location)" do
-      pending "should destroy based on the comment_nid only"
-      r = @recommendation1
-      Comment.destroy({:recommendation_nid => r[:recommendation_nid], :user_nid => r[:user_nid], :location_nid => r[:location_nid]})
-      (Comment.collection.count - @after).should == 0
-      
-      r = @recommendation2
-      Comment.destroy({:recommendation_nid => r[:recommendation_nid], :user_nid => r[:user_nid], :location_nid => r[:location_nid]})
-      (Comment.collection.count - @after).should == 0
-    end
-    it "should have the common verbage for a deleted comment with user data still attached" do
-      pending "should destroy based on the comment_nid only"
-      r = @recommendation2
-      finder = {:user_nid => r[:user_nid], :location_nid => r[:location_nid]}
-      Comment.destroy_unid_lnid(finder)
-      c = Comment.search(finder).first
-      c['text'].should == Comment.removed_content_message
-    end
-    it "should remove a single comment if the nid is specified" do
-      pending "should destroy based on the comment_nid only"
-      @recommendation1[:text] = 'ttext'
-      Comment.create_comment_for_recommendation(@recommendation1)
-      (Comment.collection.count - @after).should == 1
-      r = @recommendation2
-      finder = {:user_nid => r[:user_nid], :location_nid => r[:location_nid]}
-      Comment.destroy_unid_lnid(finder)
-      Comment.search(finder).first['text'].should == Comment.removed_content_message
     end
   end
   describe "search" do

@@ -5,4 +5,5 @@ tmp/
 Gemfile.lock
 .sass-cache/
 # config/unicorn.rb
+database.yml
 .DS_Store

@@ -35,11 +35,11 @@ describe UsersController do
   describe "#me" do
     before :each do
       get(:register, :format => :json, :email => @nort[:email], :password => @nort[:password], :screen_name => @nort[:screen_name])
-      @token = JSON.parse(response.body)['results'][0]['session_id']
+      @auth_token = JSON.parse(response.body)['results'][0]['session_id']
     end
     it "should find the user that is currently authed for that session_id" do
       pending
-      get(:me, :format => :json, :token => @token)
+      get(:me, :format => :json, :auth_token => @auth_token)
       body = JSON.parse(response.body)
       body['status'].should == 1
       body['results'][0]['screen_name'].should == @nort[:screen_name]
@@ -74,7 +74,7 @@ describe UsersController do
     it "should login a user" do
       get(:search, :format => :json, :q => @nort[:email])
       nid = JSON.parse(response.body)['results'][0]['nid']
-      get(:login, :format => :json, :nid => nid, :password => @nort[:password])
+      get(:login, :format => :json, :user_nid => nid, :password => @nort[:password])
       JSON.parse(response.body)['status'].should == 1
     end
   end
