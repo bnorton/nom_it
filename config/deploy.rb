@@ -9,7 +9,7 @@ set :branch do
   if ENV["BRANCH_NAME"]
     ENV["BRANCH_NAME"]
   else
-    "master"
+    "origin/master"
   end
 end
 
@@ -31,7 +31,7 @@ end
 set :deploy_to,       "/apps/#{application}"
 set :normalize_asset_timestamps, false
 
-set :unicorn_pid,     "/apps/#{application}/current/tmp/pids/unicorn.pid"
+set :unicorn_pid,     "#{shared_path}/pids/unicorn.pid" # "/apps/#{application}/current/tmp/pids/unicorn.pid"
 
 set :user,            "root"
 set :group,           "root"
@@ -107,8 +107,9 @@ namespace :deploy do
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    run "cd #{current_path}; git fetch origin #{branch};"
-    run "cd #{current_path}; git checkout #{branch}; git pull origin #{branch}"
+    # git fetch origin; git reset --hard #{branch}"
+    run "cd #{current_path}; git fetch origin ; git reset --hard #{branch}"
+    # run "cd #{current_path}; git checkout #{branch}; git pull origin #{branch}"
     finalize_update
   end
 

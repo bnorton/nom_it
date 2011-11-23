@@ -1,11 +1,10 @@
 # config/unicorn.rb
-env = ENV["RAILS_ENV"] || "development"
+env = ENV["RAILS_ENV"] || "production"
 
 app_root = ENV["NOM_ROOT"] ||= "/apps/nom/current"
 app_root_shared = ENV["NOM_ROOT_SHARED"] ||= "/apps/nom/shared"
 
-worker_processes 4
-
+worker_processes 2
 
 listen "#{app_root_shared}/sockets/unicorn.sock", :backlog => 64
 
