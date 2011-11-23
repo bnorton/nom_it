@@ -3,7 +3,7 @@ require "bundler/capistrano"
 
 set :scm,             :git
 set :repository,      "git@github.com:bnorton/nom_it.git"
-set :application      "nom"
+set :application,     "nom"
 
 set :branch do
   if ENV["BRANCH_NAME"]
@@ -15,7 +15,7 @@ end
 
 set :deploy_via,      :checkout
 
-set :rvm_use          "rvm use ree@#{application}"
+set :rvm_use,         "rvm use ree@#{application}"
 
 set :migrate_target,  :current
 set :ssh_options,     { :forward_agent => true }

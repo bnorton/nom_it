@@ -3,7 +3,7 @@ class DetailsController < ApplicationController
   respond_to :json, :html
   
   before_filter :lat_lng_user
-  before_filter :parse_params
+  before_filter :parse_params, :except => [:blitz]
   before_filter :authentication_required, :only => []
   
   def blitz
