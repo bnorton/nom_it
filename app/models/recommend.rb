@@ -7,7 +7,7 @@ class Recommend < MongoRuby
   attr_accessor :rnid,   :unid,    :uname,     :to_unid
   attr_accessor :token, :name,   :city
   attr_accessor :text,  :title,  :lat,       :lng
-  attr_accessor :time,  :inid,    :lnid
+  attr_accessor :time,  :inid,    :lnid, :viewed
     
   def self.dbcollection
     "recommends"
@@ -44,19 +44,19 @@ class Recommend < MongoRuby
     
   end
   
-  def self.by_user_nid(nid)
+  def self.by_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
-    Recommend.find({:unid => nid})
+    Recommend.find({:unid => nid}).limit(limit)
   end
   
-  def self.for_user_nid(nid)
+  def self.for_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
-    Recommend.find({:to_unid => nid})
+    Recommend.find({:to_unid => nid}).limit(limit)
   end
   
-  def self.for_location_nid(nid)
+  def self.for_location_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
-    Recommend.find({:lnid => nid})
+    Recommend.find({:lnid => nid}).limit(limit)
   end
   
   def self.for_token(token)

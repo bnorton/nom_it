@@ -70,6 +70,8 @@ class UsersController < ApplicationController
   
   def activity
     # fetch the thumbs, recomendations and rankings for users this person follows
+    followers = Follower.followers_nids(@user_nid)
+    recommends = Recommended.for_user_nid_list(@user_nid)
     
     
   end

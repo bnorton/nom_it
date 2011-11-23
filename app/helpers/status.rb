@@ -55,6 +55,10 @@ module Status
       message(-1, "it appears that user dont { have any followers, follow anyone }")
     end
     
+    def follow_list(list,options={})
+      status_message_results(1,'OK',list,options)
+    end
+    
     def comments_not_found
       message(-1, 'no comments were found for the specified item')
     end

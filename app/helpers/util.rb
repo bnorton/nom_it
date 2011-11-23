@@ -70,7 +70,7 @@ class Util
       end
     end
     
-    def ensure_limit(start,limit,min=5,max=20)
+    def ensure_limit(start,limit,min=5,max=50)
       start = start.to_i
       start = start > 0 ? start : 0
       limit = limit.to_i
