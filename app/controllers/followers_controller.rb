@@ -1,14 +1,12 @@
 class FollowersController < ApplicationController
 
-  NUMBER_ARR = /^([0-9]+)(,[0-9]+)*$/
+  NUMBER_ARR = /^([0-9a-zA-Z]+)(,[0-9a-zA-Z]+)*$/
 
   respond_to :json
 
   before_filter :lat_lng_user
   before_filter :parse_params
-  before_filter :check_params,            :only => [:create,:destroy,:followers,:following]
   before_filter :followers_params,        :only => [:create,:destroy]
-  before_filter :following_params,        :only => [:followers,:following]
   before_filter :authentication_required, :only => [:create,:destroy]
   before_filter :validate_nids,           :only => [:followers,:followers]
 
@@ -30,12 +28,12 @@ class FollowersController < ApplicationController
 
   def followers
     nids = Follower.followers(@user_nid)
-    respond_with response_from_nids(nids,:to_user_nid)
+    respond_with ok_or_not(nids.present?,{:followers=>nids,:none=>true}) # response_from_nids(nids,:to_user_nid)
   end
 
   def following
     nids = Follower.following(@user_nid)
-    respond_with response_from_nids(nids,:user_nid)
+    respond_with ok_or_not(nids.present?,{:following=>nids,:none=>true}) # response_from_nids(nids,:user_nid)
   end
 
   def followers_list
