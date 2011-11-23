@@ -8,6 +8,8 @@ gem 'mysql'
 gem 'mysql2'
 gem 'ruby-mysql' 
 
+gem 'twilio-ruby'
+
 gem 'memcache'
 gem 'memcache-client'
 gem 'dalli'

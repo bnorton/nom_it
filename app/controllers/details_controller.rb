@@ -1,10 +1,14 @@
 class DetailsController < ApplicationController
   
-  respond_to :html, :json
+  respond_to :json, :html
   
   before_filter :lat_lng_user
   before_filter :parse_params
   before_filter :authentication_required, :only => []
+  
+  def blitz
+    respond_with '42'
+  end
   
   def detail
     detail = Detail.build_detail_for_token(@token)

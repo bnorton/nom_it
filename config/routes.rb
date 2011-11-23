@@ -79,6 +79,9 @@ NomIt::Application.routes.draw do
   #####  ACTIVITIES  ##########################################################
   #############################################################################
   get '/activity' => 'users#activity'
+  
+  
+  get '/mu-3638e38f-8dd3e59d-52c5ecf8-1330dbf4' => 'details#blitz'
 
   # Sample of named route:
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
