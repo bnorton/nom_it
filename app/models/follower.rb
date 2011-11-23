@@ -35,21 +35,47 @@ class Follower < ActiveRecord::Base
   end
 
   def self.followers(user_nid,start=0,limit=50)
-    start,limit = Util.ensure_limit(start,limit)
-    return [] if user_nid.blank?
-    user_nid = Util.STRINGify(user_nid)
-    Follower.fields.valid.OL(start,limit).find_all_by_to_user_nid(user_nid)
+    user_nid,start,limit = verify_args(user_nid,start,limit)
+    if user_nid.present?
+      return Follower.fields.valid.OL(start,limit).find_all_by_to_user_nid(user_nid)
+    end
+    []
+  end
+
+  def self.followers_nids(user_nid,start=0,limit=50)
+    user_nid,start,limit = verify_args(user_nid,start,limit)
+    if user_nid.present?
+      return Follower.select('user_nid').OL(start,limit).find_all_by_to_user_nid(user_nid).map {|fol|
+        fol.user_nid }
+    end
+    []
   end
 
   def self.following(user_nid,start=0,limit=50)
-    start,limit = Util.ensure_limit(start,limit)
-    return [] if user_nid.blank?
-    user_nid = Util.STRINGify(user_nid)
-    Follower.fields.valid.OL(start,limit).find_all_by_user_nid(user_nid)
+    user_nid,start,limit = verify_args(user_nid,start,limit)
+    if user_nid.present?
+      return Follower.fields.valid.OL(start,limit).find_all_by_user_nid(user_nid)
+    end
+    []
+  end
+
+  def self.following_nids(user_nid,start=0,limit=50)
+    user_nid,start,limit = verify_args(user_nid,start,limit)
+    if user_nid.present?
+      return Follower.select('to_user_nid').OL(start,limit).find_all_by_user_nid(user_nid).map {|fol|
+        fol.to_user_nid }
+    end
+    []
   end
 
   private
-  
+
+  def self.verify_args(user_nid,start,limit)
+    return if user_nid.blank?
+    start,limit = Util.ensure_limit(start,limit)
+    [user_nid,start,limit]
+  end
+
   def self.new_follower(user_nid,other,options={})
     me = User.private_nid(user_nid).try(:first)
     return false if me.blank? || other.blank?

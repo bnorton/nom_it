@@ -37,6 +37,16 @@ class FollowersController < ApplicationController
     nids = Follower.following(@user_nid)
     respond_with response_from_nids(nids,:user_nid)
   end
+
+  def followers_list
+    nids = Follower.followers_nids(@user_nid)
+    respond_with Status.follow_list(nids, {:result_name => :followers})
+  end
+
+  def following_list
+    nids = Follower.following_nids(@user_nid)
+    respond_with Status.follow_list(nids, {:result_name => :following})
+  end
   
   private
   
@@ -45,7 +55,6 @@ class FollowersController < ApplicationController
     nids.each do |i| 
       list << i[key] 
     end
-    list.uniq!
     condition = !list.empty?
     ok_or_not(condition,{:follower=>list,:none=>true})
   end

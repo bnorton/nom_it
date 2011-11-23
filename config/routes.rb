@@ -23,6 +23,9 @@ NomIt::Application.routes.draw do
   
   get '/followers' => 'followers#followers'
   get '/following' => 'followers#following'
+
+  get '/followers/list' => 'followers#followers_list'
+  get '/following/list' => 'followers#following_list'
   
   #############################################################################
   #####  RECOMMENDATIONS  #####################################################
@@ -78,7 +81,7 @@ NomIt::Application.routes.draw do
   #############################################################################
   #####  ACTIVITIES  ##########################################################
   #############################################################################
-  get '/activity' => 'users#activity'
+  get '/activities' => 'users#activity'
   
   
   get '/mu-3638e38f-8dd3e59d-52c5ecf8-1330dbf4' => 'details#blitz'
