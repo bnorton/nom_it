@@ -72,25 +72,27 @@ class Location < ActiveRecord::Base
   end
   
   def self.detail_for_nid(nid,location=nil,geolocation=nil)
-    nid = Util.STRINGify(nid)
-    if location.present?
-      detail = location.as_json
-    else
-      detail = find_by_nid(nid).as_json
+    Rails.cache.fetch("location_detail_#{nid}", :timeout => 1.minutes) do
+      nid = Util.STRINGify(nid)
+      if location.present?
+        detail = location.as_json
+      else
+        detail = find_by_nid(nid).as_json
+      end
+      meta = Metadata.for_nid(nid)
+      Metadata.returned(nid)
+      thumb = Thumb.detail_for_nid(nid)
+      images = Image.for_location_nid(nid)
+      average = RankingAverage.ranking_total(nid)
+      geo = geolocation || Geolocation.for_location_nid(nid)
+      detail.merge!(thumb)
+      detail.merge({
+        :metadata => meta,
+        :geolocation => geo,
+        :images => images,
+        :ranking => average
+      })
     end
-    meta = Metadata.for_nid(nid)
-    Metadata.returned(nid)
-    thumb = Thumb.detail_for_nid(nid)
-    images = Image.for_location_nid(nid)
-    average = RankingAverage.ranking_total(nid)
-    geo = geolocation || Geolocation.for_location_nid(nid)
-    detail.merge!(thumb)
-    detail.merge({
-      :metadata => meta,
-      :geolocation => geo,
-      :images => images,
-      :ranking => average
-    })
   end
   
   def self.full_detail_for_nids(nids)
