@@ -5,5 +5,7 @@ tmp/
 Gemfile.lock
 .sass-cache/
 # config/unicorn.rb
-database.yml
+config/database.yml
+config/mongodb.yml
+config/memcached.yml
 .DS_Store

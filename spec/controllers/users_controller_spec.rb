@@ -35,9 +35,9 @@ describe UsersController do
   describe "#me" do
     before :each do
       get(:register, :format => :json, :email => @nort[:email], :password => @nort[:password], :screen_name => @nort[:screen_name])
-      @auth_token = JSON.parse(response.body)['results'][0]['session_id']
+      @auth_token = JSON.parse(response.body)['results'][0]['auth_token']
     end
-    it "should find the user that is currently authed for that session_id" do
+    it "should find the user that is currently authed for that auth_token" do
       pending
       get(:me, :format => :json, :auth_token => @auth_token)
       body = JSON.parse(response.body)
@@ -65,11 +65,11 @@ describe UsersController do
   describe "#login" do
     before do
       get(:register, :format => :json, :email => @nort[:email], :password => @nort[:password], :screen_name => @nort[:screen_name])
-      JSON.parse(response.body)['results'][0]['session_id'].should_not be_blank
+      JSON.parse(response.body)['results'][0]['auth_token'].should_not be_blank
       get(:register, :format => :json, :email => @shanfor[:email], :password => @shanfor[:password], :screen_name => @shanfor[:screen_name])
     end
     it "should login a newly registered user" do
-      JSON.parse(response.body)['results'][0]['session_id'].should_not be_blank
+      JSON.parse(response.body)['results'][0]['auth_token'].should_not be_blank
     end
     it "should login a user" do
       get(:search, :format => :json, :q => @nort[:email])
@@ -81,7 +81,7 @@ describe UsersController do
   describe "#search" do
     before do
       get(:register, :format => :json, :email => @nort[:email], :password => @nort[:password], :screen_name => @nort[:screen_name], :name => @nort[:name])
-      JSON.parse(response.body)['results'][0]['session_id'].should_not be_blank
+      JSON.parse(response.body)['results'][0]['auth_token'].should_not be_blank
     end
     it "should find a user by email" do
       get(:search, :format => :json, :email => @nort[:email])

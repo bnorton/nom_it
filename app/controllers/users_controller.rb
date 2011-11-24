@@ -35,8 +35,8 @@ class UsersController < ApplicationController
         User.register(@email, @password, @screen_name, @name, @city)
       end
     condition = registration.present?
-    response  = ok_or_not(condition,{:results=>Array(registration)})
-    respond_with response
+    response  = ok_or_not(condition,{:results=>registration})
+    respond_with response, :location => nil
   end
   
   def login

@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
     private_fields.where(["nid=?",nid])
   }
   scope :me, lambda {|token|
-    private_fields.where(["session_id=?",token])
+    private_fields.where(["auth_token=?",token])
   }
   scope :has_joined, lambda {
     where(["has_joined=1"])
@@ -72,8 +72,8 @@ class User < ActiveRecord::Base
   def self.login(nid_or_email,password,vname='')
     unless nid_or_email.blank?
       user = User.login_with_nid_or_email(nid_or_email).first
-      if user && user.password == Digest::SHA2.hexdigest(user['salt'].to_s + password, 256)
-        user.session_id = User.new_session_id
+      if user && user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
+        user.auth_token = User.new_auth_token
         user.last_seen  = Time.now
         return true if user.save
       end
@@ -81,16 +81,18 @@ class User < ActiveRecord::Base
   end
   
   def self.register(email, pass, username, name='', city='')
+    return false if pass.blank?
     user = new_or_hasnt_joined(email)
     user.email    = email
     user.salt     = rand(1<<32).to_s
-    user.password = Digest::SHA2.hexdigest(user['salt'].to_s + pass, 256)
+    puts pass
+    user.password = Digest::SHA2.hexdigest(user.salt.to_s + pass, 256)
     user.last_seen= Time.now
     user.has_joined= true
     user.screen_name=username
     user.name = name
     user.city = city
-    user.session_id = User.new_session_id
+    user.auth_token = User.new_auth_token
     user.nid      ||= Util.ID
     user.save
     User.private_fields.find_by_email(email)
@@ -109,7 +111,7 @@ class User < ActiveRecord::Base
     user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
     user.has_joined= true
-    user.session_id = User.new_session_id
+    user.auth_token = User.new_auth_token
     user.nid    ||= Util.ID
     user.save
   end
@@ -163,7 +165,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.new_session_id
+  def self.new_auth_token
     Digest::SHA2.hexdigest(rand(1<<16).to_s)
   end
   
@@ -176,9 +178,9 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "id,nid,name,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
+    fields = "id,nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
     if opt == :private
-      fields << ",session_id,street,country,email,phone,facebook,twitter"
+      fields << ",auth_token,street,country,email,phone,facebook,twitter"
     end
     fields
   end
@@ -208,7 +210,7 @@ end
   #   t.string   "country"
   #   t.string   "password",                       :default => ""
   #   t.string   "salt"
-  #   t.string   "session_id"
+  #   t.string   "auth_token"
   #   t.binary   "newpassword",    :limit => 255
   #   t.datetime "newpass_time"
   #   t.text     "description"
