@@ -44,16 +44,14 @@ NomIt::Application.configure do
   # The underlying cache store to use.
   config.cache_store = :dalli_store, 'localhost:11211', { 
     :namespace => 'nom',
-    :expires_in => 1.day, # just the default for things that dont specify an expires_in
     :compression => true
   }
 
   # The session store is completely different from the normal data cache
   config.session_store = :dalli_store, 'localhost:11211', {
     :namespace => 'nom_sessions', 
-    :key => '_session_store',
-    :expire_after => 2.hours }
-
+    :key => '_session_store' 
+  }
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
