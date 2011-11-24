@@ -49,11 +49,10 @@ NomIt::Application.configure do
   }
 
   # The session store is completely different from the normal data cache
-  config.session_store = :dalli_store,
-    :memcache_server => 'localhost:11211',
+  config.session_store = :dalli_store, 'localhost:11211', {
     :namespace => 'nom_sessions', 
     :key => '_session_store',
-    :expire_after => 2.hours
+    :expire_after => 2.hours }
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
