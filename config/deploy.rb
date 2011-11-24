@@ -20,13 +20,14 @@ set :rvm_use,         "rvm use ree@#{application}"
 set :migrate_target,  :current
 set :ssh_options,     { :forward_agent => true }
 
-set :rails_env do
-  if ENV["RAILS_ENV"]
-    ENV["RAILS_ENV"]
-  else
-    "production"
-  end
-end
+set :rails_env,       "production"
+# do
+#   if ENV["RAILS_ENV"]
+#     ENV["RAILS_ENV"]
+#   else
+#     "production"
+#   end
+# end
 
 set :deploy_to,       "/apps/#{application}"
 set :normalize_asset_timestamps, false
@@ -43,6 +44,8 @@ set :mysql_master_host,  "localhost"
 set :mysql_user_name,    "root"
 set :mysql_password,     '"%planb56b6!"'
 set :mysql_database,     "#{application}_production"
+
+set :mongo_database,     "#{application}_production"
 
 role :web,    '68.233.24.84', "justnom.it"
 role :app,    '68.233.24.84', "justnom.it"
@@ -100,7 +103,7 @@ namespace :deploy do
   task :setup_config, :except => { :no_release => true } do
     mongodb_yaml_template = <<-YAML
       production:
-        dbdatabase: #{mysql_database}
+        dbdatabase: #{mongo_database}
     YAML
 
     mencached_yaml_template = <<-YAML
@@ -121,7 +124,7 @@ namespace :deploy do
     YAML
 
     mongodb_yml = ERB.new(mongodb_yaml_template).result(binding)
-    memcached_yml = ERB.new(memcached_yml_template).result(binding)
+    memcached_yml = ERB.new(mencached_yaml_template).result(binding)
     mysql_yml = ERB.new(mysql_yaml_template).result(binding)
 
     put mongodb_yml, "#{latest_release}/config/mongodb.yml"
