@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111115060656) do
+ActiveRecord::Schema.define(:version => 20111124095822) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -112,7 +112,7 @@ ActiveRecord::Schema.define(:version => 20111115060656) do
     t.boolean  "new",           :default => true
     t.binary   "schemaless"
     t.boolean  "is_valid",      :default => true
-    t.string   "image"
+    t.string   "image_nid"
   end
 
   add_index "recommendations", ["new"], :name => "recommendations_location_new"
@@ -141,7 +141,7 @@ ActiveRecord::Schema.define(:version => 20111115060656) do
     t.string   "country"
     t.string   "password",                       :default => ""
     t.string   "salt"
-    t.string   "session_id"
+    t.string   "auth_token"
     t.binary   "newpassword",    :limit => 255
     t.datetime "newpass_time"
     t.text     "description"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(:version => 20111115060656) do
     t.binary   "twitter_hash"
     t.boolean  "has_joined",                     :default => true
     t.binary   "schemaless"
+    t.string   "image_nid"
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true
