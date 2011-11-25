@@ -47,7 +47,7 @@ class CommentsController < ApplicationController
   
   def ok_or_not(comments)
     unless comments.blank?
-      Status.OK(comments,{:result_name=>:comments})
+      Status.OK(comments)#,{:result_name=>:comments})
     else
       Status.not_found 'comments'
     end

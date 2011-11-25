@@ -32,7 +32,7 @@ class ThumbsController < ApplicationController
     item,what = @location_nid,:location_nid if @location_nid.present?
     thumbz = Thumb.detail_for_nid(item,@limit,what)
     response = if thumbz.present?
-      Status.OK(thumbz,{:result_name => :thumbs})
+      Status.OK(thumbz) #{:result_name => :thumbs})
     else
       Status.not_found 'thumbs'
     end

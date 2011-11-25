@@ -15,7 +15,7 @@ module Status
     end
     
     def TOKEN(token)
-      status_message_results(1,'OK',token,{:result_name=>:token})
+      status_message_results(1,'OK',token) #,{:result_name=>:token})
     end
     
     def user_not_authorized
@@ -95,11 +95,10 @@ module Status
     
     def status_message_results(status,message,results,options={})
       results ||= []
-      result_name = options[:result_name] || :results
       {
         :status      => status,
         :message     => message,
-         result_name => Array(results)
+        :results => Array(results)
       }
     end
   end

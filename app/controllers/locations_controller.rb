@@ -17,7 +17,7 @@ class LocationsController < ApplicationController
   def search
     found = Location.search(@geo_opt)
     response = unless found.blank?
-      Status.OK(found,{:result_name=>:locations})
+      Status.OK(found) # ,{:result_name=>:locations})
     else
       Status.not_found 'locations'
     end
@@ -27,7 +27,7 @@ class LocationsController < ApplicationController
 
   def detail
     response = if (locations = Location.detail_for_nids(@locations))
-      Status.OK(locations,{:result_name=>:locations})
+      Status.OK(locations) #,{:result_name=>:locations})
     else
       Status.not_found 'locations'
     end

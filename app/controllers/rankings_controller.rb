@@ -52,7 +52,7 @@ class RankingsController < ApplicationController
     if ((loc = options[:location]) && (ranks = options[:ranks]))
       Status.location_ranks(loc,ranks)
     elsif (items = options[:items])
-      Status.OK(items,{:result_name=>:ranks})
+      Status.OK(items) #,{:result_name=>:ranks})
     elsif options[:oper]
       if options[:remove]
         Status.item_destroyed 'rank'
