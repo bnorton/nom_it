@@ -8,6 +8,9 @@ class User < ActiveRecord::Base
   scope :OL, lambda {|offset,limit|
     offset(offset).limit(limit)
   }
+  scope :follower_fields, lambda {
+    select("nid as user_nid,screen_name,name,facebook,image_url,city,follower_count,created_at")
+  }
   scope :public_fields, lambda {
     select(User.fields)
   }
@@ -30,7 +33,7 @@ class User < ActiveRecord::Base
     public_fields.where(["nid=? or email=?", nid, nid]).has_joined
   }
   scope :login_with_nid_or_email, lambda {|nid|
-    select("salt,password").where(["nid=? or email=?",nid,nid]).has_joined
+    select("salt,password").where(["nid=? or email=? or screen_name=?",nid,nid,nid]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id,id]
@@ -55,6 +58,10 @@ class User < ActiveRecord::Base
     public_fields.find_by_nid(nid)
   end
   
+  def self.follower(list_of)
+    User.follower_fields.find_all_by_nid(list_of)
+  end
+  
   def self.token_match?(nid, token)
     begin
       i = me
@@ -70,6 +77,7 @@ class User < ActiveRecord::Base
   end
   
   def self.login(nid_or_email,password,vname='')
+    nid_or_email ||= vname
     unless nid_or_email.blank?
       user = User.login_with_nid_or_email(nid_or_email).first
       if user && user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
@@ -82,10 +90,11 @@ class User < ActiveRecord::Base
   
   def self.register(email, pass, username, name='', city='')
     return false if pass.blank?
+    return User.private_fields.find_by_email(email) if User.login(email,pass,username)
     user = new_or_hasnt_joined(email)
+    return false if user.blank?
     user.email    = email
     user.salt     = rand(1<<32).to_s
-    puts pass
     user.password = Digest::SHA2.hexdigest(user.salt.to_s + pass, 256)
     user.last_seen= Time.now
     user.has_joined= true
@@ -134,15 +143,12 @@ class User < ActiveRecord::Base
   end
     
   def self.new_or_hasnt_joined(identifier)
-    user = User.find_by_not_yet_joined(identifier).try(:first)
+    user = User.find_by_any_means(identifier).first
     if user.blank?
-      user = User.find_by_email(identifier)
-      if user.blank?
-        user = User.new
-      end
-    else
-      Follower.user_has_joined(user.nid)
+      return User.new
     end
+    return nil if user.has_joined == true
+    Follower.user_has_joined(user.nid)
     user
   end
   

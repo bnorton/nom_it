@@ -34,8 +34,7 @@ class UsersController < ApplicationController
       when 'nom'
         User.register(@email, @password, @screen_name, @name, @city)
       end
-    condition = registration.present?
-    response  = ok_or_not(condition,{:results=>registration})
+    response = ok_or_not(registration.present?,{:results=>registration})
     respond_with response, :location => nil
   end
   
@@ -47,7 +46,7 @@ class UsersController < ApplicationController
   
   def me
     me = User.me(@auth_token)
-    respond_with Status.OK(me)
+    respond_with Status.OK(me), :location => nil
   end
   
   def detail

@@ -112,9 +112,9 @@ describe "follower" do
       valid, i = [], 0
       while i < @ones_followers.length
         o = @ones_followers[i]
-        if o.to_user_nid == @two.nid
+        if o.user_nid == @two.nid
           valid << true
-        elsif o.to_user_nid == @thr.nid
+        elsif o.user_nid == @thr.nid
           valid << true
         end
         i += 1

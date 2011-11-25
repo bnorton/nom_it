@@ -35,26 +35,22 @@ class Follower < ActiveRecord::Base
   end
 
   def self.followers(user_nid,start=0,limit=50)
-    user_nid,start,limit = verify_args(user_nid,start,limit)
-    if user_nid.present?
-      return Follower.fields.valid.OL(start,limit).find_all_by_to_user_nid(user_nid)
-    end
+    followers_nids = Follower.followers_nids(user_nid,start,limit)
+    return User.follower(followers_nids) unless followers_nids.blank?
+    []
+  end
+
+  def self.following(user_nid,start=0,limit=50)
+    following_nids = Follower.following_nids(user_nid,start,limit)
+    return User.follower(following_nids) unless following_nids.blank?
     []
   end
 
   def self.followers_nids(user_nid,start=0,limit=50)
     user_nid,start,limit = verify_args(user_nid,start,limit)
     if user_nid.present?
-      return Follower.select('user_nid').OL(start,limit).find_all_by_to_user_nid(user_nid).map {|fol|
+      return Follower.select('user_nid').valid.OL(start,limit).find_all_by_to_user_nid(user_nid).map {|fol|
         fol.user_nid }
-    end
-    []
-  end
-
-  def self.following(user_nid,start=0,limit=50)
-    user_nid,start,limit = verify_args(user_nid,start,limit)
-    if user_nid.present?
-      return Follower.fields.valid.OL(start,limit).find_all_by_user_nid(user_nid)
     end
     []
   end
@@ -62,7 +58,7 @@ class Follower < ActiveRecord::Base
   def self.following_nids(user_nid,start=0,limit=50)
     user_nid,start,limit = verify_args(user_nid,start,limit)
     if user_nid.present?
-      return Follower.select('to_user_nid').OL(start,limit).find_all_by_user_nid(user_nid).map {|fol|
+      return Follower.select('to_user_nid').valid.OL(start,limit).find_all_by_user_nid(user_nid).map {|fol|
         fol.to_user_nid }
     end
     []
