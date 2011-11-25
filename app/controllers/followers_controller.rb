@@ -71,7 +71,14 @@ class FollowersController < ApplicationController
   end
 
   def validate_nids
-    if @user_nid.blank? || !(@user_nid =~ NID_LIST)
+    @user_nid  = params[:user_nid]
+    @user_nids = params[:user_nids] || ''
+    if @user_nids.present?
+      @user_nids << ",#{@user_nid}" if @user_nid.present?
+    else
+      @user_nids << @user_nid if @user_nid.present?
+    end
+    if @user_nids.blank? || !(@user_nids =~ NID_LIST)
       respond_with Status.insufficient_arguments
     end
   end

@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
-  before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed]
+  before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed,:activity]
   before_filter :authentication_required, :only => [:me,:thumb_create]
   
   def check
@@ -66,9 +66,12 @@ class UsersController < ApplicationController
   
   def activity
     # fetch the thumbs, recomendations and rankings for users this person follows
-    followers = Follower.followers_nids(@user_nid)
-    recommends = Recommended.for_user_nid_list(@user_nid)
-    
+    followers = Follower.followers(@user_nid)
+    recommends = Recommend.for_user_nid(@user_nid,@limit)
+    respond_with ({:status => 1, :message => 'OK',
+      :followers => followers,
+      :recommends => recommends
+    })
   end
   
   private
@@ -97,7 +100,6 @@ class UsersController < ApplicationController
   
   def user_params
     @to_user_nid=params[:to_user_nid]
-    @limit  = Util.limit(params[:limit],10)
     @email  = params[:email]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
@@ -123,8 +125,12 @@ class UsersController < ApplicationController
   
   def validate_nids
     @user_nid  = params[:user_nid]
-    @user_nids = params[:user_nids] || []
-    @user_nids << @user_nids if @nid.present?
+    @user_nids = params[:user_nids] || ''
+    if @user_nids.present?
+      @user_nids << ",#{@user_nid}" if @user_nid.present?
+    else
+      @user_nids << @user_nid if @user_nid.present?
+    end
     if @user_nids.blank? || !(@user_nids =~ NID_LIST)
       respond_with Status.insufficient_arguments
     end
@@ -140,6 +146,7 @@ class UsersController < ApplicationController
   def lat_lng_user
     @lat  = params[:lat]
     @lng  = params[:lng]
+    @limit  = Util.limit(params[:limit],10)
     @user_nid = params[:user_nid]
   end
 
