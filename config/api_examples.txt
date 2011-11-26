@@ -1,0 +1,55 @@
+# activities = {
+#     "recommendations": [
+#         {
+#             "location_nid": "4ec9555e3c61671c7e000581",
+#             "title": null,
+#             "recommendation_nid": "4ed066073c61672e9f000002",
+#             "token": "ovomim1h",
+#             "updated_at": "2011-11-26T04:07:35Z",
+#             "text": "I recommended 15 Romolo via Nom.",
+#             "lng": null,
+#             "image_nid": null,
+#             "lat": null,
+#             "location_city": "San Francisco",
+#             "location_name": "15 Romolo",
+#             "user_nid": "4ec0bdce3c61675335000001"
+#         }
+#     ],
+#     "thumbs": [
+#         {
+#             "location": {
+#                 "address": "2800 Leavenworth St San Francisco, CA 94133-1112",
+#                 "city": "San Francisco",
+#                 "fsq_id": null,
+#                 "location_nid": "4ec955ea3c61671c7e0007d7",
+#                 "name": "King of Thai Noodle",
+#                 "updated_at": "2011-11-20T19:32:58Z",
+#                 "street": "2800 Leavenworth St",
+#                 "cross_street": "Near Leavenworth St and Beach St",
+#                 "gowalla_url": null,
+#                 "state": "California"
+#             },
+#             "value": 1,
+#             "user_nid": "4ec0bdce3c61675335000001"
+#         },
+#         {
+#             "location": {
+#                 "address": "15 Romolo Pl San Francisco, CA 94133-4015",
+#                 "city": "San Francisco",
+#                 "fsq_id": null,
+#                 "location_nid": "4ec9555e3c61671c7e000581",
+#                 "name": "15 Romolo",
+#                 "updated_at": "2011-11-20T19:30:38Z",
+#                 "street": "15 Romolo Pl",
+#                 "cross_street": "Between Broadway and Fresno St",
+#                 "gowalla_url": null,
+#                 "state": "California"
+#             },
+#             "value": 1,
+#             "user_nid": "4ec0bdce3c61675335000001"
+#         }
+#     ],
+#     "message": "OK",
+#     "status": 1
+# 
+# }

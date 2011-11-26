@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
 
-  COMPACT = "id,nid,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "nid as location_nid,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
 
   has_many :images
   has_one  :geolocation
@@ -57,7 +57,7 @@ class Location < ActiveRecord::Base
     city = opt[:city]
     if nid.present?
       result = compact.OL(start,lim).find_by_nid(nid)
-      built = Array(Location.detail_for_nid(result['nid'],location=result))
+      built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
       if opt[:lat] && opt[:lng]
         results = Geolocation.search(opt,start,lim)
@@ -69,6 +69,12 @@ class Location < ActiveRecord::Base
       built = build_results(results,what)
     end
     built
+  end
+  
+  def self.compact_detail_for_nid(location_nid)
+    Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 5.minutes) do
+      Location.compact.find_by_nid(location_nid)
+    end
   end
   
   def self.detail_for_nid(nid,location=nil,geolocation=nil)

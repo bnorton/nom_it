@@ -83,13 +83,13 @@ describe "locations" do
       found = Location.search(here)
       found.class.should == Array
       found.length.should == 1
-      found[0]['nid'].should == @nid3
+      found[0]['location_nid'].should == @nid3
     end
     it "should find a location based on street" do
       here = {:street => '2670 parker st',:city => ''}
       found = Location.search(here)
       found.class.should == Array
-      found[0]['nid'].should == @nid2
+      found[0]['location_nid'].should == @nid2
     end
     it "should find a location based on strict geolocation" do
       

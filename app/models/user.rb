@@ -184,7 +184,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "id,nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
+    fields = "nid as user_nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
     if opt == :private
       fields << ",auth_token,street,country,email,phone,facebook,twitter"
     end

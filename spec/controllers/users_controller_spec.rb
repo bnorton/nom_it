@@ -53,7 +53,7 @@ describe UsersController do
       get(:register, :format => :json, :email => @nort[:email], :password => @nort[:password], :screen_name => @nort[:screen_name])
       body = JSON.parse(response.body)
       body['status'].should == @ok_status
-      body['results'][0]['nid'].should_not be_blank
+      body['results'][0]['user_nid'].should_not be_blank
     end
     it "should register a user from FACEBOOK" do
       pending

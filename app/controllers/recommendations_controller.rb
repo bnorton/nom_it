@@ -12,11 +12,11 @@ class RecommendationsController < ApplicationController
   before_filter :authentication_required,:only => [:user,:location]
 
   def create
-    token,item = Recommendation.create(@all_params)
-    followers  = Follower.users_that_follow_me(@user_nid)
+    item = Recommendation.create(@all_params)
+    followers  = Follower.followers_nids(@user_nid)
     recommends = Recommend.create(item,followers)
     respond_with ok_or_not(token.present?,{
-      :token  => token})
+      :token  => item.token})
   end
 
   def destroy

@@ -8,7 +8,7 @@ class UsersController < ApplicationController
   before_filter :auth_params,       :only => [:me, :login, :register]
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
-  before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed,:activity]
+  before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed]
   before_filter :authentication_required, :only => [:me,:thumb_create]
   before_filter :activity_requires,  :only => [:activity]
   
@@ -68,13 +68,19 @@ class UsersController < ApplicationController
   def activity
     resp = {:status => 1, :message => 'OK'}
     if params[:by_user]
-      recommendations = Recommendation.find_all_by_user_nid(@by_user_nid).limit(@limit)
+      a_user = @by_user_nid
+      recommendations = Recommendation.limit(@limit).for_user(@by_user_nid)
       resp.merge!({:recommendations => recommendations})
     else
+      a_user = @user_nid
       recommends = Recommend.for_user_nid(@user_nid,@limit)
       resp.merge!({:recommends => recommends})
     end
-    thumbs = Thumbs.
+    thumbs = Thumb.for_unid(a_user,@limit).map {|t|
+      loc = Location.compact_detail_for_nid(t['nid']).as_json
+      Thumb.build_for_activity(t).merge({:location => loc})
+    }
+    resp.merge!({:thumbs => thumbs})
     respond_with resp
   end
   
@@ -145,6 +151,8 @@ class UsersController < ApplicationController
       unless (@by_user_nid = params[:by_user_nid])
         respond_with Status.insufficient_arguments
       end
+    else
+      validate_nids
     end
   end
   

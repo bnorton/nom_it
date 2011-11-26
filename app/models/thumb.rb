@@ -24,6 +24,7 @@ class Thumb < MongoRuby
   ## methods that add new data
   def self.new_thumb(nid,unid,value)
     nid = Util.STRINGify(nid)
+    return false unless (value = value.to_i) > 0
     if Thumb.eval("new_thumb('#{nid}','#{unid}',#{value})")
       ThumbCount.update_thumb_count(nid,value)
     else
@@ -31,6 +32,11 @@ class Thumb < MongoRuby
     end
   end
   
+  def self.build_for_activity(thumb)
+    thumb = Util.nidify(thumb.as_json,'user_nid','unid')
+    thumb = Util.de_nid(thumb,'_id')
+    Util.de_nid(thumb,'nid')
+  end
   ## methods that find ratings or totals
   def self.for_unid(unid,lim=20)
     unid = Util.STRINGify(unid)
