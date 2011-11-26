@@ -34,17 +34,17 @@ class Recommendation < ActiveRecord::Base
     r.user_name= this[:user_name]
     r.location_nid = this[:location_nid]
     r.title    = this[:title]
-    r.text     = this[:text]
     r.facebook = this[:facebook] || false
     r.facebook = this[:twitter]  || false
     r.location_name = this[:name]
     r.location_city = this[:city]
     r.nid      = Util.ID
     r.token = this[:token] || Util.token
+    r.text     = this[:text] || "I recommended #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
+    r.image_nid = this[:image_nid]
     if r.save
       Metadata.recommended(r.nid) # for item analytics
-      r.reload
-      r
+      Recommendation.find_by_nid(r.nid)
     end
   end
   
@@ -52,9 +52,9 @@ class Recommendation < ActiveRecord::Base
     location = {}
     result = Location.find_by_nid(this[:location_nid])
     return location if result.blank?
-    location[:text] = this[:text] || "I recommended #{result.name || '...'} via Nom."
     location[:name] = result.name
     location[:city] = result.city
+    location[:image_nid]
     location
   end
   

@@ -92,7 +92,7 @@ class Util
     end
     
     def token
-      RAND_SEED.to_s(36)
+      rand(RAND_SEED).to_s(36)
     end
     
     def placefinder

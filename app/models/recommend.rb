@@ -4,10 +4,10 @@ class Recommend < MongoRuby
   # rid => recommendation_nid
   # unid => user_nid
   # 
-  attr_accessor :rnid,   :unid,    :uname,     :to_unid
-  attr_accessor :token, :name,   :city
-  attr_accessor :text,  :title,  :lat,       :lng
-  attr_accessor :time,  :inid,    :lnid, :viewed
+  attr_accessor :rnid,  :unid,  :uname, :to_unid
+  attr_accessor :token, :name,  :city
+  attr_accessor :text,  :title, :lat,   :lng
+  attr_accessor :time,  :inid,  :lnid,  :viewed
     
   def self.dbcollection
     "recommends"
@@ -16,26 +16,27 @@ class Recommend < MongoRuby
   def self.removed_content_message
     "the user has removed this recommendation."
   end
-  
+
   def self.create(recommendation,followers)
+    raise "#{recommendation.inspect}, #{followers.inspect}"
+    
     return false if recommendation.blank? || followers.blank?
     r = recommendation
-    followers.each do |follower|
+    followers.each do |follower_nid|
       Recommend.save({
-        :rnid    => r['nid'],
-        :unid    => r['user_nid'],
-        :uname  => r['user_name'],
-        :to_unid => follower.user_nid,
-        :token  => r['token'],
-        :lnid    => r['location_nid'],
-        :name   => r['name'],
-        :city   => r['city'],
-        :text   => r['text'],
-        :title  => r['title'],
-        :lat    => r['lat'],
-        :lng    => r['lng'],
-        :time   => r['time'] || Time.now,
-        :inid    => r['image_nid']
+        :lat => r.lat,
+        :lng => r.lng,
+        :unid => r.user_nid,
+        :uname => r.user_name,
+        :lnid => r.location_nid,
+        :title => r.title,
+        :text => r.text,
+        :to_unid => follower_nid,
+        :name => r.location_name,
+        :city => r.location_city,
+        :rnid => r.nid,
+        :token => r.token,
+        :inid => r.image_nid
       })
     end
   end
@@ -46,16 +47,19 @@ class Recommend < MongoRuby
   
   def self.by_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
+    limit = Util.limit(limit,10)
     Recommend.find({:unid => nid}).limit(limit)
   end
   
   def self.for_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
+    limit = Util.limit(limit,10)
     Recommend.find({:to_unid => nid}).limit(limit)
   end
   
   def self.for_location_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
+    limit = Util.limit(limit,10)
     Recommend.find({:lnid => nid}).limit(limit)
   end
   

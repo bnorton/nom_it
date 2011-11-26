@@ -38,7 +38,8 @@ set :user,            "root"
 set :group,           "root"
 set :use_sudo,        false
 
-set :memcached_servers, ['68.233.24.84']
+# set :memcached_servers, ['68.233.24.84']
+set :memcached_servers, ['173.255.209.197']
 
 set :mysql_master_host,  "localhost"
 set :mysql_user_name,    "root"
@@ -47,10 +48,12 @@ set :mysql_database,     "#{application}_production"
 
 set :mongo_database,     "#{application}_production"
 
-role :web,    '68.233.24.84', "justnom.it"
-role :app,    '68.233.24.84', "justnom.it"
-role :db,     '68.233.24.84'
-role :db,     'justnom.it', :primary => true
+role :web,    '173.255.209.197'
+# role :web,    '68.233.24.84'
+role :app,    '173.255.209.197'
+# role :app,    '68.233.24.84'
+role :db,     '173.255.209.197', :primary => true
+# role :db,     '68.233.24.84', :primary => true
 
 set(:latest_release)  { fetch(:current_path) }
 set(:release_path)    { fetch(:current_path) }
