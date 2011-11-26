@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   before_filter :search_params,     :only => [:search]
   before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed,:activity]
   before_filter :authentication_required, :only => [:me,:thumb_create]
+  before_filter :activity_requires,  :only => [:activity]
   
   def check
     @screen_name = params[:screen_name]
@@ -65,13 +66,16 @@ class UsersController < ApplicationController
   end
   
   def activity
-    # fetch the thumbs, recomendations and rankings for users this person follows
-    followers = Follower.followers(@user_nid)
-    recommends = Recommend.for_user_nid(@user_nid,@limit)
-    respond_with ({:status => 1, :message => 'OK',
-      :followers => followers,
-      :recommends => recommends
-    })
+    resp = {:status => 1, :message => 'OK'}
+    if params[:by_user]
+      recommendations = Recommendation.find_all_by_user_nid(@by_user_nid).limit(@limit)
+      resp.merge!({:recommendations => recommendations})
+    else
+      recommends = Recommend.for_user_nid(@user_nid,@limit)
+      resp.merge!({:recommends => recommends})
+    end
+    thumbs = Thumbs.
+    respond_with resp
   end
   
   private
@@ -133,6 +137,14 @@ class UsersController < ApplicationController
     end
     if @user_nids.blank? || !(@user_nids =~ NID_LIST)
       respond_with Status.insufficient_arguments
+    end
+  end
+  
+  def activity_requires
+    if params[:by_user]
+      unless (@by_user_nid = params[:by_user_nid])
+        respond_with Status.insufficient_arguments
+      end
     end
   end
   

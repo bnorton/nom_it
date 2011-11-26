@@ -55,11 +55,13 @@ class Thumb < MongoRuby
   private
   
   def self.for_nid(nid,lim=20)
+    lim = Util.limit(lim,20)
     nid = Util.STRINGify(nid)
     Thumb.find_by({ :nid => nid }, lim)
   end
 
-  def self.find_by(finder,lim)
+  def self.find_by(finder,lim=20)
+    lim = Util.limit(lim,20)
     Thumb.find(finder).limit(lim)
   end
   
