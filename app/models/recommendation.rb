@@ -28,20 +28,25 @@ class Recommendation < ActiveRecord::Base
   def self.create(this)
     this.merge!(self.defaults(this))
     r = Recommendation.new
-    r.lat      = this[:lat]
-    r.lng      = this[:lng]
-    r.user_nid  = this[:user_nid]
-    r.user_name= this[:user_name]
+    r.lat = this[:lat]
+    r.lng = this[:lng]
+    r.user_nid = this[:user_nid]
+    r.user_name = this[:user_name]
     r.location_nid = this[:location_nid]
-    r.title    = this[:title]
+    r.title = this[:title]
     r.facebook = this[:facebook] || false
     r.facebook = this[:twitter]  || false
     r.location_name = this[:name]
     r.location_city = this[:city]
-    r.nid      = Util.ID
-    r.token = this[:token] || Util.token
-    r.text     = this[:text] || "I recommended #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
     r.image_nid = this[:image_nid]
+    r.nid = Util.ID
+    r.token = this[:token] || Util.token
+    
+    if this[:text]
+      r.text = "#{this[:text]} justnom.it/r/#{r.token}"
+    else
+      r.text = "I really like #{r.location_name || '...'} and recommended it via Nom. justnom.it/r/#{r.token}"
+    end
     if r.save
       Metadata.recommended(r.nid) # for item analytics
       Recommendation.find_by_nid(r.nid)
@@ -54,7 +59,7 @@ class Recommendation < ActiveRecord::Base
     return location if result.blank?
     location[:name] = result.name
     location[:city] = result.city
-    location[:image_nid]
+    # location[:image_nid] = result.image_nid
     location
   end
   
