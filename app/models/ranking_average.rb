@@ -75,7 +75,7 @@ class RankingAverage < MongoRuby
   end
 
   def self.ranking_total(nid)
-    RankingAverage.for_location_nid(nid,options={:total=>true})
+    RankingAverage.for_location_nid(nid,nil,options={:total=>true})
   end
 
   private
