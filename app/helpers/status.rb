@@ -50,7 +50,7 @@ module Status
     end
 
     def not_found(what_is_it='items')
-      message(-1,"no #{what_is_it} were found.")
+      message(1,"no #{what_is_it} were found.")
     end
 
     def item_not_destroyed(what='item')

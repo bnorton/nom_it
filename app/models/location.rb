@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
 
-  COMPACT = "nid as location_nid,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "nid as location_nid,rank,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
 
   has_many :images
   has_one  :geolocation
@@ -72,9 +72,9 @@ class Location < ActiveRecord::Base
   end
   
   def self.compact_detail_for_nid(location_nid)
-    Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 5.minutes) do
+    # Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 5.minutes) do
       Location.compact.find_by_nid(location_nid)
-    end
+    # end
   end
   
   def self.detail_for_nid(nid,location=nil,geolocation=nil)

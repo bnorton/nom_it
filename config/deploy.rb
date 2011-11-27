@@ -44,9 +44,12 @@ set :memcached_servers, ['173.255.209.197']
 set :mysql_master_host,  "localhost"
 set :mysql_user_name,    "root"
 set :mysql_password,     '"%planb56b6!"'
-set :mysql_database,     "#{application}_production"
+
+# set :mysql_database,     "#{application}_production"
+set :mysql_database,     "production"
 
 set :mongo_database,     "#{application}_production"
+set :mongo_database,     "production"
 
 role :web,    '173.255.209.197'
 # role :web,    '68.233.24.84'
