@@ -1,0 +1,45 @@
+diff --git a/app/helpers/util.rb b/app/helpers/util.rb
+index 3ea4e14..683c506 100644
+--- a/app/helpers/util.rb
++++ b/app/helpers/util.rb
+@@ -12,6 +12,14 @@ class Util
+       item
+     end
+     
++    def created_atify(item)
++      return item unless item.respond_to?(:delete)
++      oid = item['_id']
++      return item unless oid.respond_to?(:generation_time)
++      item['created_at'] = item.delete('_id').generation_time
++      item
++    end
++    
+     def translate!(items, mapper)
+       items.each do |it|
+         mapper.each_pair do |k,v|
+diff --git a/app/models/location.rb b/app/models/location.rb
+index a00c918..fc8189f 100644
+--- a/app/models/location.rb
++++ b/app/models/location.rb
+@@ -1,6 +1,6 @@
+ class Location < ActiveRecord::Base
+ 
+-  COMPACT = "nid as location_nid,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
++  COMPACT = "nid as location_nid,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+ 
+   has_many :images
+   has_one  :geolocation
+diff --git a/app/models/thumb.rb b/app/models/thumb.rb
+index 7c2b42e..6921c2b 100644
+--- a/app/models/thumb.rb
++++ b/app/models/thumb.rb
+@@ -33,8 +33,8 @@ class Thumb < MongoRuby
+   end
+   
+   def self.build_for_activity(thumb)
++    thumb = Util.created_atify(thumb)
+     thumb = Util.nidify(thumb.as_json,'user_nid','unid')
+-    thumb = Util.de_nid(thumb,'_id')
+     Util.de_nid(thumb,'nid')
+   end
+   ## methods that find ratings or totals

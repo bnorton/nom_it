@@ -33,8 +33,8 @@ class Thumb < MongoRuby
   end
   
   def self.build_for_activity(thumb)
+    thumb = Util.created_atify(thumb)
     thumb = Util.nidify(thumb.as_json,'user_nid','unid')
-    thumb = Util.de_nid(thumb,'_id')
     Util.de_nid(thumb,'nid')
   end
   ## methods that find ratings or totals

@@ -12,6 +12,14 @@ class Util
       item
     end
     
+    def created_atify(item)
+      return item unless item.respond_to?(:delete)
+      oid = item['_id']
+      return item unless oid.respond_to?(:generation_time)
+      item['created_at'] = item.delete('_id').generation_time
+      item
+    end
+    
     def translate!(items, mapper)
       items.each do |it|
         mapper.each_pair do |k,v|
