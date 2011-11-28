@@ -14,7 +14,7 @@ class Geolocation < ActiveRecord::Base
     select("location_nid,lat,lng")
   }
   scope :find_by_distance, lambda {|lat,lng,dist,start,limit|
-    compact.OL(start,limit).
+    compact.OL(start,limit).order(:rank)
     where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<?",dist])
   }
   scope :search_by_category, lambda {|lat,lng,dist,primary,start,limit|

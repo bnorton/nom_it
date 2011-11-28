@@ -39,7 +39,11 @@ class NomRank
       while i < @all_items.length
         j = i; limit = j + stride
         while j < limit && j < @all_items.length
-          loc = Location.find_by_nid(@all_items[j][:nid])
+          nid = @all_items[j][:nid]
+          loc = Location.find_by_nid(nid)
+          loc.rank = value
+          loc.save
+          loc = Geolocation.find_by_location_nid(nid)
           loc.rank = value
           loc.save
           j += 1
