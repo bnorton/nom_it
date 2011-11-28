@@ -4,13 +4,14 @@ class Metadata < MongoRuby
   
   VALID_YELP = [:yelp_rating,:yelp_count,:categories]
   VALID_COUNTS = [:hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount]
+  VALID_FSQ = [:fsq_checkins, :fsq_users, :fsq_tips, :fsq_categories]
   
   #                    view_count | returned | up_count | meh_count | nom_rank | nom_rank_count | recommendations_count
   attr_accessor :_id, :views,      :ret,      :up,       :meh,       :rank,     :rank_ct,        :rec_ct
   #              h == half    m == mile  tm == two mile
   attr_accessor :hrank, :hcount, :mrank, :mcount, :tmrank, :tmcount
   #              misc checkins and reviews
-  attr_accessor :fsq_checkins, :fsq_users
+  attr_accessor :fsq_checkins, :fsq_users, :fsq_tips
   attr_accessor :yelp_rating, :yelp_count
   
   def self.dbcollection
@@ -30,8 +31,8 @@ class Metadata < MongoRuby
     meta = Metadata.find_one({ :_id => nid })
     Util.nidify(meta,:location_nid) unless meta.blank?
   end
-  
-  def self.set_attributes(attribs,valid_items)
+
+  def self.update_attributes(attribs,valid_items)
     return false unless (nid = attribs[:location_nid])
     item = Metadata.find_one({ :_id => nid })
     attribs.keys.each do |k|

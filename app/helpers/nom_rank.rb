@@ -73,8 +73,9 @@ class NomRank
       
       ## FOURSQUARE ###################
       begin 
-        fsq_users = meta['fsq_users']
-        fsq_checkins = meta['fsq_checkins']
+        fsq_users = meta['fsq_users'] || 0
+        fsq_checkins = meta['fsq_checkins'] || 0
+        fsq_tips = meta['fsq_tips'] || 0
         ratio = fsq_checkins / fsq_users
         normalize = 0.25
         multiplier = 0.0001
@@ -99,6 +100,13 @@ class NomRank
         ##################################################
         value += (fsq_checkins * multiplier * normalize) #
         ##################################################
+        
+        tips_factor = fsq_tips * 7
+        
+        ##################################################
+        value += tips_factor #############################
+        ##################################################
+        
       rescue Exception
       end
       value

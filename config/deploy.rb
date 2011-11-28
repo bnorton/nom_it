@@ -55,7 +55,7 @@ role :web,    'justnom.it'#'173.255.209.197'
 # role :web,    '68.233.24.84'
 role :app,    'justnom.it'#'173.255.209.197'
 # role :app,    '68.233.24.84'
-role :db,     'justnom.it'#'173.255.209.197', :primary => true
+role :db,     'justnom.it', :primary => true#'173.255.209.197', :primary => true
 # role :db,     '68.233.24.84', :primary => true
 
 set(:latest_release)  { fetch(:current_path) }
