@@ -56,7 +56,7 @@ class Location < ActiveRecord::Base
     street = opt[:street]
     city = opt[:city]
     if nid.present?
-      result = compact.OL(start,lim).find_by_nid(nid)
+      result = compact.OL(start,lim).order(:rank).find_by_nid(nid)
       built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
       if opt[:lat] && opt[:lng]
