@@ -12,7 +12,6 @@ class NomRank
       process
       puts "post_process"
       post_process
-      puts "done #{@all_items.inspect}"
       true
     end
 
@@ -43,9 +42,10 @@ class NomRank
           loc = Location.find_by_nid(nid)
           loc.rank = value
           loc.save
-          loc = Geolocation.find_by_location_nid(nid)
-          loc.rank = value
-          loc.save
+          if loc = Geolocation.find_by_location_nid(nid)
+            loc.rank = value
+            loc.save
+          end
           j += 1
         end
         value -= 1
@@ -75,23 +75,23 @@ class NomRank
         fsq_checkins = meta['fsq_checkins']
         ratio = fsq_checkins / fsq_users
         normalize = 0.25
-        multiplier = 1.0
+        multiplier = 0.0001
         
         # when the ratio is higher you have more repeat business (complex popularity)
         if ratio > 2.9
-          multiplier += 0.4
+          multiplier += 0.2
         end
         if ratio > 1.9 # 21 st amendment
-          multiplier += 0.3
+          multiplier += 0.1
         end
         if ratio > 0.9
-          multiplier += 0.2
+          multiplier += 0.1
         end
         
         if fsq_checkins > 10000
-          normalize = 0.1
+          normalize = 0.05
         elsif fsq_checkins > 5000
-          normalize = 0.2
+          normalize = 0.75
         end
         
         ##################################################
