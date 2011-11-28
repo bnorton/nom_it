@@ -32,11 +32,12 @@ class NomRank
     end
 
     def process
-      stride = (@all_items.length / 100.0).ceil
+      stride = (@all_items.length / 1000.0).ceil
       stride = 1 unless stride > 0
-      i = 0; value = 100
+      i = 0; value = 1000
       while i < @all_items.length
         j = i; limit = j + stride
+        per = 0
         while j < limit && j < @all_items.length
           nid = @all_items[j][:nid]
           loc = Location.find_by_nid(nid)
@@ -46,11 +47,12 @@ class NomRank
             loc.rank = value
             loc.save
           end
+          per += 1
           j += 1
         end
         value -= 1
         i = j
-        puts "stride #{j/stride} done"
+        puts "stride #{j/stride} done, per stride #{per}"
       end
     end
 
