@@ -73,7 +73,7 @@ describe UsersController do
     end
     it "should login a user" do
       get(:search, :format => :json, :q => @nort[:email])
-      nid = JSON.parse(response.body)['results'][0]['nid']
+      nid = JSON.parse(response.body)['results'][0]['user_nid']
       get(:login, :format => :json, :user_nid => nid, :password => @nort[:password])
       JSON.parse(response.body)['status'].should == 1
     end

@@ -39,7 +39,8 @@ class Recommendation < ActiveRecord::Base
     r.location_name = this[:name]
     r.location_city = this[:city]
     r.image_nid = this[:image_nid]
-    r.nid = Util.ID
+    rnid = Util.ID
+    r.recommendation_nid = rnid
     r.token = this[:token] || Util.token
     
     if this[:text]
@@ -48,8 +49,8 @@ class Recommendation < ActiveRecord::Base
       r.text = "I really like #{r.location_name || '...'} and recommended it via Nom. justnom.it/r/#{r.token}"
     end
     if r.save
-      Metadata.recommended(r.nid) # for item analytics
-      Recommendation.find_by_nid(r.nid)
+      Metadata.recommended(rnid) # for item analytics
+      Recommendation.find_by_nid(rnid)
     end
   end
   

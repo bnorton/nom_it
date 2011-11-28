@@ -121,7 +121,7 @@ class Geocode
       iid = Util.ID
       addr,neigh,street = yahoo_addr_neighbor(yahoo)
       if (found = Location.find_by_location_hash(opt[:location_hash]))
-        [found.nid, false]
+        [found.location_nid, false]
       else
         Location.find_or_create_by_location_hash(
           :location_hash => opt[:location_hash],
@@ -141,7 +141,7 @@ class Geocode
           :timeofday => opt[:tod],
           :woeid => yahoo.woeid,
           :yid => yahoo.hash,
-          :nid => iid)
+          :location_nid => iid)
         [iid, true]
       end
     end
@@ -158,7 +158,7 @@ class Geocode
     end
     
     def store_metadata(opt={})
-      if Metadata.create(opt[:nid])
+      if Metadata.create(opt[:location_nid])
         Metadata.set_yelp_items(opt)
       else
         raise "Metadata not created for #{opt.inspect}"
@@ -205,7 +205,7 @@ class Geocode
         
         Category.normalize!(cats)
         store_metadata({
-          :nid => location_nid,
+          :location_nid => location_nid,
           :yelp_rating => _rating,
           :yelp_count => _rating_count,
           :categories => cats

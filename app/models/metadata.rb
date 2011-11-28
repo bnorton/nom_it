@@ -32,7 +32,7 @@ class Metadata < MongoRuby
   end
   
   def self.set_attributes(attribs,valid_items)
-    return false unless (nid = attribs[:nid])
+    return false unless (nid = attribs[:location_nid])
     item = Metadata.find_one({ :_id => nid })
     attribs.keys.each do |k|
       if valid_items.include?(k) || valid_items.include?(k.to_sym)
@@ -43,12 +43,12 @@ class Metadata < MongoRuby
   end
   
   def self.set_region_counts(attribs)
-    return false unless attribs[:nid]
+    return false unless attribs[:location_nid]
     Metadata.set_attributes(attribs,VALID_COUNTS)
   end
   
   def self.set_yelp_items(attribs)
-    return false unless attribs[:nid]
+    return false unless attribs[:location_nid]
     Metadata.set_attributes(attribs,VALID_YELP)
   end
   

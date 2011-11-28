@@ -77,11 +77,11 @@ class Follower < ActiveRecord::Base
     return false if me.blank? || other.blank?
     my_name = me.name || me.screen_name
     other_name = other.name || other.screen_name
-    f = Follower.new_or_old(user_nid,other.nid)
-    f.user_nid = me.nid
+    f = Follower.new_or_old(user_nid,other.user_nid)
+    f.user_nid = me.user_nid
     f.user_name = my_name
     f.user_city = me.city
-    f.to_user_nid = other.nid
+    f.to_user_nid = other.user_nid
     f.to_name = other_name
     if options[:hasnt_joined]
       f.approved = false
@@ -89,29 +89,27 @@ class Follower < ActiveRecord::Base
       f.approved = true
     end
     f.save
-    User.for_nid(other.nid)
+    User.for_nid(other.user_nid)
   end
   
   def self.user_has_joined(to_nid)
     return if (to = Follower.find_by_to_user_nid(to_nid)).blank?
-    Array(to).each do |t|
-      t.approved = true
-      t.save
-    end
+    to.approved = true
+    to.save
   end
   
   # user_nid is following to_user_nid
   def self.unfollow(user_nid,to_user_nid)
-    to_user_nid     = User.find_by_any_means_necessary(to_user_nid)
-    follower = Follower.find_by_user_nid_and_to_user_nid(user_nid,to_user_nid.nid)
-    return false if follower.blank? || to_user_nid.blank?
+    to_user     = User.find_by_any_means_necessary(to_user_nid)
+    follower = Follower.find_by_user_nid_and_to_user_nid(user_nid,to_user.user_nid)
+    return false if follower.blank? || to_user.blank?
     follower.delete!
   end
   
   def self.block_follower(user_nid,to_user_nid)
     user_nid = Util.STRINGify(user_nid)
     to_user_nid = Util.STRINGify(to_user_nid)
-    to_user_nid = User.find_by_any_means_necessary(to_user_nid).nid
+    to_user_nid = User.find_by_any_means_necessary(to_user_nid).user_nid
     follower = fields.find_by_to_user_nid_and_user_nid(user_nid,to_user_nid)
     return false if follower.blank? || to_user_nid.blank?
     follower.approved = false

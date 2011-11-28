@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111127012326) do
+ActiveRecord::Schema.define(:version => 20111128045134) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20111127012326) do
     t.string   "image_content_type"
     t.string   "image_file_size"
     t.datetime "image_updated_at"
-    t.string   "nid"
+    t.string   "image_nid"
     t.string   "user_nid"
     t.string   "location_nid"
   end
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20111127012326) do
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "nid"
+    t.string   "location_nid"
     t.string   "name"
     t.string   "fsq_name"
     t.string   "fsq_id"
@@ -93,13 +93,13 @@ ActiveRecord::Schema.define(:version => 20111127012326) do
     t.string   "rank"
   end
 
-  add_index "locations", ["nid"], :name => "index_locations_on_nid", :unique => true
+  add_index "locations", ["location_nid"], :name => "index_locations_on_nid", :unique => true
 
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "nid"
-    t.string   "user_nid",                         :null => false
+    t.string   "recommendation_nid"
+    t.string   "user_nid",                              :null => false
     t.string   "user_name"
     t.string   "location_nid"
     t.string   "location_name"
@@ -107,24 +107,24 @@ ActiveRecord::Schema.define(:version => 20111127012326) do
     t.string   "token"
     t.string   "title"
     t.text     "text"
-    t.boolean  "facebook",      :default => false
-    t.boolean  "twitter",       :default => false
+    t.boolean  "facebook",           :default => false
+    t.boolean  "twitter",            :default => false
     t.float    "lat"
     t.float    "lng"
-    t.boolean  "new",           :default => true
+    t.boolean  "new",                :default => true
     t.binary   "schemaless"
-    t.boolean  "is_valid",      :default => true
+    t.boolean  "is_valid",           :default => true
     t.string   "image_nid"
   end
 
   add_index "recommendations", ["new"], :name => "recommendations_location_new"
-  add_index "recommendations", ["nid"], :name => "index_recommendations_on_nid", :unique => true
+  add_index "recommendations", ["recommendation_nid"], :name => "index_recommendations_on_nid", :unique => true
   add_index "recommendations", ["user_nid", "new"], :name => "recommendations_uid_new"
 
   create_table "users", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "nid"
+    t.string   "user_nid"
     t.string   "name"
     t.string   "screen_name"
     t.string   "email"
@@ -165,9 +165,9 @@ ActiveRecord::Schema.define(:version => 20111127012326) do
 
   add_index "users", ["email"], :name => "users_email", :unique => true
   add_index "users", ["facebook"], :name => "users_facebook", :unique => true
-  add_index "users", ["nid"], :name => "index_users_on_nid", :unique => true
   add_index "users", ["screen_name"], :name => "users_screen_name", :unique => true
   add_index "users", ["token", "email"], :name => "users_token_email"
   add_index "users", ["twitter"], :name => "users_twitter", :unique => true
+  add_index "users", ["user_nid"], :name => "index_users_on_nid", :unique => true
 
 end

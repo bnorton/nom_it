@@ -19,7 +19,7 @@ class Image < ActiveRecord::Base
   
   def self.for_nid(image_nid,options={})
     # Rails.cache.fetch("single_image_nid_#{image_nid}_size#{options[:size] || :medium}", :expires_in => 1.day) do
-      Image.build_image(Image.find_by_nid(image_nid),options)
+      Image.build_image(Image.find_by_image_nid(image_nid),options)
     # end
   end
   

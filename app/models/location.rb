@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
 
-  COMPACT = "nid as location_nid,rank,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "location_nid,rank,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
 
   has_many :images
   has_one  :geolocation
@@ -33,14 +33,14 @@ class Location < ActiveRecord::Base
     new_nid = Util.ID
     created_loc = Location.find_or_create_by_name_and_creator(
       :name => opt[:name],
-      :creator => opt[:nid],
+      :creator => opt[:user_nid],
       :primary => opt[:primary],
       :secondary => opt[:secondary],
       :city => opt[:city],
       :text => opt[:text],
       :phone => opt[:phone],
       :cost => opt[:cost],
-      :nid => new_nid)
+      :location_nid => new_nid)
     opt.merge!({:location_nid => new_nid})
     created_geo = Geolocation.create_item(opt)
     return true if created_loc && created_geo
@@ -51,12 +51,12 @@ class Location < ActiveRecord::Base
   # @optional :street
   # @optional :city
   def self.search(opt,start=0,lim=10)
-    nid = Util.STRINGify(opt[:nid])
+    location_nid = Util.STRINGify(opt[:location_nid])
     name = opt[:name]
     street = opt[:street]
     city = opt[:city]
-    if nid.present?
-      result = compact.OL(start,lim).order(:rank).find_by_nid(nid)
+    if location_nid.present?
+      result = compact.OL(start,lim).order(:rank).find_by_location_nid(location_nid)
       built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
       if opt[:lat] && opt[:lng]
@@ -73,23 +73,23 @@ class Location < ActiveRecord::Base
   
   def self.compact_detail_for_nid(location_nid)
     # Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 5.minutes) do
-      Location.compact.find_by_nid(location_nid)
+      Location.compact.find_by_location_nid(location_nid)
     # end
   end
   
-  def self.detail_for_nid(nid,location=nil,geolocation=nil)
-    nid = Util.STRINGify(nid)
+  def self.detail_for_nid(location_nid,location=nil,geolocation=nil)
+    location_nid = Util.STRINGify(location_nid)
     if location.present?
       detail = location.as_json
     else
-      detail = find_by_nid(nid).as_json
+      detail = find_by_location_nid(location_nid).as_json
     end
-    meta = Metadata.for_nid(nid)
-    Metadata.returned(nid)
-    thumb = Thumb.detail_for_nid(nid)
-    images = Image.for_location_nid(nid)
-    average = RankingAverage.ranking_total(nid)
-    geo = geolocation || Geolocation.for_location_nid(nid)
+    meta = Metadata.for_nid(location_nid)
+    Metadata.returned(location_nid)
+    thumb = Thumb.detail_for_nid(location_nid)
+    images = Image.for_location_nid(location_nid)
+    average = RankingAverage.ranking_total(location_nid)
+    geo = geolocation || Geolocation.for_location_nid(location_nid)
     detail.merge!(thumb)
     detail.merge({
       :metadata => meta,
@@ -111,12 +111,13 @@ class Location < ActiveRecord::Base
     real_result = []
     unless results.blank? || !(results = results.as_json)
       results.each do |result|
+        location_nid = result['location_nid']
         real_result << if what == :location
-          Location.detail_for_nid(result['nid'],result)
+          Location.detail_for_nid(location_nid,result)
         elsif what == :geolocation
-          Location.detail_for_nid(result['location_nid'],nil,result)
+          Location.detail_for_nid(location_nid,nil,result)
         else
-          Location.detail_for_nid(result['nid'])
+          Location.detail_for_nid(location_nid)
         end
       end
     end

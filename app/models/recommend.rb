@@ -34,7 +34,7 @@ class Recommend < MongoRuby
         :to_unid => follower_nid,
         :name => r.location_name,
         :city => r.location_city,
-        :rnid => r.nid,
+        :rnid => r.recommendation_nid,
         :token => r.token #,
         # :inid => r.image_nid
       })

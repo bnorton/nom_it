@@ -30,7 +30,7 @@ class Detail < MongoRuby
   def build_detail_for_token(token)
     record = Detail.for_token(token)
     recommendation = Recommendation.for_nid(record['rnid'])
-    nid = recommendation['nid']
+    nid = recommendation.recommendation_nid
     meta = Metadata.find_by_nid(nid)
     if recommendation && meta
       Metadata.viewed(nid)

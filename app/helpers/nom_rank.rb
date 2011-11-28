@@ -19,9 +19,9 @@ class NomRank
       @locations = NomRank.next
       while @locations.present?
         @locations.each do |l|
-          meta = Metadata.for_nid(l.nid)
+          meta = Metadata.for_nid(l.location_nid)
           value = NomRank.extract_features(meta)
-          @all_items << {:nid => l.nid, :value => value}
+          @all_items << {:nid => l.location_nid, :value => value}
         end
         @locations = NomRank.next
       end
@@ -40,7 +40,7 @@ class NomRank
         per = 0
         while j < limit && j < @all_items.length
           nid = @all_items[j][:nid]
-          loc = Location.find_by_nid(nid)
+          loc = Location.find_by_location_nid(nid)
           loc.rank = value
           loc.save
           if loc = Geolocation.find_by_location_nid(nid)

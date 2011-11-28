@@ -47,14 +47,14 @@ describe "user" do
       User.login(@brian[:email],@brian[:password]).should == true
     
       brian = User.find_by_email(@brian[:email])
-      User.login(brian.nid, @brian[:password]).should == true
+      User.login(brian.user_nid, @brian[:password]).should == true
     end
   end
   describe "searching" do
     before :each do
-      @brian_nid = User.register(@brian[:email],@brian[:password],@brian[:screen_name]).nid
-      @mark_nid  = User.register(@mark[:email], @mark[:password], @mark[:screen_name] ).nid
-      @third_nid = User.register(@third[:email],@third[:password],@third[:screen_name]).nid
+      @brian_nid = User.register(@brian[:email],@brian[:password],@brian[:screen_name]).user_nid
+      @mark_nid  = User.register(@mark[:email], @mark[:password], @mark[:screen_name] ).user_nid
+      @third_nid = User.register(@third[:email],@third[:password],@third[:screen_name]).user_nid
     end
     it "should find the users by id" do
       User.find_by_any_means_necessary(@brian_nid).should_not be_blank

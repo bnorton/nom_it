@@ -35,7 +35,7 @@ class Correlate
       this.state = corr['state']
       this.area_code = corr['zipc']
       this.country = corr['country']
-      this.nid = Util.ID;
+      this.location_nid = Util.ID;
       this.save
       end
       

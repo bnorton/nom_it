@@ -10,19 +10,19 @@ class LocationsInit
       nid3 = Util.ID
       
       Location.create({
-        :nid => nid1,
+        :location_nid => nid1,
         :name => 'location name 1',
         :address => '14 darrell pl',
         :primary => cat1
       })
       Location.create({
-        :nid => nid2,
+        :location_nid => nid2,
         :name => 'location name 2',
         :address => '2670 parker st',
         :primary => cat2
       })
       Location.create({
-        :nid => nid3,
+        :location_nid => nid3,
         :name => 'location name 3',
         :address => '201 11th st',
         :primary => cat3

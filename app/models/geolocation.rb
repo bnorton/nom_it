@@ -27,7 +27,7 @@ class Geolocation < ActiveRecord::Base
   def self.create_item(opt)
     if ((nid = opt[:location_nid]) && (lat = opt[:lat]) && (lng = opt[:lng]))
       Geolocation.find_or_create_by_nid_and_lat_and_lng(
-        :nid => nid,
+        :location_nid => nid,
         :lat => lat,
         :lng => lng,
         :cost => opt[:cost],

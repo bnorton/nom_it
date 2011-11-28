@@ -83,7 +83,7 @@ class LocationsController < ApplicationController
     geolocation_params
     
     @creation = {
-      :nid => @nid,
+      :user_nid => @user_nid,
       :auth_token => @auth_token,
       :name => @name,
       :text => @text,

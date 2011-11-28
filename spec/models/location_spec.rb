@@ -12,17 +12,17 @@ describe "locations" do
       @nid2 = Util.ID
       @nid3 = Util.ID
       Location.create({
-        :nid => @nid1,
+        :location_nid => @nid1,
         :name => 'location name 1',
         :address => '14 darrell pl',
         :primary => '4e234'})
       Location.create({
-        :nid => @nid2,
+        :location_nid => @nid2,
         :name => 'location 2',
         :address => '2670 parker st',
         :primary => '4e235'})
       Location.create({
-        :nid => @nid3,
+        :location_nid => @nid3,
         :name => 'location name 3',
         :address => '201 11th st',
         :city => 'seal beach',
@@ -76,7 +76,7 @@ describe "locations" do
       found = Location.search(here)
       found.class.should == Array
       found.length.should == 1
-      found[0]['nid'].should == @nid1
+      found[0]['location_nid'].should == @nid1
     end
     it "should find a location based on street/city" do
       here = {:street => '201 11th',:city => 'seal beach'}

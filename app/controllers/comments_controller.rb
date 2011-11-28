@@ -3,8 +3,8 @@ class CommentsController < ApplicationController
   respond_to :json
   
   before_filter :lat_lng_user
-  before_filter :check_params,  :only => [:recommendation,:location,:user]
-  before_filter :search_params, :only => [:search,:create]
+  before_filter :other_params
+  before_filter :search_params
   before_filter :authentication_required, :only => [:create]
   
   def recommendation
@@ -40,7 +40,7 @@ class CommentsController < ApplicationController
   private 
   
   def comments(method_name)
-    comments = Comment.send(:"for_#{method_name}_nid", @comment_nid, {:start=>@start,:limit=>@limit})
+    comments = Comment.search(@search, {:start=>@start,:limit=>@limit})
     prepared = Util.prepare(comments)
     respond_with ok_or_not(prepared)
   end
@@ -53,7 +53,7 @@ class CommentsController < ApplicationController
     end
   end
   
-  def check_params
+  def other_params
     @comment_nid = params[:comment_nid]
     @start = params[:start]
     @limit = Util.limit(params[:limit])

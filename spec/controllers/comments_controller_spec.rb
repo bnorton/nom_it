@@ -21,7 +21,6 @@ describe CommentsController do
     it "should make a new commnt about a location" do
       User.stub!(:valid_session?).and_return(true)
       post :create, :format => :json, :location_nid=>@lnid1, :auth_token => Digest::SHA2.hexdigest(rand(1<<16).to_s)
-      puts JSON.parse(response.body)
     end
     it "should make a new commnt about a user" do
       pending

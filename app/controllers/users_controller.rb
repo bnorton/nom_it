@@ -4,8 +4,8 @@ class UsersController < ApplicationController
   respond_to :json
   
   before_filter :lat_lng_user
-  before_filter :user_params,       :only => [:me, :login, :register,:thumbs,:thumbed]
-  before_filter :auth_params,       :only => [:me, :login, :register]
+  before_filter :user_params,       :only => [:me,:login,:register,:thumbs,:thumbed]
+  before_filter :auth_params,       :only => [:me,:login,:register]
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
   before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed]
@@ -109,8 +109,9 @@ class UsersController < ApplicationController
   end
   
   def user_params
-    @to_user_nid=params[:to_user_nid]
-    @email  = params[:email]
+    @user_nid = params[:user_nid]
+    @to_user_nid = params[:to_user_nid]
+    @email = params[:email]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
     @TWHash = params[:twhash]

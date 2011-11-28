@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
     offset(offset).limit(limit)
   }
   scope :follower_fields, lambda {
-    select("nid as user_nid,screen_name,name,facebook,image_url,city,follower_count,created_at")
+    select("user_nid,screen_name,name,facebook,image_url,city,follower_count,created_at")
   }
   scope :public_fields, lambda {
     select(User.fields)
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
     select(User.fields(:private))
   }
   scope :private_nid, lambda {|nid|
-    private_fields.where(["nid=?",nid])
+    private_fields.where(["user_nid=?",nid])
   }
   scope :me, lambda {|token|
     private_fields.where(["auth_token=?",token])
@@ -30,42 +30,42 @@ class User < ActiveRecord::Base
     where(["has_joined=0"])
   }
   scope :find_by_nid_or_email, lambda {|nid|
-    public_fields.where(["nid=? or email=?", nid, nid]).has_joined
+    public_fields.where(["user_nid=? or email=?", nid, nid]).has_joined
   }
   scope :login_with_nid_or_email, lambda {|nid|
-    select("salt,password").where(["nid=? or email=? or screen_name=?",nid,nid,nid]).has_joined
+    select("salt,password").where(["user_nid=? or email=? or screen_name=?",nid,nid,nid]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id,id]
-    public_fields.where(["nid=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
+    public_fields.where(["user_nid=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
   }
   scope :find_by_not_yet_joined, lambda {|identifier|
     find_by_any_means(identifier).hasnt_joined
   }
   scope :detail_for_nids, lambda {|nids,lim|
-    public_fields.where(["nid in (?)", nids.split(',')]).limit(lim)
+    public_fields.where(["user_nid in (?)", nids.split(',')]).limit(lim)
   }
   scope :find_by_like_name, lambda {|name,lim|
     public_fields.where(["name like ?", "%#{name}%"]).has_joined.limit(lim)
   }
   scope :search_by_all, lambda {|identifier,limit|
     list = [identifier,identifier,identifier]
-    public_fields.where(["name like ? or nid=? or email=? or screen_name=?", "%#{identifier}%",*list]).has_joined
+    public_fields.where(["name like ? or user_nid=? or email=? or screen_name=?", "%#{identifier}%",*list]).has_joined
   }
   
   def self.for_nid(nid)
     nid = Util.STRINGify(nid)
-    public_fields.find_by_nid(nid)
+    public_fields.find_by_user_nid(nid)
   end
   
   def self.follower(list_of)
-    User.follower_fields.find_all_by_nid(list_of)
+    User.follower_fields.find_all_by_user_nid(list_of)
   end
   
   def self.token_match?(nid, token)
     begin
       i = me
-      nid == i(token).nid
+      nid == i(token).user_nid
     rescue Exception
       false
     end
@@ -93,52 +93,56 @@ class User < ActiveRecord::Base
     return User.private_fields.find_by_email(email) if User.login(email,pass,username)
     user = new_or_hasnt_joined(email)
     return false if user.blank?
-    user.email    = email
-    user.salt     = rand(1<<32).to_s
+    user.email = email
+    user.salt = rand(1<<32).to_s
     user.password = Digest::SHA2.hexdigest(user.salt.to_s + pass, 256)
-    user.last_seen= Time.now
-    user.has_joined= true
-    user.screen_name=username
+    user.last_seen = Time.now
+    user.has_joined = true
+    user.screen_name = username
     user.name = name
     user.city = city
     user.auth_token = User.new_auth_token
-    user.nid      ||= Util.ID
+    user.user_nid ||= Util.ID
     user.save
     User.private_fields.find_by_email(email)
   end
   
   def self.register_with_facebook(fbHash,username='')
-    user = new_or_hasnt_joined(fbHash['id'])
+    return false if (fb_id = fbHash['id']).blank?
+    user = new_or_hasnt_joined(fb_id)
+    return false if user.blank?
     user.facebook_hash = fbHash
     user.screen_name = username
-    user.facebook = fbHash['id']
-    user.name     = fbHash['name']
-    user.token    = email_token
-    user.url      = "https://graph.facebook.com/#{user.facebook}/picture"
-    user.last_seen= Time.now
-    location      = fbHash['locaton']
+    user.facebook = fb_id
+    user.name = fbHash['name']
+    user.token = email_token
+    user.image_url = "https://graph.facebook.com/#{user.facebook}/picture"
+    user.last_seen = Time.now
+    location = fbHash['locaton']
     user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
-    user.has_joined= true
+    user.has_joined = true
     user.auth_token = User.new_auth_token
-    user.nid    ||= Util.ID
+    user.user_nid ||= Util.ID
     user.save
   end
   
   def self.register_with_twitter(twHash,username='',email='')
-    user = new_or_hasnt_joined(twHash['id'])
+    return false if (tw_id = twHash['id']).blank?
+    user = new_or_hasnt_joined(tw_id)
+    return false if user.blank?
     user.twitter_hash = twHash
     user.screen_name = username
-    user.email    = email
-    user.twitter  = twHash['id']
-    user.name     = twHash['name']
-    user.url      = twHash['profile_image_url']
-    user.token    = email_token
-    user.last_seen= Time.now
+    user.email = email
+    user.twitter = tw_id
+    user.name = twHash['name']
+    user.image_url = twHash['profile_image_url']
+    user.token = email_token
+    user.last_seen = Time.now
     user.city, user.state = Util.parse_location(twHash['location'])
     user.token_expires = Time.now + 14.days
-    user.has_joined= true
-    user.nid     ||= Util.ID
+    user.has_joined = true
+    user.user_nid ||= Util.ID
     user.save
   end
     
@@ -146,9 +150,10 @@ class User < ActiveRecord::Base
     user = User.find_by_any_means(identifier).first
     if user.blank?
       return User.new
+    else 
+      return nil if user.has_joined == true
+      Follower.user_has_joined(user.user_nid)
     end
-    return nil if user.has_joined == true
-    Follower.user_has_joined(user.nid)
     user
   end
   
@@ -160,14 +165,14 @@ class User < ActiveRecord::Base
     token = email_token
     user.token        = token
     user.token_expires= email_token_expires
-    user.nid          = Util.ID
+    user.user_nid          = Util.ID
     ## - warning   #####################################################
     ## - make sure that we know this is not a valid user as they      ##
     ##    are here because someone followed them via some identifier  ##
     user.has_joined = false                                           ##
     ## end warning #####################################################
     if user.save
-      User.find_by_token(token)
+      User.public_fields.find_by_token(token)
     end
   end
   
@@ -184,7 +189,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "nid as user_nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
+    fields = "user_nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
     if opt == :private
       fields << ",auth_token,street,country,email,phone,facebook,twitter"
     end
