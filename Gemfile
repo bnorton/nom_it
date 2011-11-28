@@ -8,7 +8,7 @@ gem 'mongo'
 
 gem 'mysql'
 gem 'mysql2'
-gem 'ruby-mysql' 
+gem 'ruby-mysql', '2.9.3'
 
 gem 'memcache'
 gem 'memcache-client'
