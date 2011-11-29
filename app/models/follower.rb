@@ -93,9 +93,11 @@ class Follower < ActiveRecord::Base
   end
   
   def self.user_has_joined(to_nid)
-    return if (to = Follower.find_by_to_user_nid(to_nid)).blank?
-    to.approved = true
-    to.save
+    return if (records = Follower.find_all_by_to_user_nid(to_nid)).blank?
+    records.each do |to|
+      to.approved = true
+      to.save
+    end
   end
   
   # user_nid is following to_user_nid

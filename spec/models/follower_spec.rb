@@ -84,7 +84,7 @@ describe "follower" do
         'id'    => _FBID,
         'name'  => 'brian fb name'
       }
-      User.register_with_facebook(fb_user)
+      User.register_with_facebook(fb_user,nil,nil)
       fbuser = User.find_by_facebook(_FBID)
       fbuser.should_not be_blank
       fbuser.has_joined.should == true
@@ -94,13 +94,18 @@ describe "follower" do
     end
   end
   describe "followers listing" do
-    before do
+    before :each do
       User.register(@brian[:email],@brian[:password],@brian[:screen_name])
       @one = User.find_by_email(@brian[:email])
       User.register(@mark[:email],@mark[:password],@mark[:screen_name])
       @two = User.find_by_email(@mark[:email])
       User.register('some_other_email@gmail.com','password','samplename')
       @thr = User.find_by_email('some_other_email@gmail.com')
+    end
+    after :each do
+      @one.destroy
+      @two.destroy
+      @thr.destroy
     end
     it "should find followers that have followed a user" do
       Follower.find_or_create(@one.user_nid,@two.user_nid,@mark)
@@ -157,13 +162,8 @@ describe "follower" do
       Follower.followers(@two.user_nid).length.should == 0
       
       User.register(random_user[:email],'password',random_user[:screen_name])
-      Follower.following(@two.user_nid).length.should  == 1
+      Follower.following(@two.user_nid).length.should == 1
       Follower.followers(@two.user_nid).length.should == 0
-    end
-    after do
-      @one.destroy
-      @two.destroy
-      @thr.destroy
     end
   end
   describe "unfollow" do

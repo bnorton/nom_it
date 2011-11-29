@@ -47,47 +47,48 @@ describe "locations" do
     # @optional :city
     # def self.search(opt,...)
     it "should find some places near a location in SF" do
-      search = Location.search({:lat=>@lat1,:lng=>@lng1,:dist=>1})
+      search,dist = Location.search({:lat=>@lat1,:lng=>@lng1,:dist=>1})
       search.class.should == Array
     end
     it "should find a locations based on the nid" do
       
     end
     it "should find a location based on name" do
-      one = Location.search({:name =>'location name 1'})
+      one,dist = Location.search({:name =>'location name 1'})
       one.class.should == Array
       one[0]['name'].should == 'location name 1'
       
-      two = Location.search({:name =>'location 2'})
+      two,dist = Location.search({:name =>'location 2'})
       two.class.should == Array
       two[0]['name'].should == 'location 2'
     end
     it "should find a location based on address" do
-      one = Location.search({:street =>'14 darrell pl'})
+      one,dist = Location.search({:street =>'14 darrell pl'})
       one.class.should == Array
       one[0]['name'].should == 'location name 1'
       
-      two = Location.search({:street =>'2670 parker st'})
+      two,dist = Location.search({:street =>'2670 parker st'})
       two[0]['name'].should == 'location 2'
-      Location.search({:street =>'201 11th st'}).class.should == Array
+      x,dist=Location.search({:street =>'201 11th st'})
+      x.class.should == Array
     end
     it "should find a location based on being somewhere" do
       here = {:lat => @lat1, :lng => @lng1}
-      found = Location.search(here)
+      found,dist = Location.search(here)
       found.class.should == Array
       found.length.should == 1
       found[0]['location_nid'].should == @nid1
     end
     it "should find a location based on street/city" do
       here = {:street => '201 11th',:city => 'seal beach'}
-      found = Location.search(here)
+      found,dist = Location.search(here)
       found.class.should == Array
       found.length.should == 1
       found[0]['location_nid'].should == @nid3
     end
     it "should find a location based on street" do
       here = {:street => '2670 parker st',:city => ''}
-      found = Location.search(here)
+      found,dist = Location.search(here)
       found.class.should == Array
       found[0]['location_nid'].should == @nid2
     end

@@ -36,11 +36,11 @@ class User < ActiveRecord::Base
     select("salt,password").where(["user_nid=? or email=? or screen_name=?",nid,nid,nid]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
-    items = [id,id,id,id,id]
-    public_fields.where(["user_nid=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
+    items = [id,id,id,id.to_s,id]
+    where(["user_nid=? or screen_name=? or email=? or facebook=? or twitter=?",*items])
   }
   scope :find_by_not_yet_joined, lambda {|identifier|
-    find_by_any_means(identifier).hasnt_joined
+    public_fields.find_by_any_means(identifier).hasnt_joined
   }
   scope :detail_for_nids, lambda {|nids,lim|
     public_fields.where(["user_nid in (?)", nids.split(',')]).limit(lim)
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_by_any_means_necessary(nid)
-    user = User.find_by_any_means(nid).has_joined
+    user = User.public_fields.find_by_any_means(nid).has_joined
     user.first unless user.blank?
   end
   
@@ -90,7 +90,7 @@ class User < ActiveRecord::Base
   
   def self.register(email, pass, username, name='', city='')
     return false if pass.blank?
-    return User.private_fields.find_by_email(email) if User.login(email,pass,username)
+    return User.find_by_email(email) if User.login(email,pass,username)
     user = new_or_hasnt_joined(email)
     return false if user.blank?
     user.email = email
@@ -108,6 +108,7 @@ class User < ActiveRecord::Base
   end
   
   def self.register_with_facebook(fbHash,user_nid,email,username='')
+    fbHash_str = fbHash
     if fbHash.is_a? String
       fbHash = begin
         JSON.parse(fbHash)
@@ -120,18 +121,19 @@ class User < ActiveRecord::Base
     user ||= User.find_by_email(email) if email.present?
     user ||= new_or_hasnt_joined(fb_id)
     return false if user.blank?
-    user.facebook_hash = fbHash
-    user.screen_name = username
+    user.facebook_hash = fbHash_str
+    user.screen_name ||= username || fbHash['user_name']
     user.facebook = fb_id
-    user.name = fbHash['name']
+    user.name ||= fbHash['name']
     user.token = email_token
-    user.image_url = "https://graph.facebook.com/#{user.facebook}/picture"
+    user.email ||= fbHash['email']
+    user.image_url ||= "https://graph.facebook.com/#{user.facebook}/picture"
     user.last_seen = Time.now
     location = fbHash['locaton']
     user.city, user.state = Util.parse_location(location)
     user.token_expires = Time.now + 14.days
     user.has_joined = true
-    user.auth_token = User.new_auth_token
+    user.auth_token ||= User.new_auth_token
     user.user_nid ||= Util.ID
     user.save
   end
@@ -168,20 +170,20 @@ class User < ActiveRecord::Base
   
   def self.create_should_join(items)
     user = User.new
-    user.email        = items[:email]
-    user.twitter      = items[:twid]
-    user.facebook     = items[:fbid]
+    user.email = items[:email]
+    user.twitter = items[:twid]
+    user.facebook = items[:fbid]
     token = email_token
-    user.token        = token
-    user.token_expires= email_token_expires
-    user.user_nid          = Util.ID
+    user.token = token
+    user.token_expires = email_token_expires
+    user.user_nid = Util.ID
     ## - warning   #####################################################
     ## - make sure that we know this is not a valid user as they      ##
     ##    are here because someone followed them via some identifier  ##
     user.has_joined = false                                           ##
     ## end warning #####################################################
     if user.save
-      User.public_fields.find_by_token(token)
+      User.public_fields.find_by_user_nid(user.user_nid)
     end
   end
   

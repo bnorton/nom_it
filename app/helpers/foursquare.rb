@@ -10,9 +10,13 @@ class Foursquare
       post_process
     end
 
-    def uri
-       @uri ||= URI.parse('https://api.foursquare.com/v2/venues/search')
-     end
+    def search_uri
+       @search_uri ||= URI.parse('https://api.foursquare.com/v2/venues/search')
+    end
+
+    def detail_uri(venue_id)
+      "https://api.foursquare.com/v2/venues/#{venue_id}"
+    end
 
     private
 
@@ -36,12 +40,22 @@ class Foursquare
         puts @locations.length
         @locations.each do |loc|
           @location = loc
-          unless location_params.blank?
-            @data = Foursquare.send :fetch_data
+          flag = false
+          if @location.fsq_id.present?
+            flag = true
+            @data = Foursquare.send :update_from_fsq_id
+            puts ','
+          else
+            unless location_params.blank?
+              flag = true
+              @data = Foursquare.send :fetch_new_data
+              puts '.'
+            end
+          end
+          if flag
             @meta = Foursquare.send :parse_metadata
             Foursquare.send :parse_data
             Foursquare.send :store_changes
-            puts '.'
           end
         end
         @locations = Foursquare.send(:next)
@@ -51,11 +65,15 @@ class Foursquare
     def post_process
     end
 
-    def fetch_data
+    def update_from_fsq_id
+      url = detail_uri @location.fsq_id
+    end
+
+    def fetch_new_data
       begin
-        http = Net::HTTP.new(Foursquare.uri.host, 443)
+        http = Net::HTTP.new(Foursquare.search_uri.host, 443)
         http.use_ssl = true
-        request = Net::HTTP::Get.new("#{uri.request_uri}?#{@params.to_param}")
+        request = Net::HTTP::Get.new("#{search_uri.request_uri}?#{@params.to_param}")
         response = http.request(request)
         sleep(0.18)
         JSON.parse(response.body)

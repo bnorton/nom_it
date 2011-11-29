@@ -18,6 +18,12 @@ module Status
       status_message_results(1,'OK',token) #,{:result_name=>:token})
     end
     
+    def SEARCHED(token,dist)
+      m = OK(token)
+      m.merge!({:distance => dist}) if dist.present?
+      m
+    end
+    
     def user_not_authorized
       message(-1, "you are not authorized as that user")
     end

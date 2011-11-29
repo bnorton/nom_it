@@ -55,12 +55,13 @@ class Location < ActiveRecord::Base
     name = opt[:name]
     street = opt[:street]
     city = opt[:city]
+    dist=nil
     if location_nid.present?
       result = compact.OL(start,lim).order(:rank).find_by_location_nid(location_nid)
       built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
       if opt[:lat] && opt[:lng]
-        results = Geolocation.search(opt,start,lim)
+        results,dist = Geolocation.search(opt,start,lim)
         what = :geolocation
       else
         results = search_by_name_street_city(name,street,city,lim)
@@ -68,7 +69,7 @@ class Location < ActiveRecord::Base
       end
       built = build_results(results,what)
     end
-    built
+    [built,dist]
   end
   
   def self.compact_detail_for_nid(location_nid)
