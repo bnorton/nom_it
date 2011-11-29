@@ -107,9 +107,11 @@ class User < ActiveRecord::Base
     User.private_fields.find_by_email(email)
   end
   
-  def self.register_with_facebook(fbHash,username='')
+  def self.register_with_facebook(fbHash,user_nid,email,username='')
     return false if (fb_id = fbHash['id']).blank?
-    user = new_or_hasnt_joined(fb_id)
+    user = User.find_by_user_nid(user_nid) if user_nid.present?
+    user ||= User.find_by_email(email) if email.present?
+    user ||= new_or_hasnt_joined(fb_id)
     return false if user.blank?
     user.facebook_hash = fbHash
     user.screen_name = username

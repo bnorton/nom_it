@@ -29,7 +29,7 @@ class UsersController < ApplicationController
   def register
     registration = case @registration_type
       when 'facebook'
-        User.register_with_facebook(@FBHash)
+        User.register_with_facebook(@FBHash,@user_nid,@email)
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
