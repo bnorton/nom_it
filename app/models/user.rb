@@ -107,7 +107,7 @@ class User < ActiveRecord::Base
     User.private_fields.find_by_email(email)
   end
   
-  def self.register_with_facebook(fbHash,user_nid,email,username='')
+  def self.register_with_facebook(fbHash,user_nid,email,access_token='',username='')
     fbHash_str = fbHash
     if fbHash.is_a? String
       fbHash = begin
@@ -125,6 +125,7 @@ class User < ActiveRecord::Base
     user.screen_name ||= username || fbHash['user_name']
     user.facebook = fb_id
     user.name ||= fbHash['name']
+    user.fb_access_token = access_token
     user.token = email_token
     user.email ||= fbHash['email']
     user.image_url ||= "https://graph.facebook.com/#{user.facebook}/picture"

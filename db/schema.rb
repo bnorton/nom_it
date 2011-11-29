@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111128045134) do
+ActiveRecord::Schema.define(:version => 20111129220039) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -141,26 +141,27 @@ ActiveRecord::Schema.define(:version => 20111128045134) do
     t.string   "state"
     t.string   "zip"
     t.string   "country"
-    t.string   "password",                       :default => ""
+    t.string   "password",                        :default => ""
     t.string   "salt"
     t.string   "auth_token"
-    t.binary   "newpassword",    :limit => 255
+    t.binary   "newpassword",     :limit => 255
     t.datetime "newpass_time"
     t.text     "description"
     t.datetime "authenticated"
     t.string   "token"
     t.date     "token_expires"
-    t.string   "referral_code",  :limit => 32
-    t.string   "referred_by",    :limit => 32
-    t.string   "json_encode",    :limit => 1022
+    t.string   "referral_code",   :limit => 32
+    t.string   "referred_by",     :limit => 32
+    t.string   "json_encode",     :limit => 1022
     t.integer  "follower_count"
     t.string   "oauth_token"
     t.string   "oauth_secret"
     t.binary   "facebook_hash"
     t.binary   "twitter_hash"
-    t.boolean  "has_joined",                     :default => true
+    t.boolean  "has_joined",                      :default => true
     t.binary   "schemaless"
     t.string   "image_nid"
+    t.string   "fb_access_token"
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true

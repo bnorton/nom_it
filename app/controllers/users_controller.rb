@@ -29,7 +29,7 @@ class UsersController < ApplicationController
   def register
     registration = case @registration_type
       when 'facebook'
-        User.register_with_facebook(@FBHash,@user_nid,@email)
+        User.register_with_facebook(@FBHash,@user_nid,@email,@fb_access_token)
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
@@ -114,6 +114,7 @@ class UsersController < ApplicationController
     @email = params[:email]
     @screen_name  = params[:screen_name]
     @FBHash = params[:fbhash]
+    @fb_access_token = params[:fb_access_token]
     @TWHash = params[:twhash]
     @name = params[:name]
     @city = params[:city]
