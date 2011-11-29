@@ -108,6 +108,13 @@ class User < ActiveRecord::Base
   end
   
   def self.register_with_facebook(fbHash,user_nid,email,username='')
+    if fbHash.is_a? String
+      fbHash = begin
+        JSON.parse(fbHash)
+      rescue Exception
+        {}
+      end
+    end
     return false if (fb_id = fbHash['id']).blank?
     user = User.find_by_user_nid(user_nid) if user_nid.present?
     user ||= User.find_by_email(email) if email.present?
