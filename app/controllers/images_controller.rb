@@ -8,7 +8,7 @@ class ImagesController < ApplicationController
   before_filter :authentication_required
 
   def create
-    @image = Image.new(params[:image])
+    @image = Image.new(@image)
     @image.image_nid = Util.ID
     @image.user_nid = @user_nid
     @image.location_nid = @location_nid
@@ -23,9 +23,9 @@ class ImagesController < ApplicationController
   private
 
   def _update
-    @image = Image.find(params[:id])
+    @image = Image.find(params[:image_nid])
     if @image.update_attributes(params[:image])
-      redirect_to @image
+      respond_with_location Status.image_saved(@image.image_nid)
     end
   end
 

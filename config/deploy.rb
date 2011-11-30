@@ -38,8 +38,7 @@ set :user,            "root"
 set :group,           "root"
 set :use_sudo,        false
 
-# set :memcached_servers, ['68.233.24.84']
-set :memcached_servers, ['173.255.209.197']
+set :memcached_servers, ['173.255.209.197', '74.207.251.76']
 
 set :mysql_master_host,  "localhost"
 set :mysql_user_name,    "root"
@@ -48,15 +47,13 @@ set :mysql_password,     '"%planb56b6!"'
 # set :mysql_database,     "#{application}_production"
 set :mysql_database,     "production"
 
-set :mongo_database,     "#{application}_production"
+# set :mongo_database,     "#{application}_production"
 set :mongo_database,     "production"
 
-role :web,    'justnom.it'#'173.255.209.197'
-# role :web,    '68.233.24.84'
-role :app,    'justnom.it'#'173.255.209.197'
-# role :app,    '68.233.24.84'
-role :db,     'justnom.it', :primary => true#'173.255.209.197', :primary => true
-# role :db,     '68.233.24.84', :primary => true
+role :web,    'justnom.it','74.207.251.76'
+role :app,    'justnom.it','74.207.251.76'
+role :db,     'justnom.it', :primary => true
+role :db,     '74.207.251.76'
 
 set(:latest_release)  { fetch(:current_path) }
 set(:release_path)    { fetch(:current_path) }
@@ -127,6 +124,9 @@ namespace :deploy do
         reconnect: true
         encoding:  utf8
         collation: utf8_general_ci
+    YAML
+
+    mysql_shards_yaml_template = <<-YAML
     YAML
 
     mongodb_yml = ERB.new(mongodb_yaml_template).result(binding)
