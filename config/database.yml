@@ -1,5 +1,5 @@
 development:
-  adapter: mysql
+  adapter: mysql2
   host: localhost
   database: prod_test
   username: root
@@ -7,7 +7,7 @@ development:
   reconnect: true
 
 test:
-  adapter: mysql
+  adapter: mysql2
   host: localhost
   database: test
   username: root
@@ -15,7 +15,7 @@ test:
   reconnect: true
 
 production:
-  adapter: mysql
+  adapter: mysql2
   host: localhost
   database: production
   username: root
