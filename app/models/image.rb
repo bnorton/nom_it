@@ -7,6 +7,8 @@ class Image < ActiveRecord::Base
   }
   IMAGE_KEYS = [:thumb,:medium,:large]
   
+  # validates_attachment_content_type :image, :content_type=>['image/jpeg', 'image/png', 'image/gif']
+  
   has_attached_file :image,
   :url => ':s3_domain_url',
   :hash_secret => "244617a1862bb2bfdd1c061118e2f009e97806502a0858380f06379aa7980403",

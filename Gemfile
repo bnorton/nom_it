@@ -23,7 +23,8 @@ gem 'json'
 gem 'httparty'
 
 gem "paperclip", "~> 2.4"
-
+gem 'rmagick'
+ 
 gem 'placefinder'
 
 gem 'newrelic_rpm'
