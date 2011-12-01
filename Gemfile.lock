@@ -88,7 +88,6 @@ GEM
       bson (= 1.4.0)
     multi_json (1.0.4)
     multi_xml (0.4.1)
-    mysql (2.8.1)
     mysql2 (0.3.10)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
@@ -196,7 +195,6 @@ DEPENDENCIES
   memcache
   memcache-client
   mongo
-  mysql
   mysql2
   newrelic_rpm
   paperclip (~> 2.4)

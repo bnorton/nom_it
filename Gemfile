@@ -5,15 +5,14 @@ gem 'rails'
 gem 'aws-s3'
 
 gem 'mongo'
-
-gem 'mysql'
 gem 'mysql2'
-# gem 'ruby-mysql', '2.9.4'
-# gem 'ar-octopus', :require => "octopus"
-
 gem 'memcache'
 gem 'memcache-client'
 gem 'dalli'
+
+# gem 'mysql'
+# gem 'ruby-mysql', '2.9.4'
+# gem 'ar-octopus', :require => "octopus"
 
 gem 'twilio-ruby'
 
