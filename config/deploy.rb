@@ -44,6 +44,7 @@ set :memcached_servers, ['74.207.251.76']
 set :mysql_master_host,  "localhost"
 set :mysql_user_name,    "root"
 set :mysql_password,     '"%planb56b6!"'
+set :mysql_raw_password, '%planb56b6!'
 
 set :mysql_database,     "#{application}_production"
 # set :mysql_database,     "production"
@@ -90,6 +91,7 @@ namespace :deploy do
     run "#{try_sudo} mkdir -p #{dirs.join(' ')} && #{try_sudo} chmod g+w #{dirs.join(' ')};"
     run "git clone #{repository} #{current_path};"
     run "cd #{current_path} ; #{rvm_use} ; bundle install"
+    run "mysqladmin -u #{mysql_user_name} -p'#{mysql_raw_password}' CREATE #{mysql_database}"
     run "cd #{current_path} ; #{rvm_use} ; bundle exec rake db:create db:schema:load"
   end
 
