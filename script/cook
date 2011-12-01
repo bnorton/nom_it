@@ -78,3 +78,7 @@ if [ ! -f /etc/init.d/memcached ]; then
   echo "Installing memcached"
   ~/script/memcached
 fi
+
+
+# install ImageMagick then do
+ldconfig /usr/local/lib
