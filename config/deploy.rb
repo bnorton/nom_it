@@ -119,7 +119,7 @@ namespace :deploy do
 
     mysql_yaml_template = <<-YAML
       production:
-        adapter: mysql
+        adapter: mysql2
         username: #{mysql_user_name}
         password: #{mysql_password}
         database: #{mysql_database}
