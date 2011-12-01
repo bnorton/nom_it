@@ -57,9 +57,9 @@ class ImagesController < ApplicationController
 
   def authentication_required
     @auth_token = params[:auth_token]
-    unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
-      respond_with Status.user_auth_invalid
-    end
+    # unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
+      # respond_with Status.user_auth_invalid
+    # end
   end
 
 end
