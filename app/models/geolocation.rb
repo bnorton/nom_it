@@ -58,7 +58,7 @@ class Geolocation < ActiveRecord::Base
     unless len > MIN_ENTRIES || same?(len) || @dist >= MAX_SEARCH_DISTANCE
       @last = len
       @dist = Geolocation.new_distance(@dist)
-      search(options,retries-1)
+      Geolocation.search(options,start,limit,retries-1)
     end
     [locations,@dist]
   end
