@@ -57,7 +57,7 @@ NomIt::Application.configure do
 
   # paperclip has to be able to fnd the right binary for identify.
   # http://stackoverflow.com/questions/1635840/probem-with-paperclip-accepting-jpg-and-png-on-production
-  Paperclip.options[:command_path] = "/usr/bin"
+  Paperclip.options[:command_path] = "/usr/local/bin"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )

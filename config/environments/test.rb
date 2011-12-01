@@ -7,7 +7,7 @@ NomIt::Application.configure do
   # and recreated between test runs.  Don't rely on the data there!
   config.cache_classes = true
 
-  Paperclip.options[:command_path] = "/usr/bin"
+  Paperclip.options[:command_path] = "/usr/local/bin"
 
   # Configure static asset server for tests with Cache-Control for performance
   config.serve_static_assets = true
