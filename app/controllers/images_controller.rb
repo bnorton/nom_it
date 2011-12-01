@@ -12,7 +12,7 @@ class ImagesController < ApplicationController
     @image.image_nid = Util.ID
     @image.user_nid = @user_nid
     @image.location_nid = @location_nid
-    resp = if @image.save
+    resp = if @image.save!
       Status.image_saved(@image.image_nid)
     else
       Status.item_not_created 'image'
