@@ -8,7 +8,7 @@ gem 'mongo'
 
 gem 'mysql'
 gem 'mysql2'
-gem 'ruby-mysql', '2.9.3'
+# gem 'ruby-mysql', '2.9.4'
 # gem 'ar-octopus', :require => "octopus"
 
 gem 'memcache'
