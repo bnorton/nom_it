@@ -55,6 +55,10 @@ NomIt::Application.configure do
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
+  # paperclip has to be able to fnd the right binary for identify.
+  # http://stackoverflow.com/questions/1635840/probem-with-paperclip-accepting-jpg-and-png-on-production
+  Paperclip.options[:command_path] = "/usr/bin"
+
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
 
