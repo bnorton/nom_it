@@ -1,6 +1,6 @@
 class ImagesController < ApplicationController
   
-  respond_to :json
+  respond_to :json, :html
 
   before_filter :lat_lng_user
   before_filter :new_image_params
@@ -12,12 +12,20 @@ class ImagesController < ApplicationController
     @image.image_nid = Util.ID
     @image.user_nid = @user_nid
     @image.location_nid = @location_nid
-    resp = if @image.save!
+    resp = if @image.save
       Status.image_saved(@image.image_nid)
     else
       Status.item_not_created 'image'
     end
     respond_with_location resp
+  end
+
+  def show
+    @image = Image.find_by_id(params[:id])
+  end
+
+  def index
+    @images = Image.find(:all) || []
   end
 
   private
@@ -31,7 +39,7 @@ class ImagesController < ApplicationController
 
   def image_presence
     @image = params[:image]
-    unless @image.present?
+    unless @image.present? 
       respond_with_location Status.insufficient_arguments({ :message=>"image upload should have an attached image with the name set to `image[image]` and an original file name"})
     end
   end
