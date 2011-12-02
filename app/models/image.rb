@@ -1,5 +1,7 @@
 class Image < ActiveRecord::Base
   
+  attr_accessible :image
+  
   IMAGE_STYLES = {
     :thumb  => "60x60",
     :medium => "600x400",
