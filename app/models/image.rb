@@ -12,13 +12,13 @@ class Image < ActiveRecord::Base
   # validates_attachment_content_type :image, :content_type=>['image/jpeg', 'image/png', 'image/gif']
   
   has_attached_file :image,
-  :url => ':s3_domain_url',
+  :url => ':s3_norcal_url',
   :hash_secret => "244617a1862bb2bfdd1c061118e2f009e97806502a0858380f06379aa7980403",
   :styles => IMAGE_STYLES,
   :storage => :s3,
   :s3_credentials => "#{Rails.root}/config/s3.yml",
   :path => "/:hash.:extension",
-  :bucket => 'cdn.justnom',
+  :bucket => 'img.justnom',
   :use_timestamp => false
   
   def self.for_nid(image_nid,options={})
