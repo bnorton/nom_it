@@ -32,8 +32,8 @@ class User < ActiveRecord::Base
   scope :find_by_nid_or_email, lambda {|nid|
     public_fields.where(["user_nid=? or email=?", nid, nid]).has_joined
   }
-  scope :login_with_nid_or_email, lambda {|nid|
-    select("salt,password").where(["user_nid=? or email=? or screen_name=?",nid,nid,nid]).has_joined
+  scope :login_with_nid_or_email, lambda {|nid,sn|
+    select("salt,password").where(["user_nid=? or email=? or screen_name=? or screen_name=?",nid,nid,sn,nid]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id.to_s,id]
@@ -77,20 +77,26 @@ class User < ActiveRecord::Base
   end
   
   def self.login(nid_or_email,password,vname='')
-    nid_or_email ||= vname
     unless nid_or_email.blank?
-      user = User.login_with_nid_or_email(nid_or_email).first
-      if user && user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
-        user.auth_token = User.new_auth_token
-        user.last_seen  = Time.now
-        return true if user.save
+      user = User.login_with_nid_or_email(nid_or_email,vname).first
+      if user
+        if user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
+          user.last_seen  = Time.now
+          user.save
+          true
+        else
+          return 'login_failed'
+        end
       end
     end
   end
   
   def self.register(email, pass, username, name='', city='')
     return false if pass.blank?
-    return User.find_by_email(email) if User.login(email,pass,username)
+    if log = User.login(email,pass,username)
+      return log if log == 'login_failed'
+      return User.find_by_email(email)
+    end
     user = new_or_hasnt_joined(email)
     return false if user.blank?
     user.email = email

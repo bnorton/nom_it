@@ -28,6 +28,10 @@ module Status
       message(-1, "you are not authorized as that user")
     end
     
+    def user_login_failed
+      status(-1,"Looks like you're registerd but the login failed")
+    end
+    
     def image_saved(image_nid)
       d = [{:image_nid => image_nid}]
       status_message_results(1,'image uploaded',d)

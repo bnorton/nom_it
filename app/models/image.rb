@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
   IMAGE_KEYS = [:thumb,:medium,:original]
 
   has_attached_file :image, {
-    :url => ':s3_norcal_url',
+    :url => ':s3_static_url',
     :hash_secret => "244617a1862bb2bfdd1c061118e2f009e97806502a0858380f06379aa7980403",
     :hash_data => ":class/:attachment/:id/:updated_at",
     :styles => IMAGE_STYLES,

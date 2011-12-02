@@ -11,6 +11,6 @@ Paperclip.interpolates(:s3_norcal_url) { |attachment, style|
   "#{attachment.s3_protocol}://#{AWS::S3::DEFAULT_HOST}/#{attachment.bucket_name}/#{attachment.path(style).gsub(%r{^/}, "")}"
 }
 Paperclip.interpolates(:s3_static_url) { |attachment, style|
-  "https://static.justnom.it/#{attachment.path(style).gsub(%r{^/}, "")}"
+  "http://static.justnom.it/#{attachment.path(style).gsub(%r{^/}, "")}"
 }
 
