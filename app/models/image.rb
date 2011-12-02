@@ -18,7 +18,7 @@ class Image < ActiveRecord::Base
   :storage => :s3,
   :s3_credentials => "#{Rails.root}/config/s3.yml",
   :path => "/:hash.:extension",
-  :bucket => 'img.justnom',
+  :bucket => 'cdn.justnom',
   :use_timestamp => false
   
   def self.for_nid(image_nid,options={})
