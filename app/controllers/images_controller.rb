@@ -8,12 +8,12 @@ class ImagesController < ApplicationController
   before_filter :authentication_required
 
   def create
-    @image = Image.new(@image)
-    @image.image_nid = Util.ID
-    @image.user_nid = @user_nid
-    @image.location_nid = @location_nid
-    resp = if @image.save
-      Status.image_saved(@image.image_nid)
+    image = Image.new(@image)
+    image.image_nid = nid
+    image.user_nid = @user_nid
+    image.location_nid = @location_nid
+    resp = if image.save
+      Status.image_saved(image.image_nid)
     else
       Status.item_not_created 'image'
     end

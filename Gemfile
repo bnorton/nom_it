@@ -22,7 +22,7 @@ gem 'bson_ext', '1.4.0'
 gem 'json'
 gem 'httparty'
 
-gem "paperclip", "~> 2.4"
+gem "paperclip", "<= 2.3.11"
 gem 'rmagick'
  
 gem 'placefinder'
