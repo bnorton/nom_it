@@ -8,8 +8,6 @@ NomIt::Application.configure do
 
   config.cache_store = :dalli_store, 'localhost:11211'
 
-  Paperclip.options[:command_path] = "/usr/local/bin"
-
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
