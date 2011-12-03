@@ -33,8 +33,10 @@ class UsersController < ApplicationController
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
-        reg = User.register(@email, @password, @screen_name, @name, @city)
-        respond_with((Status.user_login_failed if reg == 'login_failed'), :location => nil)
+        if (reg = User.register(@email, @password, @screen_name, @name, @city)) == 'login_failed'
+          respond_with(Status.user_login_failed, :location => nil)
+          return
+        end
         reg
       end
     response = ok_or_not(registration.present?,{:results=>registration})

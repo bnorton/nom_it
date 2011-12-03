@@ -32,6 +32,9 @@ class User < ActiveRecord::Base
   scope :find_by_nid_or_email, lambda {|nid|
     public_fields.where(["user_nid=? or email=?", nid, nid]).has_joined
   }
+  scope :find_by_email_or_screen_name, lambda {|e,s|
+    private_fields.where(["email=? or screen_name=?",e,s])
+  }
   scope :login_with_nid_or_email, lambda {|nid,sn|
     select("salt,password").where(["user_nid=? or email=? or screen_name=? or screen_name=?",nid,nid,sn,nid]).has_joined
   }
@@ -77,7 +80,7 @@ class User < ActiveRecord::Base
   end
   
   def self.login(nid_or_email,password,vname='')
-    unless nid_or_email.blank?
+    if nid_or_email.present? || vname.present?
       user = User.login_with_nid_or_email(nid_or_email,vname).first
       if user
         if user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
@@ -95,7 +98,7 @@ class User < ActiveRecord::Base
     return false if pass.blank?
     if log = User.login(email,pass,username)
       return log if log == 'login_failed'
-      return User.find_by_email(email)
+      return User.find_by_email_or_screen_name(email,username)
     end
     user = new_or_hasnt_joined(email)
     return false if user.blank?

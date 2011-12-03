@@ -9,7 +9,7 @@ class ImagesController < ApplicationController
 
   def create
     image = Image.new(@image)
-    image.image_nid = nid
+    image.image_nid = Util.ID
     image.user_nid = @user_nid
     image.location_nid = @location_nid
     resp = if image.save
