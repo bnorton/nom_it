@@ -4,8 +4,8 @@ class Image < ActiveRecord::Base
   validates_attachment_content_type :image, :content_type=>['image/jpeg', 'image/png', 'image/gif']
 
   IMAGE_STYLES = {
-    :thumb  => "60x60",
-    :medium => "600x400"
+    :thumb  => "100x100#",
+    :medium => "600x320#"
   }
   IMAGE_KEYS = [:thumb,:medium,:original]
 
@@ -42,7 +42,7 @@ class Image < ActiveRecord::Base
   private
 
   def self.build_image(image,options={})
-    return false unless image = image.image
+    return false unless image = image.try(:image)
     size = options[:size] if IMAGE_KEYS.include? options[:size]
     size ||= :medium
     img = {

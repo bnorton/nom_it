@@ -15,7 +15,7 @@ class LocationsController < ApplicationController
   end
 
   def search
-    found,dist = Location.search(@geo_opt)
+    found,dist = Location.search(@geo_opt,@start,@limit)
     response = unless found.blank?
       Status.SEARCHED(found,dist) # ,{:result_name=>:locations})
     else
@@ -134,6 +134,7 @@ class LocationsController < ApplicationController
     @lat  = params[:lat]
     @lng  = params[:lng]
     @user_nid = params[:user_nid]
+    @start, @limit = Util.ensure_limit params[:start], params[:limit]
   end
 
   

@@ -37,6 +37,10 @@ module Status
       status_message_results(1,'image uploaded',d)
     end
     
+    def user_image_created(img_r)
+      status_message_results(1, 'user_image created', img_r)
+    end
+    
     def screen_name_taken
       message(-1, "the screen_name you were looking for is not available")
     end

@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   before_filter :login_required,    :only => [:login]
   before_filter :search_params,     :only => [:search]
   before_filter :validate_nids,     :only => [:detail,:thumbs,:thumbed]
-  before_filter :authentication_required, :only => [:me,:thumb_create]
+  before_filter :authentication_required, :only => [:me,:thumb_create,:user_image]
   before_filter :activity_requires,  :only => [:activity]
   
   def check
@@ -88,6 +88,20 @@ class UsersController < ApplicationController
     resp.merge!({:thumbs => thumbs})
     respond_with resp
   end
+  
+  def user_image
+    if(user = User.find_by_user_nid(@user_nid))
+      image = Image.new(@image)
+      image.image_nid = Util.ID
+      image.user_nid = @user_nid
+      resp = if image.save
+        Status.user_image_created Image.build_image(image)
+      else
+        Status.item_not_created 'user_image'
+      end
+      respond_with resp, :location => nil
+  end
+
   
   private
   
