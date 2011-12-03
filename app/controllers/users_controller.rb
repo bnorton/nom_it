@@ -100,6 +100,7 @@ class UsersController < ApplicationController
         Status.item_not_created 'user_image'
       end
       respond_with resp, :location => nil
+    end
   end
 
   
