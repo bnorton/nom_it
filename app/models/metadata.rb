@@ -28,8 +28,10 @@ class Metadata < MongoRuby
   end
   
   def self.for_nid(nid)
-    meta = Metadata.find_one({ :_id => nid })
-    Util.nidify(meta,:location_nid) unless meta.blank?
+    Rails.cache.fetch("metadata_for_nid_#{nid}", :expires_in => 10.minutes) do
+      meta = Metadata.find_one({ :_id => nid })
+      Util.nidify(meta,:location_nid) unless meta.blank?
+    end
   end
 
   def self.update_attributes(attribs,valid_items)

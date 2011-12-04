@@ -83,10 +83,11 @@ class Location < ActiveRecord::Base
     if location.present?
       detail = location.as_json
     else
-      detail = find_by_location_nid(location_nid).as_json
+      detail = Rails.cache.fetch("location_detail_for_nid_find_by_location_nid_#{location_nid}", :expires_in => 30.minutes) do
+        find_by_location_nid(location_nid).as_json
+      end
     end
     meta = Metadata.for_nid(location_nid)
-    Metadata.returned(location_nid)
     thumb = Thumb.detail_for_nid(location_nid)
     images = Image.for_location_nid(location_nid)
     average = RankingAverage.ranking_total(location_nid)

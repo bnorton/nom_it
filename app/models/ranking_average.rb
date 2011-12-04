@@ -67,15 +67,21 @@ class RankingAverage < MongoRuby
   end
 
   def self.ranking(nid)
-    RankingAverage.for_location_nid(nid,key='a')
+    Rails.cache.fetch("ranking_average_ranking_#{nid}", :expires_in => 10.minutes) do
+      RankingAverage.for_location_nid(nid,key='a')
+    end
   end
 
   def self.total(nid)
-    RankingAverage.for_location_nid(nid,key='c')
+    Rails.cache.fetch("ranking_average_total_#{nid}", :expires_in => 10.minutes) do
+      RankingAverage.for_location_nid(nid,key='c')
+    end
   end
 
   def self.ranking_total(nid)
-    RankingAverage.for_location_nid(nid,nil,options={:total=>true})
+    Rails.cache.fetch("ranking_average_ranking_total_#{nid}", :expires_in => 10.minutes) do
+      RankingAverage.for_location_nid(nid,nil,options={:total=>true})
+    end
   end
 
   private
