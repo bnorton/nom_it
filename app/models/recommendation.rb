@@ -4,7 +4,7 @@ class Recommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :location
   
-  COMPACT = "nid as recommendation_nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,created_at,image_nid"
+  COMPACT = "recommendation_nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,created_at,image_nid"
   
   scope :OL, lambda {|offset,limit|
     offset(offset).limit(limit)
