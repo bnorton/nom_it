@@ -56,7 +56,7 @@ class UsersController < ApplicationController
   end
   
   def detail
-    results   = User.detail_for_nids(@user_nids)
+    results   = User.detail_for_nids(@user_nids,@limit)
     condition = !results.blank?
     response  = ok_or_not(condition,{:results=>results})
     respond_with response
