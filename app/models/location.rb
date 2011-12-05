@@ -92,13 +92,12 @@ class Location < ActiveRecord::Base
     images = Image.for_location_nid(location_nid)
     average = RankingAverage.ranking_total(location_nid)
     geo = geolocation || Geolocation.for_location_nid(location_nid)
-    detail.merge!(thumb)
     detail.merge({
       :metadata => meta,
       :geolocation => geo,
       :images => images,
       :ranking => average
-    })
+    }).merge(thumb)
   end
   
   def self.full_detail_for_nids(nids)
