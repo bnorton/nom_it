@@ -1,29 +1,39 @@
 class NomRank
   class << self
     
+    def rank_v1
+      @rank_type = 'v1'
+      @process_by = 'percentile'
+      rank
+    end
+
+    def rank_v2
+      @rank_type = 'v2'
+      @process_by = 'absolute'
+      rank
+    end
+
+    private
+
     def rank
-      puts "setup"
-      setup
-      puts "pre_process"
-      pre_process
-      puts "order"
-      order
-      puts "process"
-      process
-      puts "post_process"
-      post_process
+      puts "setup"; setup
+      puts "pre_process"; pre_process
+      puts "order"; order
+      puts "process"; send(:"process_by_#{@process_by}")
+      puts "post_process"; post_process
       true
     end
 
     def pre_process
-      @locations = NomRank.next
+      @locations = _next
       while @locations.present?
         @locations.each do |l|
           meta = Metadata.for_nid(l.location_nid)
-          value = NomRank.extract_features(meta)
+          prepare_for_extract(meta)
+          value = send(:"extract_features_#{@rank_type}", meta)
           @all_items << {:nid => l.location_nid, :value => value}
         end
-        @locations = NomRank.next
+        @locations = _next
       end
     end
 
@@ -31,10 +41,29 @@ class NomRank
       @all_items.sort!{|x,y| y[:value] <=> x[:value]}
     end
 
-    def process
+    def process_by_absolute
+      value = 1
+      length = @all_items.length
+      @all_items.each_with_index do |item,i|
+        nid = item[:nid]
+        loc = Location.find_by_location_nid(nid)
+        rank = "#{value}/#{length}"
+        loc.rank = rank
+        loc.rank_value = value
+        loc.save
+        if loc = Geolocation.find_by_location_nid(nid)
+          loc.rank = rank
+          loc.rank_value = value
+          loc.save
+        end
+        value += 1
+      end
+    end
+
+    def process_by_percentile
       stride = (@all_items.length / 1000.0).ceil
       stride = 1 unless stride > 0
-      i = 0; value = 1000
+      i = 0; value = 1
       while i < @all_items.length
         j = i; limit = j + stride
         per = 0
@@ -60,22 +89,30 @@ class NomRank
       
     end
 
-    def extract_features(meta)
-      value = 0
-      
-      ## YELP #########################
-      yelp_count = meta['yelp_count']
-      yelp_rating = meta['yelp_rating']
-      
+    def prepare_for_extract(meta)
+      @value = 0
+      @yelp_count = meta['yelp_count'].to_f
+      @yelp_rating = meta['yelp_rating'].to_f
+      @fsq_users = meta['fsq_users'].to_f
+      @fsq_checkins = meta['fsq_checkins'].to_f
+      @fsq_tips = meta['fsq_tips'].to_f
+    end
+    
+    def extract_features_v1(meta)
+      ## YELP ##########################################
+      ## 4.5's should contribute a lot
+      scale = 1 # no scale
+      if @yelp_rating > 4.4
+        scale = 2
+      elsif @yelp_rating > 3.9
+        scale = 1.5
+      end
       ##################################################
-      value += yelp_count * yelp_rating ################
+      @value += @yelp_count * @yelp_rating * scale #####
       ##################################################
       
       ## FOURSQUARE ###################
       begin 
-        fsq_users = meta['fsq_users'] || 0
-        fsq_checkins = meta['fsq_checkins'] || 0
-        fsq_tips = meta['fsq_tips'] || 0
         ratio = fsq_checkins / fsq_users
         normalize = 0.25
         multiplier = 0.0001
@@ -98,10 +135,10 @@ class NomRank
         end
         
         ##################################################
-        value += (fsq_checkins * multiplier * normalize) #
+        value += (@fsq_checkins * multiplier * normalize)#
         ##################################################
         
-        tips_factor = fsq_tips * 7
+        tips_factor = @fsq_tips * 7
         
         ##################################################
         value += tips_factor #############################
@@ -112,7 +149,48 @@ class NomRank
       value
     end
 
-    def next(lim=50)
+    def extract_features_v2(meta)
+      #####################################################
+      ## capture the value of transient users
+      fsq_total = 0
+
+      if @fsq_checkins > 0
+        if @fsq_users / @fsq_checkins > 0.42
+          fsq_total += @fsq_checkins * 0.15
+        end
+        if @fsq_users / @fsq_checkins > 0.21
+          fsq_total += @fsq_checkins * 0.075
+        end
+        ###
+        #####################################################
+        ## capture the value of the repeat (local customer)
+        if @fsq_users / @fsq_checkins < 0.42
+          fsq_total += @fsq_checkins * 0.35
+        end
+        if @fsq_users / @fsq_checkins < 0.21
+          fsq_total += @fsq_checkins * 0.175
+        end
+      end
+      ###
+
+      if @fsq_tips > 16
+        fsq_total += 2 * @fsq_tips
+      end
+      if @fsq_tips > 32
+        fsq_total += 4 * @fsq_tips
+      end
+      if @fsq_tips > 64
+        fsq_total += 8 * @fsq_tips
+      end
+      # too high signals boredom
+      if @fsq_tips > 128
+        fsq_total += 2 * @fsq_tips
+      end
+
+      @value += fsq_total
+    end
+
+    def _next(lim=50)
       all = Location.limit(50).offset(@offset).find(:all)
       @offset += 50
       all
@@ -123,6 +201,5 @@ class NomRank
       @all_values = []
       @all_items = []
     end
-    
   end
 end

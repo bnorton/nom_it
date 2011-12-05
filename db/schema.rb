@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111129220039) do
+ActiveRecord::Schema.define(:version => 20111205053017) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20111129220039) do
     t.string   "secondary"
     t.string   "location_nid"
     t.string   "rank"
+    t.integer  "rank_value"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
@@ -91,6 +92,7 @@ ActiveRecord::Schema.define(:version => 20111129220039) do
     t.string   "metadata_nid"
     t.string   "creator"
     t.string   "rank"
+    t.integer  "rank_value"
   end
 
   add_index "locations", ["location_nid"], :name => "index_locations_on_nid", :unique => true

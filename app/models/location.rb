@@ -1,6 +1,6 @@
 class Location < ActiveRecord::Base
 
-  COMPACT = "location_nid,rank,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "location_nid,rank,rank_value,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
 
   has_many :images
   has_one  :geolocation
