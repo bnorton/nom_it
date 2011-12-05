@@ -43,7 +43,9 @@ NomIt::Application.routes.draw do
   post '/locations/create' => 'locations#create'
   get '/locations/search' => 'locations#search'
   get '/locations/here'   => 'locations#here'
-
+  get '/locations/:location_nid/detail'   => 'locations#detail'
+  get '/locations/detail'                 => 'locations#detail'
+  
   #############################################################################
   #####  COMMENTS  ############################################################
   #############################################################################

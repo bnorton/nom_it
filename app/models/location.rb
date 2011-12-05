@@ -16,7 +16,7 @@ class Location < ActiveRecord::Base
     detail_for_nids(nid)
   }
   scope :detail_for_nids, lambda {|nids| 
-    compact.where(["nid in (?)", nids.split(',')])
+    compact.where(["location_nid in (?)", nids.split(',')])
   }
   scope :find_by_like_name, lambda {|name|
     compact.where(["name like ?","%#{name}%"])

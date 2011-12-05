@@ -17,7 +17,7 @@ class LocationsController < ApplicationController
   def search
     found,dist = Location.search(@geo_opt,@start,@limit)
     response = unless found.blank?
-      Status.SEARCHED(found,dist) # ,{:result_name=>:locations})
+      Status.SEARCHED(found,dist)
     else
       Status.not_found 'locations'
     end
@@ -26,8 +26,8 @@ class LocationsController < ApplicationController
   end
 
   def detail
-    response = if (locations = Location.detail_for_nids(@locations))
-      Status.OK(locations) #,{:result_name=>:locations})
+    response = if (locations = Location.detail_for_nids(@location_nids))
+      Status.OK(locations)
     else
       Status.not_found 'locations'
     end
@@ -44,14 +44,14 @@ class LocationsController < ApplicationController
   end
 
   def validate_nids
-    if (@locations = params[:location_nids]) =~ NID_LIST
-      @locations = @locations.split(',')
+    @location_nid = params[:location_nid]
+    @location_nids = params[:location_nids] || ''
+    if @location_nids.present?
+      @location_nids << ",#{@location_nid}" if @location_nid.present?
     else
-      @locations = []
+      @location_nids << @location_nid if @location_nid.present?
     end
-    @location = params[:location_nid]
-    @locations << @location if @location =~ NID
-    unless @locations.is_a? Array && @locations.length > 0
+    if @location_nids.blank? || !(@location_nids =~ NID_LIST)
       respond_with Status.location_not_properly_formatted({ :plural=>true })
     end
   end

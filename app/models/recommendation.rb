@@ -19,7 +19,7 @@ class Recommendation < ActiveRecord::Base
     compact.where(["location_nid=?",nid])
   }
   scope :for_nid, lambda {|nid|
-    compact.where(["nid=?",nid])
+    compact.where(["recommendation_nid=?",nid])
   }
   scope :for_token, lambda {|token|
     compact.where(["token=?",token])
