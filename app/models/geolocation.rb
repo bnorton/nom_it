@@ -14,6 +14,7 @@ class Geolocation < ActiveRecord::Base
     select("location_nid,lat,lng")
   }
   scope :find_by_distance, lambda {|lat,lng,dist,start,limit|
+                                                            # (DEGREES(ACOS(SIN(RADIANS( $lat ))*SIN(RADIANS(lat))+COS(RADIANS( $lat ))*COS(RADIANS(lat))*COS(RADIANS(  $lon-lng))))*60*1.1515)<$dist)
     compact.OL(start,limit).order('rank_value ASC').where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<#{dist}"])
   }
   scope :search_by_category, lambda {|lat,lng,dist,primary,start,limit|
@@ -41,6 +42,7 @@ class Geolocation < ActiveRecord::Base
   end
   
   def self.search(options,start=0,limit=10,retries=3)
+    puts "SEARCH : options #{options.inspect} : retries #{retries}"
     if @lat.blank? || @lng.blank?
       params options
     end
@@ -52,14 +54,17 @@ class Geolocation < ActiveRecord::Base
         Geolocation.search_by_category(@lat,@lng,@dist,@primary,start,limit)
       end
     else
+      puts "find_by_distance #{@lat}, #{@lng}, #{@dist}, #{start}, #{limit}"
       Geolocation.find_by_distance(@lat,@lng,@dist,start,limit)
     end
     len = locations.length
+    puts "locations.length #{len} which locations :|||||| #{locations.map{|l| [l.location_nid]}.inspect} |||||||"
     unless len > MIN_ENTRIES || same?(len) || @dist >= MAX_SEARCH_DISTANCE
       @last = len
       @dist = Geolocation.new_distance(@dist)
       Geolocation.search(options,start,limit,retries-1)
     end
+    puts "WILL RETURN #{@dist}, /////// #{locations.map{|l| [l.location_nid]}.inspect} /\/\/\/\/\/\/\/"
     [locations,@dist]
   end
   
