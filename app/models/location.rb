@@ -57,11 +57,13 @@ class Location < ActiveRecord::Base
     city = opt[:city]
     dist=nil
     if location_nid.present?
-      result = compact.OL(start,lim).order(:rank).find_by_location_nid(location_nid)
+      result = compact.OL(start,lim).order(:rank_value).find_by_location_nid(location_nid)
       built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
-      if opt[:lat] && opt[:lng]
-        results,dist = Geolocation.search(opt,start,lim)
+      if (lat=opt[:lat]) && (lng=opt[:lng])
+        dist=opt[:dist];primary=opt[:primary];secondary=opt[:secondary];
+        start=opt[:start];limit=opt[:limit]
+        results,dist = Geolocation.search(lat,lng,dist,primary,secondary,start,limit)
         what = :geolocation
       else
         results = search_by_name_street_city(name,street,city,lim)
@@ -73,9 +75,9 @@ class Location < ActiveRecord::Base
   end
   
   def self.compact_detail_for_nid(location_nid)
-    # Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 5.minutes) do
+    Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 10.minutes) do
       Location.compact.find_by_location_nid(location_nid)
-    # end
+    end
   end
   
   def self.detail_for_nid(location_nid,location=nil,geolocation=nil)

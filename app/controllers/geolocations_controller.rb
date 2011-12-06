@@ -8,7 +8,7 @@ class GeolocationsController < ApplicationController
   before_filter :lat_lng_dist, :only => [:here, :search]
 
   def here
-    @search = Geolocation.search(@options)
+    @search = Geolocation.search(@lat,@lng,@dist,@primary,@secondary,@start,@limit)
     details
   end
 
@@ -23,28 +23,16 @@ class GeolocationsController < ApplicationController
   end
 
   def lat_lng_dist
-    lat = params[:lat]
-    lng = params[:lng]
+    @lat = params[:lat]
+    @lng = params[:lng]
     @user_nid = params[:user_nid]
-    unless lat && lng
+    unless @lat && @lng
       respond_with Status.insufficient_arguments({:message => 'needs lat and lng by default'})
     end
-    @options = { 
-      :lat   => lat,
-      :lng   => lng,
-      :dist  => params[:dist] || DEFAULT_DISTANCE,
-      :start => params[:start],
-      :limit => Util.limit(params[:limit])}
-    primary
-    secondary
+    @dist = params[:dist] || DEFAULT_DISTANCE,
+    @start = params[:start]
+    @limit => Util.limit(params[:limit])}
+    @primary = params[:primary]
+    @secondary = params[:secondary]
   end
-
-  def primary
-    @options.merge!({:primary => params[:primary]})
-  end
-
-  def secondary
-    @options.merge!({:secondary => params[:secondary]})
-  end
-
 end

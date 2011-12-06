@@ -41,41 +41,33 @@ class Geolocation < ActiveRecord::Base
     (compact.find_by_location_nid(nid) || {}).as_json
   end
   
-  def self.search(options,start=0,limit=10,retries=3)
-    puts "SEARCH : options #{options.inspect} : retries #{retries}"
-    if @lat.blank? || @lng.blank?
-      params options
-    end
+  def self.search(lat,lng,dist=0.5,primary=nil,secondary=nil,start=0,limit=10,retries=3,len=0)
     return false if retries < 0
-    locations = if @primary.present?
-      if @secondary.present?
-        Geolocation.search_by_categories(@lat,@lng,@dist,@primary,@secondary,start,limit)
+    locations = if primary.present?
+      if secondary.present?
+        Geolocation.search_by_categories(lat,lng,dist,primary,secondary,start,limit)
       else
-        Geolocation.search_by_category(@lat,@lng,@dist,@primary,start,limit)
+        Geolocation.search_by_category(lat,lng,dist,primary,start,limit)
       end
     else
-      puts "find_by_distance #{@lat}, #{@lng}, #{@dist}, #{start}, #{limit}"
-      Geolocation.find_by_distance(@lat,@lng,@dist,start,limit)
+      Geolocation.find_by_distance(lat,lng,dist,start,limit)
     end
-    len = locations.length
-    puts "locations.length #{len} which locations :|||||| #{locations.map{|l| [l.location_nid]}.inspect} |||||||"
-    unless len > MIN_ENTRIES || same?(len) || @dist >= MAX_SEARCH_DISTANCE
-      @last = len
-      @dist = Geolocation.new_distance(@dist)
-      Geolocation.search(options,start,limit,retries-1)
+    length = locations.length
+    unless (length > MIN_ENTRIES) || len == length || dist >= MAX_SEARCH_DISTANCE
+      dist = Geolocation.new_distance(dist)
+      Geolocation.search(lat,lng,dist,primary,secondary,start,limit,retries-1,length)
     end
-    puts "WILL RETURN #{@dist}, /////// #{locations.map{|l| [l.location_nid]}.inspect} /\/\/\/\/\/\/\/"
-    [locations,@dist]
+    [locations,dist]
   end
   
   private
   
   def self.params(options)
-    @lat = options[:lat].try(:to_f)
-    @lng = options[:lng].try(:to_f)
-    @dist = options[:dist].try(:to_f) || 0.5
-    @primary = options[:primary]
-    @secondary = options[:secondary]
+    lat = options[:lat].try(:to_f)
+    lng = options[:lng].try(:to_f)
+    dist = options[:dist].try(:to_f) || 0.5
+    primary = options[:primary]
+    secondary = options[:secondary]
   end
   
   def self.new_distance(dist)
@@ -85,11 +77,6 @@ class Geolocation < ActiveRecord::Base
     dist += dist*0.25 if dist >= 1
     dist
   end
-  
-  def self.same?(len)
-    len && len > 0 && len == @last
-  end
-  
 end
 
   # create_table "geolocations", :force => true do |t|

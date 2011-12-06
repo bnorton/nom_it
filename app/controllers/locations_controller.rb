@@ -108,7 +108,9 @@ class LocationsController < ApplicationController
       :lng => @lng,
       :dist => @dist || DEFAULT_DISTANCE,
       :city => @city,
-      :addr => @addr
+      :addr => @addr,
+      :start => @start,
+      :limit => @limit
     }
   end
 
