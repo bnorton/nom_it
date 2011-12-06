@@ -97,9 +97,11 @@ class LocationsController < ApplicationController
     @dist = params[:dist]
     @addr = params[:addr]
     @city = params[:city]
-    
-    unless (@lat && @lng)
-      respond_with Status.insufficient_arguments({:message => 'needs lat/lng or addr/city by default'})
+    @where = params[:where]
+    unless (@where || (@lat && @lng))
+      respond_with Status.insufficient_arguments({
+        :message => 'Needs where you are or latitude /longitude by default'
+      })
     end
     {
       :lat => @lat,
