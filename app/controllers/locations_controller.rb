@@ -108,6 +108,7 @@ class LocationsController < ApplicationController
       :lng => @lng,
       :dist => @dist || DEFAULT_DISTANCE,
       :city => @city,
+      :query => params[:query],
       :addr => @addr,
       :start => @start,
       :limit => @limit

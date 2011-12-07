@@ -52,7 +52,7 @@ class Location < ActiveRecord::Base
   # @optional :city
   def self.search(opt,start=0,lim=10)
     location_nid = Util.STRINGify(opt[:location_nid])
-    name = opt[:name]
+    query = opt[:query]
     street = opt[:street]
     city = opt[:city]
     dist=nil
@@ -60,8 +60,8 @@ class Location < ActiveRecord::Base
       result = compact.OL(start,lim).order(:rank_value).find_by_location_nid(location_nid)
       built = Array(Location.detail_for_nid(result['location_nid'],location=result))
     else
-      if name.present?
-        results = search_by_name_street_city(name,street,city,lim)
+      if query.present?
+        results = search_by_name_street_city(query,street,city,lim)
         what = :location
       else
         lat=opt[:lat];lng=opt[:lng]
@@ -136,11 +136,11 @@ class Location < ActiveRecord::Base
   
   private 
   
-  def self.search_by_name_street_city(name,street,city,lim)
-    if name && street
-      find_by_like_name(name).find_by_address_parts(street,city).limit(lim)
-    elsif name
-      find_by_like_name(name).limit(lim)
+  def self.search_by_name_street_city(query,street,city,lim)
+    if query && street
+      find_by_like_name(query).find_by_address_parts(street,city).limit(lim)
+    elsif query
+      find_by_like_name(query).limit(lim)
     elsif street
       find_by_address_parts(street,city).limit(lim)
     end
