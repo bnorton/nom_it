@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-  # Thumb.new_thumb(nid,uid,value)
+  # Thumb.new_thumb(nid,uid,name,value)
   # Thumb.for_unid(uid,lim=20)
   # Thumb.for_nid(nid,lim=20)
   # 
@@ -27,21 +27,21 @@ describe "thumbs" do
         @before_tc = ThumbCount.collection.count
       end
       it "should create a new thumb" do
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.meh).should == true
         (Thumb.collection.count - @before_t).should == 1
       end
       it "should create mutiple new thumbs" do
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
-        Thumb.new_thumb(@nid1,@uid2,ThumbCount.up).should  == true
-        Thumb.new_thumb(@nid2,@uid1,ThumbCount.meh).should == true
-        Thumb.new_thumb(@nid2,@uid2,ThumbCount.meh).should == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should  == true
+        Thumb.new_thumb(@nid1,@uid2,'name',ThumbCount.up).should  == true
+        Thumb.new_thumb(@nid2,@uid1,'name',ThumbCount.meh).should == true
+        Thumb.new_thumb(@nid2,@uid2,'name',ThumbCount.meh).should == true
         (Thumb.collection.count - @before_t).should == 4
       end
       it "should propagate the new thumbs out to the count as well" do
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
-        Thumb.new_thumb(@nid1,@uid2,ThumbCount.up).should  == true
-        Thumb.new_thumb(@nid2,@uid1,ThumbCount.meh).should == true
-        Thumb.new_thumb(@nid2,@uid2,ThumbCount.meh).should == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should  == true
+        Thumb.new_thumb(@nid1,@uid2,'name',ThumbCount.up).should  == true
+        Thumb.new_thumb(@nid2,@uid1,'name',ThumbCount.meh).should == true
+        Thumb.new_thumb(@nid2,@uid2,'name',ThumbCount.meh).should == true
         (Thumb.collection.count - @before_t).should == 4
         nid1 = ThumbCount.for_nid(@nid1)
         nid2 = ThumbCount.for_nid(@nid2)
@@ -51,17 +51,17 @@ describe "thumbs" do
         nid2[:meh].should == 2
       end
       it "should update the thumb when it is a different value from from the original" do
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should  == true
         ThumbCount.for_nid(@nid1)[:up].should == 1
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.meh).should  == true
         ThumbCount.for_nid(@nid1)[:meh].should == 1
       end
       it "should reject the identical thumb and update to a new value" do
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == true
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should   == false
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should   == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should   == false
         ThumbCount.for_nid(@nid1)[:up].should == 1
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == true
-        Thumb.new_thumb(@nid1,@uid1,ThumbCount.meh).should  == false
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.meh).should  == true
+        Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.meh).should  == false
         ThumbCount.for_nid(@nid1)[:meh].should == 1
       end
     end
@@ -70,8 +70,8 @@ describe "thumbs" do
     before do
       Thumb.collection.remove
       ThumbCount.collection.remove
-      Thumb.new_thumb(@nid1,@uid1,ThumbCount.up).should  == true
-      Thumb.new_thumb(@nid2,@uid1,ThumbCount.meh).should == true
+      Thumb.new_thumb(@nid1,@uid1,'name',ThumbCount.up).should  == true
+      Thumb.new_thumb(@nid2,@uid1,'name',ThumbCount.meh).should == true
     end
     describe "user" do
       it "should find thumbs by the users specified" do

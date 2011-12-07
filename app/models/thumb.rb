@@ -1,17 +1,17 @@
 class Thumb < MongoRuby
   
   #          | nom_id | user_nid | value
-  attr_accessor :nid, :unid, :value
+  attr_accessor :nid, :name, :unid, :value
   
   def self.dbcollection
     "thumbs"
   end
   
   def self.add_new_thumb
-    Thumb.store_function('new_thumb', "function( nid,unid,value ) {
+    Thumb.store_function('new_thumb', "function( nid,unid,name,value ) {
       try { item = db.#{Thumb.dbcollection}.findOne({ nid:nid, unid:unid });
         if ( item == null ) {
-          db.#{Thumb.dbcollection}.save({ nid:nid, unid:unid, value:value });
+          db.#{Thumb.dbcollection}.save({ nid:nid, unid:unid, name:name, value:value });
         } else {
           if (item.value == value) { return false; }
           item.value = value;
@@ -22,10 +22,10 @@ class Thumb < MongoRuby
   end
     
   ## methods that add new data
-  def self.new_thumb(nid,unid,value)
+  def self.new_thumb(nid,unid,name,value)
     nid = Util.STRINGify(nid)
     return false unless (value = value.to_i) > 0
-    if Thumb.eval("new_thumb('#{nid}','#{unid}',#{value})")
+    if Thumb.eval("new_thumb('#{nid}','#{unid}', '#{name}', #{value})")
       ThumbCount.update_thumb_count(nid,value)
     else
       false # dont need to update

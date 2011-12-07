@@ -9,7 +9,7 @@ class ThumbsController < ApplicationController
   before_filter :authentication_required, :only => [:user_new,:location_new]
 
   def create
-    response = if (thumb = Thumb.new_thumb(@item,@user_nid,@value))
+    response = if (thumb = Thumb.new_thumb(@item,@user_nid,@user_name,@value))
       Status.item_created 'thumb'
     else
       Status.item_not_created 'thumb'
@@ -86,6 +86,7 @@ class ThumbsController < ApplicationController
     @value = params[:value]
     @to_user_nid = params[:to_user_nid]
     @user_nid = params[:user_nid]
+    @user_name = params[:user_name]
     @location_nid = params[:location_nid]
   end
 
