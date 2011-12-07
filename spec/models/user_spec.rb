@@ -97,7 +97,9 @@ describe "user" do
       @should_join_brian.has_joined.should == false
       
       # create the user later based on criteria
-      User.register_with_facebook(@brian_FACEBOOK,nil,nil).should == true
+      reg = User.register_with_facebook(@brian_FACEBOOK,nil,nil)
+      reg.class.should == User
+      reg.name.should == @brian_FACEBOOK['name']
       found = User.find_by_facebook(@brian_FACEBOOK['id'])
       found.should_not be_blank
     end

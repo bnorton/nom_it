@@ -100,8 +100,8 @@ class User < ActiveRecord::Base
       return log if log == 'login_failed'
       return User.find_by_email_or_screen_name(email,username)
     end
-    user = new_or_hasnt_joined(email)
-    return false if user.blank?
+    user,flag = new_or_hasnt_joined(email)
+    return user unless flag
     user.email = email
     user.salt = rand(1<<32).to_s
     user.password = Digest::SHA2.hexdigest(user.salt.to_s + pass, 256)
@@ -129,8 +129,9 @@ class User < ActiveRecord::Base
     user = User.find_by_user_nid(user_nid) if user_nid.present?
     user ||= User.find_by_email([email,fbHash['email']].compact) if email.present? || fbHash['email'].present?
     return user if user.present?
-    user ||= new_or_hasnt_joined(fb_id)
-    return false if user.blank?
+    u,flag = new_or_hasnt_joined(fb_id)
+    user ||= u
+    return user unless flag
     user.facebook_hash = fbHash_str
     user.screen_name ||= username || fbHash['user_name']
     user.facebook = fb_id
@@ -147,6 +148,7 @@ class User < ActiveRecord::Base
     user.auth_token ||= User.new_auth_token
     user.user_nid ||= Util.ID
     user.save
+    User.private_fields.find_by_user_nid(user.user_nid)
   end
   
   def self.register_with_twitter(twHash,username='',email='')
@@ -171,12 +173,12 @@ class User < ActiveRecord::Base
   def self.new_or_hasnt_joined(identifier)
     user = User.find_by_any_means(identifier).first
     if user.blank?
-      return User.new
+      return [User.new, true]
     else 
-      return nil if user.has_joined == true
+      return [user,false] if user.has_joined == true
       Follower.user_has_joined(user.user_nid)
     end
-    user
+    return [user, true]
   end
   
   def self.create_should_join(items)
