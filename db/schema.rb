@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111205053017) do
+ActiveRecord::Schema.define(:version => 20111206203640) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(:version => 20111205053017) do
     t.string   "location_nid"
     t.string   "rank"
     t.integer  "rank_value"
+    t.integer  "trending"
   end
 
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
