@@ -139,7 +139,7 @@ class User < ActiveRecord::Base
     user.fb_access_token = access_token
     user.token = email_token
     user.email ||= fbHash['email']
-    user.image_url ||= "https://graph.facebook.com/#{user.facebook}/picture"
+    user.image_url ||= "https://graph.facebook.com/#{user.facebook}/picture?type=large"
     user.last_seen = Time.now
     location = fbHash['locaton']
     user.city, user.state = Util.parse_location(location)

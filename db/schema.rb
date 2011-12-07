@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
     t.string   "creator"
     t.string   "rank"
     t.integer  "rank_value"
+    t.boolean  "fsq_ignore"
   end
 
   add_index "locations", ["location_nid"], :name => "index_locations_on_nid", :unique => true
