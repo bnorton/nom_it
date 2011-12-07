@@ -94,7 +94,7 @@ class LocationsController < ApplicationController
   end
 
   def geolocation_params
-    @dist = params[:dist]
+    @dist = params[:dist].try(:to_f)
     @addr = params[:addr]
     @city = params[:city]
     @where = params[:where]
@@ -136,8 +136,8 @@ class LocationsController < ApplicationController
   end
 
   def lat_lng_user
-    @lat  = params[:lat]
-    @lng  = params[:lng]
+    @lat  = params[:lat].try(:to_f)
+    @lng  = params[:lng].try(:to_f)
     @user_nid = params[:user_nid]
     @start, @limit = Util.ensure_limit params[:start], params[:limit]
   end
