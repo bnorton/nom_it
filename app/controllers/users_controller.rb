@@ -45,7 +45,10 @@ class UsersController < ApplicationController
   
   def login
     condition = User.login(@email_or_nid,@password)
-    respond_with((Status.user_login_failed if condition == 'login_failed'), :location => nil)
+    if condition == 'login_failed'
+      respond_with((Status.user_login_failed), :location => nil)
+      return
+    end
     response  = ok_or_not(condition,{:results=>[{:logged_in=>true}]})
     respond_with response, :location => nil
   end

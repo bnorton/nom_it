@@ -54,11 +54,11 @@ describe "locations" do
       
     end
     it "should find a location based on name" do
-      one,dist = Location.search({:name =>'location name 1'})
+      one,dist = Location.search({:query =>'location name 1'})
       one.class.should == Array
       one[0]['name'].should == 'location name 1'
       
-      two,dist = Location.search({:name =>'location 2'})
+      two,dist = Location.search({:query =>'location 2'})
       two.class.should == Array
       two[0]['name'].should == 'location 2'
     end

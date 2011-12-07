@@ -127,7 +127,8 @@ class User < ActiveRecord::Base
     end
     return false if (fb_id = fbHash['id']).blank?
     user = User.find_by_user_nid(user_nid) if user_nid.present?
-    user ||= User.find_by_email(email) if email.present?
+    user ||= User.find_by_email([email,fbHash['email']].compact) if email.present? || fbHash['email'].present?
+    return user if user.present?
     user ||= new_or_hasnt_joined(fb_id)
     return false if user.blank?
     user.facebook_hash = fbHash_str

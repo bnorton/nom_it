@@ -53,7 +53,6 @@ class Geolocation < ActiveRecord::Base
       Geolocation.find_by_distance(lat,lng,dist,start,limit)
     end
     length = locations.length
-    puts "#{length}"
     unless (length > MIN_ENTRIES) || (len != 0 && len == length) || dist >= MAX_SEARCH_DISTANCE
       dist = Geolocation.new_distance(dist)
       return Geolocation.search(lat,lng,dist,primary,secondary,start,limit,retries-1,length)
