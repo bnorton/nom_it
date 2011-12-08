@@ -49,12 +49,12 @@ class Metadata < MongoRuby
   
   def self.set_region_counts(attribs)
     return false unless attribs[:location_nid]
-    Metadata.set_attributes(attribs,VALID_COUNTS)
+    Metadata.update_attributes(attribs,VALID_COUNTS)
   end
   
   def self.set_yelp_items(attribs)
     return false unless attribs[:location_nid]
-    Metadata.set_attributes(attribs,VALID_YELP)
+    Metadata.update_attributes(attribs,VALID_YELP)
   end
   
   def self.viewed(nid,by=1)
