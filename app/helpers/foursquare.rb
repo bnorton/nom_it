@@ -140,7 +140,7 @@ class Foursquare
     end
 
     def next(lim=50)
-      all = Location.limit(50).offset(@offset).find(:all)
+      all = Location.limit(50).offset(@offset).find_all_by_city('cupertino')
       @offset += 50
       all
     end
