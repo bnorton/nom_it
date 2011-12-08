@@ -158,11 +158,10 @@ namespace :deploy do
     restart
   end
 
-  desc "rollback the last migration" do
-    task :migrations_rollback do
-      transaction do
-        run "cd #{current_path}; RAILS_ENV=production rake db:rollback ;"
-      end
+  desc "rollback the last migration"
+  task :migrations_rollback do
+    transaction do
+      run "cd #{current_path}; RAILS_ENV=production rake db:rollback ;"
     end
   end
 
