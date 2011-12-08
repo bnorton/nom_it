@@ -41,21 +41,23 @@ class Foursquare
         @locations.each do |loc|
           @location = loc
           flag = false
-          if @location.fsq_id.present?
-            flag = true
-            @data = Foursquare.send :update_from_fsq_id
-            puts ','
-          else
-            unless location_params.blank?
+          unless @location.fsq_ignore
+              if @location.fsq_id.present?
               flag = true
-              @data = Foursquare.send :fetch_new_data
-              puts '.'
+              @data = update_from_fsq_id
+              puts ','
+            else
+              unless location_params.blank?
+                flag = true
+                @data = fetch_new_data
+                puts '.'
+              end
             end
-          end
-          if flag
-            @meta = Foursquare.send :parse_metadata
-            Foursquare.send :parse_data
-            Foursquare.send :store_changes
+            if flag
+              @meta = parse_metadata
+              parse_data
+              store_changes
+            end
           end
         end
         @locations = Foursquare.send(:next)
@@ -98,7 +100,7 @@ class Foursquare
         :fsq_checkins => (stats['checkinsCount'] || 0),
         :fsq_users => (stats['usersCount'] || 0),
         :fsq_tips => (stats['tipCount'] || 0),
-        :fsq_categories => Foursquare.send(:collect_categories)
+        :fsq_categories => collect_categories
       }
     end
 
@@ -122,7 +124,7 @@ class Foursquare
     end
 
     def store_changes
-      Foursquare.send :store_metadata
+      store_metadata
       @location.save
     end
 

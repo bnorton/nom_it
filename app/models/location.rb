@@ -1,5 +1,5 @@
 class Location < ActiveRecord::Base
-
+  class NotDeactivated < Exception; end
   COMPACT = "location_nid,rank,rank_value,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
 
   has_many :images
@@ -136,6 +136,29 @@ class Location < ActiveRecord::Base
   end
   
   private 
+  
+  def fsq_ignore!
+    transaction do
+      self.fsq_ignore = true
+      self.fsq_name = nil
+      self.fsq_id = nil
+      begin
+        self.save!
+      rescue Exception
+        raise Location::NotDeactivated
+        return
+      end
+      meta = {
+        :location_nid => self.location_nid,
+        :fsq_checkins => 0,
+        :fsq_users => 0,
+        :fsq_tips => 0,
+        :fsq_categories => {}
+      }
+      raise Location::NotDeactivated unless Metadata.update_attributes(meta,Metadata::VALID_FSQ)
+    end
+    true
+  end
   
   def self.search_by_name_street_city(query,street,city,lim)
     if query && street

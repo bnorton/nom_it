@@ -37,12 +37,14 @@ class Metadata < MongoRuby
   def self.update_attributes(attribs,valid_items)
     return false unless (nid = attribs[:location_nid])
     item = Metadata.find_one({ :_id => nid })
-    attribs.keys.each do |k|
-      if valid_items.include?(k) || valid_items.include?(k.to_sym)
-        item[k] = attribs[k]
+    if attribs.keys.present?
+      attribs.keys.each do |k|
+        if valid_items.include?(k) || valid_items.include?(k.to_sym)
+          item[k] = attribs[k]
+        end
       end
+      Metadata.save(item)
     end
-    Metadata.save(item)
   end
   
   def self.set_region_counts(attribs)
