@@ -158,6 +158,14 @@ namespace :deploy do
     restart
   end
 
+  desc "rollback the last migration" do
+    task :migrations_rollback do
+      transaction do
+        run "cd #{current_path}; RAILS_ENV=production rake db:rollback ;"
+      end
+    end
+  end
+
   task :finalize_update, :except => { :no_release => true } do
     run "chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
 
