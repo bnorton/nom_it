@@ -16,7 +16,7 @@ class RecommendationsController < ApplicationController
     followers  = Follower.followers_nids(@user_nid)
     recommends = Recommend.create(item,followers)
     respond_with ok_or_not(token.present?,{
-      :token  => item.token})
+      :token  => item.token}), :location => nil
   end
 
   def destroy
