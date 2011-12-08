@@ -50,7 +50,7 @@ class Recommendation < ActiveRecord::Base
     end
     if r.save
       Metadata.recommended(rnid) # for item analytics
-      Recommendation.find_by_nid(rnid)
+      Recommendation.find_by_recomendation_nid(rnid)
     end
   end
   
