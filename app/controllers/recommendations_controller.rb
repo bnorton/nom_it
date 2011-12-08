@@ -88,8 +88,8 @@ class RecommendationsController < ApplicationController
     @lng  = params[:lng]
     @user_nid = params[:user_nid]
     @location_nid = params[:location_nid]
-    if (@lat.blank? || @lng.blank? || @user_nid_nid.blank? || @location_nid.blank?)
-      respond_with Status.item_not_created 'recommendation'
+    if (@lat.blank? || @lng.blank? || @user_nid.blank? || @location_nid.blank?)
+      respond_with Status.item_not_created 'recommendation', :location => nil
     end
   end
 
@@ -97,7 +97,7 @@ class RecommendationsController < ApplicationController
     @recommendation_nid = params[:recommendation_nid]
     @user_nid  = params[:user_nid]
     if @recommendation_nid.blank? || @user_nid.blank?
-      respond_with Status.item_not_destroyed 'recommendation'
+      respond_with Status.item_not_destroyed 'recommendation', :location => nil
     end
   end
 
