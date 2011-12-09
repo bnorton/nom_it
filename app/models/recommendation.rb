@@ -55,7 +55,7 @@ class Recommendation < ActiveRecord::Base
   
   def self.defaults(this)
     location = {}
-    result = Location.find_by_nid(this[:location_nid])
+    result = Location.find_by_location_nid(this[:location_nid]) if this[:location_nid].present?
     return location if result.blank?
     location[:name] = result.name
     location[:city] = result.city

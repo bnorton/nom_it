@@ -42,15 +42,12 @@ class Image < ActiveRecord::Base
   private
 
   def self.build_image(image,options={})
-    return false unless image = image.try(:image)
-    size = options[:size] if IMAGE_KEYS.include? options[:size]
-    size ||= :medium
-    img = {
-      :url => image.url(size),
-      :size => IMAGE_STYLES[size]
+    return {} unless image_ref = image.try(:image)
+    {
+      :image_nid => image.image_nid,
+      :url => image_ref.url(:medium),
+      :size => IMAGE_STYLES[:medium]
     }
-    img.merge!({:thumb => image.url(:thumb)}) unless size == :thumb
-    img
   end
 end
 
