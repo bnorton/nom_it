@@ -42,15 +42,14 @@ class Recommendation < ActiveRecord::Base
     rnid = Util.ID
     r.recommendation_nid = rnid
     r.token = this[:token] || Util.token
-    
     if this[:text]
       r.text = "#{this[:text]} justnom.it/r/#{r.token}"
     else
-      r.text = "I really like #{r.location_name || '...'} and recommended it via Nom. justnom.it/r/#{r.token}"
+      r.text = "I Nommed @ #{r.location_name || '...'} and recommended it via Nom. justnom.it/r/#{r.token}"
     end
     if r.save
       Metadata.recommended(rnid) # for item analytics
-      Recommendation.find_by_recomendation_nid(rnid)
+      r
     end
   end
   
