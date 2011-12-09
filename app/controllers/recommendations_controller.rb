@@ -139,7 +139,7 @@ class RecommendationsController < ApplicationController
       :user_nid => @user_nid,
       :text => @text,
       :location_nid => @location_nid,
-      :token => params[:token]
+      :token => params[:token],
       ## optional
       :title => @title,
       :name  => @name,
