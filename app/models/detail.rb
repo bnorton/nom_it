@@ -27,7 +27,7 @@ class Detail < MongoRuby
   end
   
   # Coordinate the full capture of all data for a detail
-  def build_detail_for_token(token)
+  def self.build_detail_for_token(token)
     record = Detail.for_token(token)
     recommendation = Recommendation.for_nid(record['rnid'])
     nid = recommendation.recommendation_nid

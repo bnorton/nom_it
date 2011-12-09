@@ -40,7 +40,7 @@ class ThumbsController < ApplicationController
   end
   
   def thumbed
-    thumbs = Thumb.for_unid(@user_nid,@limit)
+    thumbs = Thumb.for_unids(@user_nid,@limit)
     response = if thumbs.present?
       Status.thumbs thumbs
     else

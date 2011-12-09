@@ -38,9 +38,9 @@ class Thumb < MongoRuby
     Util.de_nid(thumb,'nid')
   end
   ## methods that find ratings or totals
-  def self.for_unid(unid,lim=20)
-    unid = Util.STRINGify(unid)
-    Thumb.find_by({ :unid => unid }, lim) || {}
+  def self.for_unids(unid,lim=30)
+    unid = [unid] unless unid.is_a? Array
+    Thumb.find_by({ :unid => {'$in' => unid }}, lim) || {}
   end
   
   def self.detail_for_nid(nid,lim=10,what=:user_nid)
@@ -60,14 +60,14 @@ class Thumb < MongoRuby
   
   private
   
-  def self.for_nid(nid,lim=20)
-    lim = Util.limit(lim,20)
+  def self.for_nid(nid,lim=30)
+    lim = Util.limit(lim,30)
     nid = Util.STRINGify(nid)
     Thumb.find_by({ :nid => nid }, lim)
   end
 
-  def self.find_by(finder,lim=20)
-    lim = Util.limit(lim,20)
+  def self.find_by(finder,lim=30)
+    lim = Util.limit(lim,30)
     Thumb.find(finder).limit(lim)
   end
   
