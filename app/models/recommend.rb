@@ -18,8 +18,6 @@ class Recommend < MongoRuby
   end
 
   def self.create(recommendation,followers)
-    raise "#{recommendation.inspect}, #{followers.inspect}"
-    
     return false if recommendation.blank? || followers.blank?
     r = recommendation
     followers.each do |follower_nid|
@@ -35,8 +33,8 @@ class Recommend < MongoRuby
         :name => r.location_name,
         :city => r.location_city,
         :rnid => r.recommendation_nid,
-        :token => r.token #,
-        # :inid => r.image_nid
+        :token => r.token,
+        :inid => r.image_nid
       })
     end
   end
