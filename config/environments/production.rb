@@ -35,7 +35,7 @@ NomIt::Application.configure do
   # Use a different logger for distributed setups
   # config.logger = SyslogLogger.new
 
-  Rails.logger.memcache_display = true
+  # Rails.logger.memcache_display = true
 
   # Global enable/disable all memcached usage
   config.perform_caching = true
