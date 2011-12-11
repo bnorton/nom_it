@@ -30,22 +30,22 @@ class FollowersController < ApplicationController
 
   def followers
     followers = Follower.followers(@user_nid)
-    respond_with Status.follow_list(followers) #, {:result_name => :followers})
+    respond_with Status.follow_list(followers)
   end
 
   def following
     following = Follower.following(@user_nid)
-    respond_with Status.follow_list(following) #, {:result_name => :following})
+    respond_with Status.follow_list(following)
   end
 
   def followers_list
     nids = Follower.followers_nids(@user_nid)
-    respond_with Status.follow_list(nids) #, {:result_name => :followers})
+    respond_with Status.follow_list(nids)
   end
 
   def following_list
     nids = Follower.following_nids(@user_nid)
-    respond_with Status.follow_list(nids) #, {:result_name => :following})
+    respond_with Status.follow_list(nids)
   end
 
   private

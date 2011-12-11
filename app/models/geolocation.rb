@@ -63,7 +63,6 @@ class Geolocation < ActiveRecord::Base
   private
   
   def self.new_distance(dist)
-    puts 'new_distance'
     dist = dist
     dist += 0.45      if dist < 1.25
     dist += dist*0.25 if dist >= 1

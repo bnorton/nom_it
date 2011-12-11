@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111206203640) do
+ActiveRecord::Schema.define(:version => 20111210080825) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -42,8 +42,13 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
     t.integer  "trending"
   end
 
+  add_index "geolocations", ["cost"], :name => "index_geolocations_on_cost"
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
   add_index "geolocations", ["lng", "lat"], :name => "geolocations_long_lat"
+  add_index "geolocations", ["location_nid"], :name => "index_geolocations_on_location_nid"
+  add_index "geolocations", ["primary"], :name => "index_geolocations_on_primary"
+  add_index "geolocations", ["rank_value"], :name => "index_geolocations_on_rank_value"
+  add_index "geolocations", ["secondary"], :name => "index_geolocations_on_secondary"
 
   create_table "images", :force => true do |t|
     t.datetime "created_at"
@@ -55,6 +60,10 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
     t.string   "user_nid"
     t.string   "location_nid"
   end
+
+  add_index "images", ["image_nid"], :name => "index_images_on_image_nid"
+  add_index "images", ["location_nid"], :name => "index_images_on_location_nid"
+  add_index "images", ["user_nid"], :name => "index_images_on_user_nid"
 
   create_table "locations", :force => true do |t|
     t.datetime "created_at"
@@ -97,7 +106,9 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
     t.boolean  "fsq_ignore"
   end
 
+  add_index "locations", ["location_nid"], :name => "index_locations_on_location_nid"
   add_index "locations", ["location_nid"], :name => "index_locations_on_nid", :unique => true
+  add_index "locations", ["name"], :name => "index_locations_on_name"
 
   create_table "recommendations", :force => true do |t|
     t.datetime "created_at"
@@ -121,9 +132,12 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
     t.string   "image_nid"
   end
 
+  add_index "recommendations", ["location_nid"], :name => "index_recommendations_on_location_nid"
   add_index "recommendations", ["new"], :name => "recommendations_location_new"
   add_index "recommendations", ["recommendation_nid"], :name => "index_recommendations_on_nid", :unique => true
+  add_index "recommendations", ["recommendation_nid"], :name => "index_recommendations_on_recommendation_nid"
   add_index "recommendations", ["user_nid", "new"], :name => "recommendations_uid_new"
+  add_index "recommendations", ["user_nid"], :name => "index_recommendations_on_user_nid"
 
   create_table "users", :force => true do |t|
     t.datetime "created_at"
@@ -171,8 +185,7 @@ ActiveRecord::Schema.define(:version => 20111206203640) do
   add_index "users", ["email"], :name => "users_email", :unique => true
   add_index "users", ["facebook"], :name => "users_facebook", :unique => true
   add_index "users", ["screen_name"], :name => "users_screen_name", :unique => true
-  add_index "users", ["token", "email"], :name => "users_token_email"
-  add_index "users", ["twitter"], :name => "users_twitter", :unique => true
   add_index "users", ["user_nid"], :name => "index_users_on_nid", :unique => true
+  add_index "users", ["user_nid"], :name => "index_users_on_user_nid"
 
 end

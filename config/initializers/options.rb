@@ -17,4 +17,3 @@ Paperclip.interpolates(:s3_static_url) { |attachment, style|
 # Paperclip.interpolates(:object_id) { |attachment, style|
 #   "http://static.justnom.it/#{attachment.image_nid}"
 # }
-

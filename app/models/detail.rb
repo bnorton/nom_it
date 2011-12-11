@@ -29,6 +29,7 @@ class Detail < MongoRuby
   # Coordinate the full capture of all data for a detail
   def self.build_detail_for_token(token)
     record = Detail.for_token(token)
+    return {} unless record.present?
     recommendation = Recommendation.for_nid(record['rnid'])
     nid = recommendation.recommendation_nid
     meta = Metadata.find_by_nid(nid)

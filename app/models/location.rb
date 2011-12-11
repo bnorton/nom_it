@@ -1,7 +1,7 @@
 class Location < ActiveRecord::Base
   class NotDeactivated < Exception; end
-  COMPACT = "location_nid,rank,rank_value,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
-
+  COMPACT = "location_nid,rank,rank_value,yid,woeid,url,timeofday,primary,secondary,neighborhoods,phone,cost,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  COMPACT = "*"
   has_many :images
   has_one  :geolocation
   has_one  :statistic
@@ -87,9 +87,7 @@ class Location < ActiveRecord::Base
     if location.present?
       detail = location.as_json
     else
-      detail = Rails.cache.fetch("location_detail_for_nid_find_by_location_nid_#{location_nid}", :expires_in => 30.minutes) do
-        find_by_location_nid(location_nid).as_json
-      end
+      detail = Location.compact_detail_for_nid(location_nid).as_json
     end
     meta = Metadata.for_nid(location_nid)
     thumb = Thumb.detail_for_nid(location_nid)
@@ -106,6 +104,7 @@ class Location < ActiveRecord::Base
   
   def self.full_detail_for_nids(nids)
     locations = []
+    nids = [nids] unless nids.is_a? Array
     nids.each do |nid|
       locations << Location.detail_for_nid(nid)
     end

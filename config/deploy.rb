@@ -147,6 +147,7 @@ namespace :deploy do
   task :update_code, :except => { :no_release => true } do
     run "cd #{current_path}; git fetch origin ; git reset --hard #{branch}"
     finalize_update
+    clear_cache
   end
 
   desc "Update the database (overwritten to avoid symlink)"
@@ -203,6 +204,11 @@ namespace :deploy do
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{unicorn_pid}`"
   end  
+
+  desc "Clear cache"
+  task :clear_cache, :except => { :no_release => true } do
+    run "cd /apps/nom/current; rvm use ree@nom; rails runner Rails.cache.clear"
+  end
 
   namespace :rollback do
     desc "Moves the repo back to the previous version of HEAD"
