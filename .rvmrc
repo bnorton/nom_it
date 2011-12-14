@@ -1,1 +1,1 @@
-rvm use ree@nom --create
+rvm use ree@nom --install --create

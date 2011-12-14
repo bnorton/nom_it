@@ -75,17 +75,16 @@ class UsersController < ApplicationController
   
   def activity
     resp = {:status => 1, :message => 'OK'}
-    if params[:by_user]
-      a_user = @by_user_nid
+    if params[:by_user_nid]
       recommendations = Recommendation.limit(@limit).for_user(@by_user_nid)
       resp.merge!({:recommendations => recommendations})
+      thumbs_for_who = @by_user_nid
     else
-      a_user = @user_nid
       recommends = Recommend.for_user_nid(@user_nid,@limit)
       resp.merge!({:recommends => recommends})
+      thumbs_for_who = Follower.followers_nids(@user_nid)
     end
-    followers = Follower.followers_nids(@user_nid)
-    thumbs = Thumb.for_unids(followers,@limit).map {|t|
+    thumbs = Thumb.for_unids(thumbs_for_who,@limit).map {|t|
       loc = Location.compact_detail_for_nid(t['nid']).as_json
       Thumb.build_for_activity(t).merge({:location => loc})
     }

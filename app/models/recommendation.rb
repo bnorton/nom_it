@@ -13,16 +13,16 @@ class Recommendation < ActiveRecord::Base
     select(COMPACT)
   }
   scope :for_user, lambda {|nid|
-    select(COMPACT).where(["user_nid=?", nid])
+    compact.order('id DESC').find_all_by_user_nid(nid)
   }
   scope :for_location, lambda {|nid|
-    compact.where(["location_nid=?",nid])
+    compact.order('id DESC').find_all_by_location_nid(nid)
   }
   scope :for_nid, lambda {|nid|
-    compact.where(["recommendation_nid=?",nid])
+    compact.order('id DESC').find_all_by_recommendation_nid(nid)
   }
   scope :for_token, lambda {|token|
-    compact.where(["token=?",token])
+    compact.order('id DESC').find_all_by_token(token)
   }
   
   def self.create(this)

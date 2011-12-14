@@ -39,7 +39,7 @@ class Thumb < MongoRuby
   end
   ## methods that find ratings or totals
   def self.for_unids(unid,lim=30)
-    unid = [unid] unless unid.is_a? Array
+    unid = [unid] unless unid.kind_of? Array
     Thumb.find_by({ :unid => {'$in' => unid }}, lim) || {}
   end
   
