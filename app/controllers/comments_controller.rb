@@ -85,7 +85,7 @@ class CommentsController < ApplicationController
   def authentication_required
     @auth_token = params[:auth_token]
     unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
-      respond_with Status.user_auth_invalid
+      respond_with Status.user_auth_invalid, :location => nil
     end
   end
 

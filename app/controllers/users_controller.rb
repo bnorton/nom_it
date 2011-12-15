@@ -127,7 +127,7 @@ class UsersController < ApplicationController
   
   def login_required
     if !(@email.present? || @user_nid.present?) || @password.blank?
-      respond_with Status.user_not_authorized
+      respond_with Status.user_not_authorized, :location => nil
     end
   end
   
@@ -184,7 +184,7 @@ class UsersController < ApplicationController
   def authentication_required
     @auth_token = params[:auth_token]
     unless @auth_token.present? && User.valid_session?(@user_nid, @auth_token)
-      respond_with Status.user_not_authorized
+      respond_with Status.user_not_authorized, :location => nil
     end
   end
   
