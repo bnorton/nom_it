@@ -48,6 +48,7 @@ class Recommendation < ActiveRecord::Base
       return location if result.blank?
       location[:name] = result.name
       location[:city] = result.city
+      location
     end
 
     def for_user(nid)

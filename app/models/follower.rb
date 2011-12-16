@@ -89,6 +89,8 @@ class Follower < ActiveRecord::Base
       f.approved = true
     end
     f.save
+    Follower.following_changed_for(user_nid)
+    Follower.followers_changed_for(other.user_nid)
     User.for_nid(other.user_nid)
   end
   
@@ -117,18 +119,30 @@ class Follower < ActiveRecord::Base
     follower.approved = false
     follower.save
   end
-  
+
   def self.for_user_nid(user_nid,start=0,limit=20)
     {
       :followers => Follower.OL(start,limit).find_all_by_to_user_nid(user_nid),
       :following => Follower.OL(start,limit).find_all_by_user_nid(user_nid)
     }
   end
-  
+
   def self.new_or_old(user_nid,to_user_nid)
     user_nid = Util.STRINGify(user_nid)
     to_user_nid = Util.STRINGify(to_user_nid)
     Follower.fields.valid.find_by_user_nid_and_to_user_nid(user_nid,to_user_nid) || Follower.new
+  end
+
+  private
+
+  def self.followers_changed_for(user_nid)
+    Rails.cache.delete_matched(/^followers_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    Rails.cache.delete_matched(/^followers_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
+  end
+
+  def self.following_changed_for(user_nid)
+    Rails.cache.delete_matched(/^following_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    Rails.cache.delete_matched(/^following_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
   end
 end
 

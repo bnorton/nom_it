@@ -38,31 +38,57 @@ class Recommend < MongoRuby
       })
     end
   end
-  
-  def self.destroy()
-    
-  end
-  
+
   def self.by_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
     limit = Util.limit(limit,10)
-    Recommend.find({:unid => nid}).limit(limit)
+    Recommend.find({:unid => nid}).limit(limit).map{ |rec|
+      Recommend.build(rec)
+    }
   end
-  
+
   def self.for_user_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
     limit = Util.limit(limit,10)
-    Recommend.find({:to_unid => nid}).limit(limit)
+    Recommend.find({:to_unid => nid}).limit(limit).map{ |rec|
+      Recommend.build(rec)
+    }
   end
-  
+
   def self.for_location_nid(nid, limit=10)
     nid = Util.STRINGify(nid)
     limit = Util.limit(limit,10)
-    Recommend.find({:lnid => nid}).limit(limit)
+    Recommend.find({:lnid => nid}).limit(limit).map{ |rec|
+      Recommend.build(rec)
+    }
+  end
+
+  def self.for_token(token, limit=10)
+    Recommend.find({:token => token}).limit(limit).map{ |rec|
+      Recommend.build(rec)
+    }
+  end
+
+  def self.build(rec)
+    Rails.cache.fetch("recommended_item_#{rec['_id']}", :expires_in => 3.days) do
+      rec = Recommend.clean(rec)
+      Recommend.image(rec)
+      rec
+    end
   end
   
-  def self.for_token(token)
-    Recommend.find({:token => token})
+  def self.clean(rec)
+    rec = Util.de_nid(rec, '_id')
+    rec = Util.nidify(rec, 'location_nid', 'lnid')
+    rec = Util.nidify(rec, 'user_nid', 'unid')
+    rec = Util.nidify(rec, 'user_name', 'uname')
+    rec = Util.nidify(rec, 'recommendation_nid', 'rnid')
+    rec
+  end
+  
+  def self.image(rec)
+    rec[:image] = Image.for_nid(rec.delete('inid')) if rec['inid'].present
+    rec
   end
   
 end
