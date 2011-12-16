@@ -40,7 +40,7 @@ class CommentsController < ApplicationController
   private 
   
   def comments(method_name)
-    comments = Comment.search(@search, {:start=>@start,:limit=>@limit})
+    comments = Comment.search(@search,{:start=>@start,:limit=>@limit})
     prepared = Util.prepare(comments)
     respond_with ok_or_not(prepared)
   end

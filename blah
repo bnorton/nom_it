@@ -1,3 +1,0 @@
-if ! hash git >/dev/null; then
-  echo "Setting up git"
-fi
