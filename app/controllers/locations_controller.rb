@@ -40,7 +40,7 @@ class LocationsController < ApplicationController
     else
       Status.item_not_created
     end
-    respond_with response
+    respond_with response, :location => nil
   end
 
   def validate_nids
@@ -68,20 +68,20 @@ class LocationsController < ApplicationController
     @auth_token = params[:auth_token]
     @name = params[:name]
     @text = params[:text]
-    
+
     categories
-    
+
     r = nil
     unless (@user_nid && @auth_token)
-      r = Status.insufficient_arguments({:message => 'needs acting user and auth_token'})
+      r ||= Status.insufficient_arguments({:message => 'needs acting user and auth_token'})
     end
     unless (@name && @primary)
       r ||= Status.insufficient_arguments({:message => 'needs item name and primary category'})
     end
-    respond_with r if r.present?
-    
+    respond_with(r, :location => nil) if r.present?
+
     geolocation_params
-    
+
     @creation = {
       :user_nid => @user_nid,
       :auth_token => @auth_token,
@@ -100,8 +100,8 @@ class LocationsController < ApplicationController
     @where = params[:where]
     unless (@where || (@lat && @lng))
       respond_with Status.insufficient_arguments({
-        :message => 'Needs where you are or latitude /longitude by default'
-      })
+        :message => 'Needs where you are or latitude/longitude by default'
+      }), :location => nil
     end
     {
       :lat => @lat,

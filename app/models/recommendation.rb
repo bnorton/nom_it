@@ -1,30 +1,18 @@
 class Recommendation < ActiveRecord::Base
   require 'base64'
-  
+
   belongs_to :user
   belongs_to :location
-  
+
   COMPACT = "recommendation_nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,created_at,image_nid"
-  
+
   scope :OL, lambda {|offset,limit|
     offset(offset).limit(limit)
   }
   scope :compact, lambda {
     select(COMPACT)
   }
-  scope :for_user, lambda {|nid|
-    compact.order('id DESC').find_all_by_user_nid(nid)
-  }
-  scope :for_location, lambda {|nid|
-    compact.order('id DESC').find_all_by_location_nid(nid)
-  }
-  scope :for_nid, lambda {|nid|
-    compact.order('id DESC').find_all_by_recommendation_nid(nid)
-  }
-  scope :for_token, lambda {|token|
-    compact.order('id DESC').find_all_by_token(token)
-  }
-  
+
   def self.create(this)
     this.merge!(self.defaults(this))
     r = Recommendation.new
@@ -52,17 +40,32 @@ class Recommendation < ActiveRecord::Base
       r
     end
   end
-  
-  def self.defaults(this)
-    location = {}
-    result = Location.find_by_location_nid(this[:location_nid]) if this[:location_nid].present?
-    return location if result.blank?
-    location[:name] = result.name
-    location[:city] = result.city
-    # location[:image_nid] = result.image_nid
-    location
+
+  class << self
+    def defaults(this)
+      location = {}
+      result = Location.find_by_location_nid(this[:location_nid]) if this[:location_nid].present?
+      return location if result.blank?
+      location[:name] = result.name
+      location[:city] = result.city
+    end
+
+    def for_user(nid)
+      compact.order('id DESC').find_all_by_user_nid(nid)
+    end
+
+    def for_location(nid)
+      compact.order('id DESC').find_all_by_location_nid(nid)
+    end
+
+    def for_nid(nid)
+      compact.order('id DESC').find_all_by_recommendation_nid(nid)
+    end
+
+    def for_token(token)
+      compact.order('id DESC').find_all_by_token(token)
+    end
   end
-  
 end
 
   # the Schema for the Recommendation model
