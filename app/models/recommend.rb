@@ -87,7 +87,7 @@ class Recommend < MongoRuby
   end
   
   def self.image(rec)
-    rec[:image] = Image.for_nid(rec.delete('inid')) if rec['inid'].present
+    rec[:image] = Image.for_nid(rec.delete('inid')) if rec['inid'].present?
     rec
   end
   
