@@ -22,7 +22,7 @@ class Recommendation < ActiveRecord::Base
     r.location_nid = this[:location_nid]
     r.image_nid = this[:image_nid]
     r.title = this[:title]
-    r.text = this[:text].present? ? "#{this[:text]} justnom.it/r/#{r.token}" : "I Nommed @ #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
+    r.text = this[:text].present? ? "#{this[:text]} justnom.it/r/#{r.token}" : "I Nommed. justnom.it/r/#{r.token}"
     r.facebook = this[:facebook] || false
     r.twitter = this[:twitter]  || false
     r.lat = this[:lat]
@@ -42,24 +42,26 @@ class Recommendation < ActiveRecord::Base
         it[:image] = Image.for_nid(image_nid) || {}
         location_nid = it.delete 'location_nid'
         it[:location] = Location.compact_detail_for_nid(location_nid) || {}
+        user_nid = it.delete('user_nid')
+        it[:user] = User.for_nid(user_nid) || {}
         it
       }
     end
 
-    def for_user(nid)
-      common Recommendation.compact.order('id DESC').find_all_by_user_nid(nid)
+    def for_user(nid, limit)
+      common Recommendation.compact.order('id DESC').limit(limit).find_all_by_user_nid(nid)
     end
 
-    def for_location(nid)
-      common Recommendation.compact.order('id DESC').find_all_by_location_nid(nid)
+    def for_location(nid, limit)
+      common Recommendation.compact.order('id DESC').limit(limit).find_all_by_location_nid(nid)
     end
 
-    def for_nid(nid)
-      common Recommendation.compact.order('id DESC').find_all_by_recommendation_nid(nid)
+    def for_nid(nid, limit)
+      common Recommendation.compact.order('id DESC').limit(limit).find_all_by_recommendation_nid(nid)
     end
 
-    def for_token(token)
-      common Recommendation.compact.order('id DESC').find_all_by_token(token)
+    def for_token(token, limit)
+      common Recommendation.compact.order('id DESC').limit(limit).find_all_by_token(token)
     end
   end
 end

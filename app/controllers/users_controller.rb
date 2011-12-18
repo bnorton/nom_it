@@ -76,7 +76,7 @@ class UsersController < ApplicationController
   def activity
     resp = { :status => 1, :message => 'OK' }
     if params[:by_user_nid]
-      recommendations = Recommendation.limit(@limit).for_user(@by_user_nid)
+      recommendations = Recommendation.for_user(@by_user_nid, @limit)
       resp.merge!({:recommendations => recommendations})
       thumbs_for_who = @by_user_nid
     else

@@ -1,15 +1,15 @@
 class ThumbsController < ApplicationController
 
   respond_to :json
-
-  before_filter :lat_lng_user
-  before_filter :user_params, :except => [:thumbs]
+  
+  before_filter :common
   before_filter :location_params, :only => [:location_new]
   before_filter :to_user_params, :only => [:user_new]
   before_filter :authentication_required, :only => [:user_new,:location_new]
 
   def create
-    response = if (thumb = Thumb.new_thumb(@item,@user_nid,@user_name,@value))
+    thumb = Thumb.new_thumb(@item,@user_nid,@value)
+    response = if thumb.present?
       Status.item_created 'thumb'
     else
       Status.item_not_created 'thumb'
@@ -60,20 +60,16 @@ class ThumbsController < ApplicationController
   end
   
   private
-  
-  def user_params
-    unless @user_nid.present?
-      respond_with Status.insufficient_arguments
-    end
-  end
-  
+
   def location_params
+    @location_nid = params[:location_nid]
     unless @location_nid.present?
       respond_with Status.insufficient_arguments
     end
   end
 
   def to_user_params
+    @to_user_nid = params[:to_user_nid]
     unless @to_user_nid.present?
       respond_with Status.insufficient_arguments
     end
@@ -81,12 +77,8 @@ class ThumbsController < ApplicationController
 
   def common
     @limit = Util.limit(params[:limit])
-    @lat  = params[:lat]
-    @lng  = params[:lng]
     @value = params[:value]
-    @to_user_nid = params[:to_user_nid]
     @user_nid = params[:user_nid]
-    @location_nid = params[:location_nid]
   end
 
   def authentication_required

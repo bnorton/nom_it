@@ -57,8 +57,10 @@ class User < ActiveRecord::Base
   }
   
   def self.for_nid(nid)
-    nid = Util.STRINGify(nid)
-    public_fields.find_by_user_nid(nid)
+    return {} if nid.blank?
+    Rails.cache.fetch("user_for_nid_#{nid}", :expires_in => 30.minutes) do
+      public_fields.find_by_user_nid(nid)
+    end
   end
   
   def self.follower(list_of)
@@ -75,8 +77,7 @@ class User < ActiveRecord::Base
   end
   
   def self.find_by_any_means_necessary(nid)
-    user = User.public_fields.find_by_any_means(nid).has_joined
-    user.first unless user.blank?
+    User.public_fields.has_joined.find_by_any_means(nid).try(:first)
   end
   
   def self.login(nid_or_email,password,vname='')
