@@ -82,6 +82,7 @@ namespace :deploy do
   desc "Deploy your application"
   task :default do
     update
+    clear_cache
     restart
   end
 
@@ -148,7 +149,6 @@ namespace :deploy do
   task :update_code, :except => { :no_release => true } do
     run "cd #{current_path}; git fetch origin ; git reset --hard #{branch}"
     finalize_update
-    clear_cache
   end
 
   desc "Update the database (overwritten to avoid symlink)"
