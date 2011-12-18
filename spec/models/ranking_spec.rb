@@ -50,16 +50,28 @@ describe "ranking" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
         Ranking.new_rank(@nid1,@uid2,2,'sample').should == true
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
+
+        Rails.cache.delete("ranking_average_ranking_#{@nid1}")
+
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.5)
         Ranking.new_rank(@nid1,@uid3,3,'sample').should == true
+        RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.5)
+
+        Rails.cache.delete("ranking_average_ranking_#{@nid1}")
+
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0) 
       end
       it "should update the rank when it is a different value from from the original" do
         Ranking.new_rank(@nid1,@uid1,1,'sample').should == true
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0) 
         Ranking.new_rank(@nid1,@uid1,2,'sample').should == true
+        
+        Rails.cache.delete("ranking_average_ranking_#{@nid1}")
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0) 
         Ranking.new_rank(@nid1,@uid1,5,'sample').should == true
+        
+        Rails.cache.delete("ranking_average_ranking_#{@nid1}")
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(5.0) 
       end
       it "should keep the same count when the rating is updated" do
@@ -67,8 +79,9 @@ describe "ranking" do
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(1.0)
         RankingAverage.total(@nid1)[:total].should  == 1
         Ranking.for_unid(@uid1).count.should == 1
-        
         Ranking.new_rank(@nid1,@uid1,2,'sample').should == true
+
+        Rails.cache.delete("ranking_average_ranking_#{@nid1}")
         RankingAverage.ranking(@nid1)[:average].should be_within(0.001).of(2.0)
         RankingAverage.total(@nid1)[:total].should  == 1
         Ranking.for_unid(@uid1).count.should == 1

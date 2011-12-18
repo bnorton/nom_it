@@ -18,24 +18,24 @@ class RankingAverage < MongoRuby
   ## methods called from initializers/mongo_stored_functions.rb
   ##    and are thus defined into the mongo db instance.
   def self.add_new_ranking
-    RankingAverage.store_function('new_average_rank', "function( nid,rating ) {
-      try { item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
+    MongoRuby.store_function('new_average_rank', "function( nid,rating ) {
+      try { item = db.#{dbcollection}.findOne({ nid:nid });
         if ( item == null ) {
-          db.#{RankingAverage.dbcollection}.save({ nid:nid, c:1, a:rating });
+          db.#{dbcollection}.save({ nid:nid, c:1, a:rating });
           return true;
         } else {
           item.a = item.a + (( rating - item.a) / ++item.c );
-          db.#{RankingAverage.dbcollection}.save( item ); }
+          db.#{dbcollection}.save( item ); }
         return true;
       } catch ( ex ) { return false; } }")
   end
   
   def self.add_update_ranking
-    RankingAverage.store_function('update_average_rank', "function( nid,old_r,new_r ) {
+    MongoRuby.store_function('update_average_rank', "function( nid,old_r,new_r ) {
       try {
-        item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
+        item = db.#{dbcollection}.findOne({ nid:nid });
         item.a = item.a + (( new_r - old_r ) / item.c);
-        db.#{RankingAverage.dbcollection}.save( item );
+        db.#{dbcollection}.save( item );
         return true;
       } catch ( ex ) { return false; } }")
   end
@@ -43,9 +43,9 @@ class RankingAverage < MongoRuby
   def self.add_remove_ranking
     MongoRuby.store_function("remove_average_rank","function( nid,old_r ) {
       try {
-        item = db.#{RankingAverage.dbcollection}.findOne({ nid:nid });
+        item = db.#{dbcollection}.findOne({ nid:nid });
         item.a = item.a - (( old_r ) / item.c);
-        db.#{RankingAverage.dbcollection}.save( item );
+        db.#{dbcollection}.save( item );
         return true;
       } catch ( ex ) { return false; }
     }")
