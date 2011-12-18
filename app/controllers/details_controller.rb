@@ -9,7 +9,7 @@ class DetailsController < ApplicationController
   end
 
   def detail
-    detail = Detail.build_detail_for_token(@token)
+    detail = Detail.build_detail_for_token(@token, @limit)
     response = if detail && detail.length > 1
         resp = {
           :recommendation => detail[:recommendation],
@@ -29,6 +29,7 @@ class DetailsController < ApplicationController
   def lat_lng_user
     @lat  = params[:lat]
     @lng  = params[:lng]
+    @limit = Util.limit(params[:limit], 10)
     @user_nid = params[:user_nid]
   end
 
