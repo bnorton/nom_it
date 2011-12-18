@@ -180,7 +180,6 @@ namespace :deploy do
       ln -s #{shared_path}/pids #{latest_release}/tmp/pids &&
       ln -s #{shared_path}/sockets #{latest_release}/tmp/sockets
     CMD
-    # ln -sf #{shared_path}/database.yml #{latest_release}/config/database.yml
 
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
@@ -204,7 +203,7 @@ namespace :deploy do
   desc "Stop unicorn"
   task :stop, :except => { :no_release => true } do
     run "kill -s QUIT `cat #{unicorn_pid}`"
-  end  
+  end
 
   desc "Clear cache"
   task :clear_cache, :except => { :no_release => true } do

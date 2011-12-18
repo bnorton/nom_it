@@ -3,18 +3,18 @@ development:
   host: localhost
   database: prod_test
   username: root
-  password: letmein
+  password: '%planb56b6!'
 
 test:
   adapter: mysql2
   host: localhost
   database: test
   username: root
-  password: letmein
+  password: '%planb56b6!'
 
 production:
   adapter: mysql2
   host: localhost
   database: production
   username: root
-  password: letmein
+  password: '%planb56b6!'

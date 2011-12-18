@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111210080825) do
+ActiveRecord::Schema.define(:version => 20111218053233) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(:version => 20111210080825) do
     t.boolean  "fsq_ignore"
   end
 
-  add_index "locations", ["location_nid"], :name => "index_locations_on_location_nid"
   add_index "locations", ["location_nid"], :name => "index_locations_on_nid", :unique => true
   add_index "locations", ["name"], :name => "index_locations_on_name"
 
@@ -115,10 +114,7 @@ ActiveRecord::Schema.define(:version => 20111210080825) do
     t.datetime "updated_at"
     t.string   "recommendation_nid"
     t.string   "user_nid",                              :null => false
-    t.string   "user_name"
     t.string   "location_nid"
-    t.string   "location_name"
-    t.string   "location_city"
     t.string   "token"
     t.string   "title"
     t.text     "text"
@@ -126,17 +122,13 @@ ActiveRecord::Schema.define(:version => 20111210080825) do
     t.boolean  "twitter",            :default => false
     t.float    "lat"
     t.float    "lng"
-    t.boolean  "new",                :default => true
     t.binary   "schemaless"
     t.boolean  "is_valid",           :default => true
     t.string   "image_nid"
   end
 
   add_index "recommendations", ["location_nid"], :name => "index_recommendations_on_location_nid"
-  add_index "recommendations", ["new"], :name => "recommendations_location_new"
   add_index "recommendations", ["recommendation_nid"], :name => "index_recommendations_on_nid", :unique => true
-  add_index "recommendations", ["recommendation_nid"], :name => "index_recommendations_on_recommendation_nid"
-  add_index "recommendations", ["user_nid", "new"], :name => "recommendations_uid_new"
   add_index "recommendations", ["user_nid"], :name => "index_recommendations_on_user_nid"
 
   create_table "users", :force => true do |t|
@@ -186,6 +178,5 @@ ActiveRecord::Schema.define(:version => 20111210080825) do
   add_index "users", ["facebook"], :name => "users_facebook", :unique => true
   add_index "users", ["screen_name"], :name => "users_screen_name", :unique => true
   add_index "users", ["user_nid"], :name => "index_users_on_nid", :unique => true
-  add_index "users", ["user_nid"], :name => "index_users_on_user_nid"
 
 end
