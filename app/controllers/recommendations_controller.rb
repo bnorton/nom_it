@@ -8,8 +8,8 @@ class RecommendationsController < ApplicationController
   before_filter :required_for_update,    :only => [:update ]
   before_filter :optional,               :only => [:create,:update]
   before_filter :user_or_location,       :only => [:create,:user,:location]
-  before_filter :id_only,                :only => [:to_user,:about_location]
-  before_filter :authentication_required,:only => [:user,:location]
+  before_filter :recommendation_nid_only,:only => [:to_user,:about_location]
+  before_filter :authentication_required,:only => [:user]
 
   def create
     item = Recommendation.create(@all_params)
@@ -84,19 +84,15 @@ class RecommendationsController < ApplicationController
   end
 
   def required_for_creation
-    @lat  = params[:lat]
-    @lng  = params[:lng]
-    @user_nid = params[:user_nid]
     @location_nid = params[:location_nid]
-    if (@lat.blank? || @lng.blank? || @user_nid.blank? || @location_nid.blank?)
+    if (@user_nid.blank? || @location_nid.blank?)
       respond_with Status.item_not_created('recommendation'), :location => nil
     end
   end
 
   def required_for_destroy
     @recommendation_nid = params[:recommendation_nid]
-    @user_nid  = params[:user_nid]
-    if @recommendation_nid.blank? || @user_nid.blank?
+    if (@recommendation_nid.blank? || @user_nid.blank?)
       respond_with Status.item_not_destroyed 'recommendation', :location => nil
     end
   end
@@ -110,13 +106,12 @@ class RecommendationsController < ApplicationController
   end
 
   def user_or_location
-    @user_nid = params[:user_nid]
     if @user_nid.blank?
       respond_with Status.not_found 'recommendation'
     end
   end
 
-  def id_only
+  def recommendation_nid_only
     @recommendation_nid = params[:recommendation_nid]
     respond_with Status.not_found 'recommendation' if @recommendation_nid.blank?
   end
@@ -124,9 +119,6 @@ class RecommendationsController < ApplicationController
   def optional
     @text     = params[:text]
     @title    = params[:title]
-    @name     = params[:name]
-    @user_name= params[:user_name]
-    @city     = params[:city]
     @facebook = params[:facebook]
     @twitter  = params[:twitter]
     all_params_hash
@@ -134,17 +126,14 @@ class RecommendationsController < ApplicationController
 
   def all_params_hash
     @all_params = {
-      :lat  => @lat,
-      :lng  => @lng,
       :user_nid => @user_nid,
-      :text => @text,
       :location_nid => @location_nid,
+      :text => @text,
       :token => params[:token],
       ## optional
+      :lat  => @lat,
+      :lng  => @lng,
       :title => @title,
-      :name  => @name,
-      :user_name=> @user_name,
-      :city  => @city,
       :facebook => @facebook,
       :twitter  => @twitter
     }

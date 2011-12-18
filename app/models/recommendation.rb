@@ -4,7 +4,7 @@ class Recommendation < ActiveRecord::Base
   belongs_to :user
   belongs_to :location
 
-  COMPACT = "recommendation_nid,user_nid,lat,lng,token,location_nid,location_name,location_city,title,text,created_at,image_nid"
+  COMPACT = "recommendation_nid,location_nid,user_nid,image_nid,lat,lng,token,title,text,created_at"
 
   scope :OL, lambda {|offset,limit|
     offset(offset).limit(limit)
@@ -14,27 +14,19 @@ class Recommendation < ActiveRecord::Base
   }
 
   def self.create(this)
-    this.merge!(self.defaults(this))
     r = Recommendation.new
-    r.lat = this[:lat]
-    r.lng = this[:lng]
-    r.user_nid = this[:user_nid]
-    r.user_name = this[:user_name]
-    r.location_nid = this[:location_nid]
-    r.title = this[:title]
-    r.facebook = this[:facebook] || false
-    r.facebook = this[:twitter]  || false
-    r.location_name = this[:name]
-    r.location_city = this[:city]
-    r.image_nid = this[:image_nid]
     rnid = Util.ID
     r.recommendation_nid = rnid
     r.token = this[:token] || Util.token
-    if this[:text]
-      r.text = "#{this[:text]} justnom.it/r/#{r.token}"
-    else
-      r.text = "I Nommed @ #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
-    end
+    r.user_nid = this[:user_nid]
+    r.location_nid = this[:location_nid]
+    r.image_nid = this[:image_nid]
+    r.title = this[:title]
+    r.text = this[:text].present? ? "#{this[:text]} justnom.it/r/#{r.token}" : "I Nommed @ #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
+    r.facebook = this[:facebook] || false
+    r.twitter = this[:twitter]  || false
+    r.lat = this[:lat]
+    r.lng = this[:lng]
     if r.save
       Metadata.recommended(rnid) # for item analytics
       r
@@ -42,29 +34,32 @@ class Recommendation < ActiveRecord::Base
   end
 
   class << self
-    def defaults(this)
-      location = {}
-      result = Location.find_by_location_nid(this[:location_nid]) if this[:location_nid].present?
-      return location if result.blank?
-      location[:name] = result.name
-      location[:city] = result.city
-      location
+
+    def common(items)
+      items.map{|it|
+        it = it.as_json
+        image_nid = it.delete 'image_nid'
+        it[:image] = Image.for_nid(image_nid)
+        location_nid = it.delete 'location_nid'
+        it[:location] = Location.compact_detail_for_nid(location_nid)
+        it
+      }
     end
 
     def for_user(nid)
-      compact.order('id DESC').find_all_by_user_nid(nid)
+      common Recommendation.compact.order('id DESC').find_all_by_user_nid(nid)
     end
 
     def for_location(nid)
-      compact.order('id DESC').find_all_by_location_nid(nid)
+      common Recommendation.compact.order('id DESC').find_all_by_location_nid(nid)
     end
 
     def for_nid(nid)
-      compact.order('id DESC').find_all_by_recommendation_nid(nid)
+      common Recommendation.compact.order('id DESC').find_all_by_recommendation_nid(nid)
     end
 
     def for_token(token)
-      compact.order('id DESC').find_all_by_token(token)
+      common Recommendation.compact.order('id DESC').find_all_by_token(token)
     end
   end
 end
