@@ -22,6 +22,10 @@ class DetailsController < ApplicationController
     respond_with response
   end
 
+  def heartbeat
+    respond_with 'alive'
+  end
+
   def lat_lng_user
     @lat  = params[:lat]
     @lng  = params[:lng]

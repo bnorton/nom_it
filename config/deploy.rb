@@ -76,6 +76,7 @@ namespace :deploy do
     update
     clear_cache
     restart
+    heartbeat
   end
 
   desc "Setup your git-based deployment app"
@@ -201,6 +202,11 @@ namespace :deploy do
   desc "Clear cache"
   task :clear_cache, :except => { :no_release => true } do
     run "cd #{current_path}; #{rvm_use}; #{clear_cache_cmd}"
+  end
+
+  desc "wait for 10 seconds then just check that we are up"
+  task :heartbeat do
+    run "sleep 10; if ! curl --silent http://localhost/config/heartbeat.json | grep alive; then echo 'Looks like nom is down .. exiting with code 1'; exit 1; fi"
   end
 
   namespace :rollback do
