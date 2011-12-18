@@ -2,11 +2,11 @@ class Thumb < MongoRuby
   
   #          | nom_id | user_nid | value
   attr_accessor :nid, :unid, :value
-  
+
   def self.dbcollection
     "thumbs"
   end
-  
+
   def self.add_new_thumb
     Thumb.store_function('new_thumb', "function( nid,unid,value ) {
       try { item = db.#{Thumb.dbcollection}.findOne({ nid:nid, unid:unid });
@@ -20,8 +20,7 @@ class Thumb < MongoRuby
       } catch ( ex ) { return false; }
       return true; }")
   end
-    
-  ## methods that add new data
+
   def self.new_thumb(nid,unid,value)
     nid = Util.STRINGify(nid)
     return false unless (value = value.to_i) > 0
@@ -31,19 +30,11 @@ class Thumb < MongoRuby
       false # dont need to update
     end
   end
-  
-  def self.build_for_activity(thumb)
-    thumb = Util.created_atify(thumb)
-    thumb = Util.nidify(thumb.as_json,'user_nid','unid')
-    Util.de_nid(thumb,'nid')
-  end
-  ## methods that find ratings or totals
+
   def self.for_unids(unid,lim=30)
     unid = [unid] unless unid.kind_of? Array
     Thumb.find_by({ :unid => {'$in' => unid }}, lim).map{|thumb|
-      thumb = thumb.as_json
-      location_nid = thumb.delete 'nid'
-      thumb[:location] = Location.compact_detail_for_nid(location_nid)
+      thumb = Thumb.build_location(thumb)
       thumb
     }
   end
@@ -52,16 +43,12 @@ class Thumb < MongoRuby
   def self.detail_for_nid(nid,lim=10,what=:user_nid)
     result = if(what == :user_nid)
       Thumb.for_nid(nid,lim).map{|thumb|
-        thumb = thumb.as_json
-        user_nid = thumb.delete('nid')
-        thumb[:user] = User.for_nid(user_nid)
+        thumb = Thumb.build_user(thumb)
         thumb
       }
     else
       Thumb.for_nid(nid,lim).map{|thumb|
-        thumb = thumb.as_json
-        location_nid = thumb.delete('nid')
-        thumb[:location] = Location.compact_detail_for_nid(location_nid)
+        thumb = Thumb.build_location(thumb)
         thumb
       }
     end
@@ -70,9 +57,9 @@ class Thumb < MongoRuby
       :thumb_count => ThumbCount.for_nid(nid)
     }
   end
-  
+
   private
-  
+
   def self.for_nid(nid,lim=30)
     lim = Util.limit(lim,30)
     nid = Util.STRINGify(nid)
@@ -83,7 +70,28 @@ class Thumb < MongoRuby
     lim = Util.limit(lim,30)
     Thumb.find(finder).limit(lim)
   end
-  
+
+  def self.build_common(thumb)
+    thumb = Util.created_atify(thumb)
+    thumb = Util.de_nid(thumb.as_json, '_id')
+    thumb = Util.nidify(thumb,'user_nid','unid')
+    thumb
+  end
+
+  def self.build_user(thumb)
+    thumb = Thumb.build_common(thumb)
+    user_nid = thumb.delete 'nid'
+    thumb[:user] = User.for_nid(user_nid)
+    thumb
+  end
+
+  def self.build_location(thumb)
+    thumb = Thumb.build_common(thumb)
+    location_nid = thumb.delete 'nid'
+    thumb[:location] = Location.compact_detail_for_nid(location_nid)
+    thumb
+  end
+
   def self.max_limit(lim)
     lim > 50 ? 50 : lim < 5 ? 5 : lim
   end

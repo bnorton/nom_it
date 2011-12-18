@@ -79,7 +79,7 @@ class Location < ActiveRecord::Base
   def self.compact_detail_for_nid(location_nid)
     return {} if location_nid.blank?
     Rails.cache.fetch("compact_detail_for_nid_#{location_nid}", :expires_in => 10.minutes) do
-      Location.compact.find_by_location_nid(location_nid)
+      Location.compact.find_by_location_nid(location_nid) || {}
     end
   end
   

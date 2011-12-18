@@ -39,9 +39,9 @@ class Recommendation < ActiveRecord::Base
       items.map{|it|
         it = it.as_json
         image_nid = it.delete 'image_nid'
-        it[:image] = Image.for_nid(image_nid)
+        it[:image] = Image.for_nid(image_nid) || {}
         location_nid = it.delete 'location_nid'
-        it[:location] = Location.compact_detail_for_nid(location_nid)
+        it[:location] = Location.compact_detail_for_nid(location_nid) || {}
         it
       }
     end
