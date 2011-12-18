@@ -93,10 +93,11 @@ class UsersController < ApplicationController
   def user_image
     if(user = User.find_by_user_nid(@user_nid))
       image = Image.new(@image)
-      image.image_nid = Util.ID
+      inid = Util.ID
+      image.image_nid = inid
       image.user_nid = @user_nid
       resp = if image.save
-        Status.user_image_created Image.build_image(image)
+        Status.user_image_created Image.build_image(Image.find_by_image_nid(inid))
       else
         Status.item_not_created 'user_image'
       end
