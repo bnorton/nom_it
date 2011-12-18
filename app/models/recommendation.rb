@@ -33,7 +33,7 @@ class Recommendation < ActiveRecord::Base
     if this[:text]
       r.text = "#{this[:text]} justnom.it/r/#{r.token}"
     else
-      r.text = "I Nommed @ #{r.location_name || '...'} and recommended it via Nom. justnom.it/r/#{r.token}"
+      r.text = "I Nommed @ #{r.location_name || '...'} via Nom. justnom.it/r/#{r.token}"
     end
     if r.save
       Metadata.recommended(rnid) # for item analytics

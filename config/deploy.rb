@@ -29,6 +29,7 @@ set :rails_env,       "production"
 #   end
 # end
 
+set :keep_releases, 4
 set :deploy_to,       "/apps/#{application}"
 set :normalize_asset_timestamps, false
 
