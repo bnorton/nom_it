@@ -38,46 +38,39 @@ class Recommend < MongoRuby
   end
 
   def self.by_user_nid(nid, limit=10)
-    nid = Util.STRINGify(nid)
-    limit = Util.limit(limit,10)
-    Recommend.find({:unid => nid}).limit(limit).map{ |rec|
-      Recommend.build(rec)
-    }
+    Recommend.fetch_and_build({:unid => nid})
   end
 
   def self.for_user_nid(nid, limit=10)
-    nid = Util.STRINGify(nid)
-    limit = Util.limit(limit,10)
-    Recommend.find({:to_unid => nid}).limit(limit).map{ |rec|
-      Recommend.build(rec)
-    }
+    Recommend.fetch_and_build({:to_unid => nid})
   end
 
   def self.for_location_nid(nid, limit=10)
-    nid = Util.STRINGify(nid)
-    limit = Util.limit(limit,10)
-    Recommend.find({:lnid => nid}).limit(limit).map{ |rec|
-      Recommend.build(rec)
-    }
+    Recommend.fetch_and_build({:lnid => nid})
   end
 
   def self.for_token(token, limit=10)
-    Recommend.find({:token => token}).limit(limit).map{ |rec|
+    Recommend.fetch_and_build({:token => token})
+  end
+
+  private
+
+  def self.fetch_and_build(finder, limit)
+    limit = Util.limit(limit,10)
+    Recommend.find(finder).limit(limit).map{|rec|
       Recommend.build(rec)
     }
   end
 
   def self.build(rec)
-    Rails.cache.fetch("recommended_item_#{rec['_id']}", :expires_in => 3.days) do
-      rec = Recommend.clean(rec)
-      Recommend.image(rec)
-      rec
-    end
+    rec = Recommend.clean(rec)
+    Recommend.image(rec)
+    Recommend.location(rec)
+    rec
   end
   
   def self.clean(rec)
     rec = Util.de_nid(rec, '_id')
-    rec = Util.nidify(rec, 'location_nid', 'lnid')
     rec = Util.nidify(rec, 'user_nid', 'unid')
     rec = Util.nidify(rec, 'user_name', 'uname')
     rec = Util.nidify(rec, 'recommendation_nid', 'rnid')
@@ -89,7 +82,13 @@ class Recommend < MongoRuby
     rec[:image] = Image.for_nid(inid) if inid.present?
     rec
   end
-  
+
+  def self.location(rec)
+    location_nid = rec.delete('lnid')
+    rec[:location] = Location.compact_detail_for_nid(location_nid) || {}
+    rec
+  end
+
 end
 
   # the Schema for the Recommendation model 

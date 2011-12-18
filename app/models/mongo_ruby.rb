@@ -3,7 +3,7 @@ class MongoRuby
   #####################################################################
   ### Ruby MongoDB Driver Wrapper
   def self.dbdatabase
-    "production"
+    MONGODB_CONFIG['dbdatabase']
   end
   
   def self.dbcollection

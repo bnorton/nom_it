@@ -1,6 +1,9 @@
 # config/deploy.rb 
 require "bundler/capistrano"
 
+default_environment["RAILS_ENV"] = 'production'
+set :rails_env, "production"
+
 set :scm,             :git
 set :repository,      "git@github.com:bnorton/nom_it.git"
 set :application,     "nom"
@@ -20,18 +23,12 @@ set :rvm_use,         "rvm use ree@#{application}"
 set :migrate_target,  :current
 set :ssh_options,     { :forward_agent => true }
 
-set :rails_env,       "production"
-# do
-#   if ENV["RAILS_ENV"]
-#     ENV["RAILS_ENV"]
-#   else
-#     "production"
-#   end
-# end
+set :stage,           "#{rails_env}"
 
 set :keep_releases, 4
 set :deploy_to,       "/apps/#{application}"
 set :normalize_asset_timestamps, false
+set :clear_cache_cmd, "rails runner Rails.cache.clear"
 
 set :unicorn_pid,     "#{shared_path}/pids/unicorn.pid" # "/apps/#{application}/current/tmp/pids/unicorn.pid"
 
@@ -47,11 +44,8 @@ set :mysql_user_name,    "root"
 set :mysql_password,     '"%planb56b6!"'
 set :mysql_raw_password, '%planb56b6!'
 
-# set :mysql_database,     "#{application}_production"
-set :mysql_database,     "production"
-
-set :mongo_database,     "#{application}_production"
-# set :mongo_database,     "production"
+set :mysql_database,     "#{stage}"
+set :mongo_database,     "#{stage}"
 
 role :web,    'justnom.it'#,
 # role :web,    '74.207.251.76'
@@ -67,8 +61,6 @@ set(:current_release) { fetch(:current_path) }
 set(:current_revision)  { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
 set(:latest_revision)   { capture("cd #{current_path}; git rev-parse --short HEAD").strip }
 set(:previous_revision) { capture("cd #{current_path}; git rev-parse --short HEAD@{1}").strip }
-
-default_environment["RAILS_ENV"] = 'production'
 
 # define REE in the default_environment
 default_environment["PATH"]         = "/usr/local/mysql/bin:/usr/local/rvm/gems/ree-1.8.7-2011.03@#{application}/bin:/usr/local/rvm/gems/ree-1.8.7-2011.03@global/bin:/usr/local/rvm/rubies/ree-1.8.7-2011.03/bin:/usr/local/rvm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games"
@@ -112,17 +104,18 @@ namespace :deploy do
   desc "setup the config files for mongodb, memcached"
   task :setup_config, :except => { :no_release => true } do
     mongodb_yaml_template = <<-YAML
-      production:
+      #{stage}:
         dbdatabase: #{mongo_database}
+        dbcollection_prefix: #{stage}
     YAML
 
     mencached_yaml_template = <<-YAML
-      production:
+      #{stage}:
         servers: [#{memcached_servers.join(', ')}]
     YAML
 
     mysql_yaml_template = <<-YAML
-      production:
+      #{stage}:
         adapter: mysql2
         username: #{mysql_user_name}
         password: #{mysql_password}
@@ -163,7 +156,7 @@ namespace :deploy do
   desc "rollback the last migration"
   task :migrations_rollback do
     transaction do
-      run "cd #{current_path}; RAILS_ENV=production rake db:rollback ;"
+      run "cd #{current_path}; RAILS_ENV=#{stage} rake db:rollback ;"
     end
   end
 
@@ -207,7 +200,7 @@ namespace :deploy do
 
   desc "Clear cache"
   task :clear_cache, :except => { :no_release => true } do
-    run "cd /apps/nom/current; rvm use ree@nom; rails runner Rails.cache.clear"
+    run "cd #{current_path}; #{rvm_use}; #{clear_cache_cmd}"
   end
 
   namespace :rollback do
