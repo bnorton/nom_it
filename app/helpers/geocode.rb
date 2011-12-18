@@ -133,8 +133,8 @@ class Geocode
           :state => yahoo.state,
           :area_code => yahoo.postal,
           :country => yahoo.country,
-          :primary => opt[:primary],
-          :secondary => opt[:secondary],
+          :primary_category => opt[:primary_category],
+          :secondary_category => opt[:secondary_category],
           :neighborhoods => neigh,
           :cost => opt[:cost],
           :phone => opt[:phone],
@@ -151,8 +151,8 @@ class Geocode
         :location_nid => opt[:location_nid],
         :lat => yahoo.latitude,
         :lng => yahoo.longitude,
-        :primary => opt[:primary],
-        :secondary => opt[:secondary],
+        :primary_category => opt[:primary_category],
+        :secondary_category => opt[:secondary_category],
         :cost => opt[:cost]
       )
     end
@@ -188,8 +188,8 @@ class Geocode
       
       location_nid,is_new = store_location(yahoo,{
         :location_hash=>location_hash,
-        :primary => primary,
-        :secondary => secondary,
+        :primary_category => primary,
+        :secondary_category => secondary,
         :name => _name,
         :tod => _tod,
         :cost => _cost,
@@ -198,8 +198,8 @@ class Geocode
       if is_new
         store_geolocation(yahoo,{
           :location_nid => location_nid,
-          :primary => primary,
-          :secondary => secondary,
+          :primary_category => primary,
+          :secondary_category => secondary,
           :cost => _cost
         })
         
@@ -214,8 +214,8 @@ class Geocode
       cats_str = cats.join(', ') rescue nil
       {
         :name => _name,
-        :primary => primary,
-        :secondary => secondary,
+        :primary_category => primary,
+        :secondary_category => secondary,
         :categories => cats_str,
         :neighborhood => neighborhood(item),
         :rating => _rating,

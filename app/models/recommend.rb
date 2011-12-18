@@ -22,19 +22,17 @@ class Recommend < MongoRuby
     r = recommendation
     followers.each do |follower_nid|
       Recommend.save({
-        :lat => r.lat,
-        :lng => r.lng,
+        :rnid => r.recommendation_nid,
+        :lnid => r.location_nid,
+        :inid => r.image_nid,
         :unid => r.user_nid,
         :uname => r.user_name,
-        :lnid => r.location_nid,
+        :to_unid => follower_nid,
+        :token => r.token,
         :title => r.title,
         :text => r.text,
-        :to_unid => follower_nid,
-        :name => r.location_name,
-        :city => r.location_city,
-        :rnid => r.recommendation_nid,
-        :token => r.token,
-        :inid => r.image_nid
+        :lat => r.lat,
+        :lng => r.lng
       })
     end
   end

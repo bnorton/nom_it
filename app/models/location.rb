@@ -1,7 +1,7 @@
 class Location < ActiveRecord::Base
   class NotDeactivated < Exception; end
-  COMPACT = "location_nid,rank,rank_value,yid,woeid,url,timeofday,primary,secondary,neighborhoods,phone,cost,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
-  COMPACT = "*"
+  COMPACT = "location_nid,rank,rank_value,yid,woeid,url,timeofday,primary_category,secondary_category,neighborhoods,phone,cost,created_at,updated_at,name,address,cross_street,street,city,state,fsq_id,gowalla_url"
+  # COMPACT = "*"
   has_many :images
   has_one  :geolocation
   has_one  :statistic
@@ -34,8 +34,8 @@ class Location < ActiveRecord::Base
     created_loc = Location.find_or_create_by_name_and_creator(
       :name => opt[:name],
       :creator => opt[:user_nid],
-      :primary => opt[:primary],
-      :secondary => opt[:secondary],
+      :primary_category => opt[:primary],
+      :secondary_category => opt[:secondary],
       :city => opt[:city],
       :text => opt[:text],
       :phone => opt[:phone],
@@ -192,8 +192,8 @@ end
   #   t.boolean  "is_new",                     :default => false, :null => false
   #   t.string   "code"
   #   t.binary   "schemaless"
-  #   t.string   "primary"
-  #   t.string   "secondary"
+  #   t.string   "primary_category"
+  #   t.string   "secondary_category"
   #   t.string   "nid"
   #   t.string   "hash"
   #   t.string   "yid"

@@ -15,18 +15,18 @@ describe "locations" do
         :location_nid => @nid1,
         :name => 'location name 1',
         :address => '14 darrell pl',
-        :primary => '4e234'})
+        :primary_category => '4e234'})
       Location.create({
         :location_nid => @nid2,
         :name => 'location 2',
         :address => '2670 parker st',
-        :primary => '4e235'})
+        :primary_category => '4e235'})
       Location.create({
         :location_nid => @nid3,
         :name => 'location name 3',
         :address => '201 11th st',
         :city => 'seal beach',
-        :primary => '4e236'})
+        :primary_category => '4e236'})
       Geolocation.create({
         :location_nid => @nid1,
         :lat => @lat1,

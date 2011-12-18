@@ -18,10 +18,10 @@ class Geolocation < ActiveRecord::Base
     compact.OL(start,limit).order('rank_value ASC').where(["(DEGREES(ACOS(SIN(RADIANS(#{lat}))*SIN(RADIANS(lat))+COS(RADIANS(#{lat}))*COS(RADIANS(lat))*COS(RADIANS(#{lng}-lng))))*60*1.1515)<#{dist}"])
   }
   scope :search_by_category, lambda {|lat,lng,dist,primary,start,limit|
-    Geolocation.find_by_distance(lat,lng,dist).where(["primary=?",primary])
+    Geolocation.find_by_distance(lat,lng,dist).where(["primary_category=?",primary])
   }
   scope :search_by_categories, lambda {|lat,lng,dist,primary,secondary,start,limit|
-    Geolocation.find_by_distance(lat,lng,dist).where(["primary=? or secondary=?",primary,secondary])
+    Geolocation.find_by_distance(lat,lng,dist).where(["primary_category=? or secondary_category=?",primary,secondary])
   }
   
   def self.create_item(opt)
@@ -31,8 +31,8 @@ class Geolocation < ActiveRecord::Base
         :lat => lat,
         :lng => lng,
         :cost => opt[:cost],
-        :primary => opt[:primary],
-        :secondary => opt[:secondary])
+        :primary_category => opt[:primary],
+        :secondary_category => opt[:secondary])
     end
   end
   
@@ -77,8 +77,8 @@ end
   #   t.float    "lat",         :default => 0.0
   #   t.float    "lng",         :default => 0.0
   #   t.integer  "cost"
-  #   t.string   "primary"
-  #   t.string   "secondary"
+  #   t.string   "primary_category"
+  #   t.string   "secondary_category"
   #   t.string  "location_nid"
   # end
   

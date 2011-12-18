@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111218053233) do
+ActiveRecord::Schema.define(:version => 20111218081437) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -31,11 +31,11 @@ ActiveRecord::Schema.define(:version => 20111218053233) do
   create_table "geolocations", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.float    "lat",          :default => 0.0
-    t.float    "lng",          :default => 0.0
+    t.float    "lat",                :default => 0.0
+    t.float    "lng",                :default => 0.0
     t.string   "cost"
-    t.string   "primary"
-    t.string   "secondary"
+    t.string   "primary_category"
+    t.string   "secondary_category"
     t.string   "location_nid"
     t.string   "rank"
     t.integer  "rank_value"
@@ -46,9 +46,9 @@ ActiveRecord::Schema.define(:version => 20111218053233) do
   add_index "geolocations", ["lat", "lng"], :name => "geolocations_lat_long"
   add_index "geolocations", ["lng", "lat"], :name => "geolocations_long_lat"
   add_index "geolocations", ["location_nid"], :name => "index_geolocations_on_location_nid"
-  add_index "geolocations", ["primary"], :name => "index_geolocations_on_primary"
+  add_index "geolocations", ["primary_category"], :name => "index_geolocations_on_primary"
   add_index "geolocations", ["rank_value"], :name => "index_geolocations_on_rank_value"
-  add_index "geolocations", ["secondary"], :name => "index_geolocations_on_secondary"
+  add_index "geolocations", ["secondary_category"], :name => "index_geolocations_on_secondary"
 
   create_table "images", :force => true do |t|
     t.datetime "created_at"
@@ -83,11 +83,11 @@ ActiveRecord::Schema.define(:version => 20111218053233) do
     t.string   "area_code"
     t.string   "country"
     t.text     "json_encode"
-    t.boolean  "is_new",        :default => false, :null => false
+    t.boolean  "is_new",             :default => false, :null => false
     t.string   "code"
     t.binary   "schemaless"
-    t.string   "primary"
-    t.string   "secondary"
+    t.string   "primary_category"
+    t.string   "secondary_category"
     t.string   "location_hash"
     t.string   "yid"
     t.string   "woeid"
