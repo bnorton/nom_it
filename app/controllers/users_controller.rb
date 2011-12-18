@@ -84,10 +84,8 @@ class UsersController < ApplicationController
       resp.merge!({:recommends => recommends})
       thumbs_for_who = Follower.followers_nids(@user_nid)
     end
-    thumbs = Thumb.for_unids(thumbs_for_who,@limit).map {|t|
-      loc = Location.compact_detail_for_nid(t['nid']).as_json
-      Thumb.build_for_activity(t).merge({:location => loc})
-    }
+    thumbs = Thumb.for_unids(thumbs_for_who,@limit)
+
     resp.merge!({:thumbs => thumbs})
     respond_with resp
   end
