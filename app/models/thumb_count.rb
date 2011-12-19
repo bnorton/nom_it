@@ -8,10 +8,10 @@ class ThumbCount < MongoRuby
   end
 
   def self.up
-    1
+    1.0
   end
   def self.meh
-    2
+    2.0
   end
   
   def self.add_new_thumb_count
@@ -30,7 +30,7 @@ class ThumbCount < MongoRuby
           if (old_value == #{ThumbCount.up}){
             --item.up;
           } else if (old_value == #{ThumbCount.meh}) {
-            --item.down; }
+            --item.meh; }
           db.#{ThumbCount.dbcollection}.save( item ); }
       } catch ( ex ) { return false; }
       return true; }")

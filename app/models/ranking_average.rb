@@ -8,11 +8,11 @@ class RankingAverage < MongoRuby
   end
   
   def self.max
-    5
+    5.0
   end
   
   def self.min
-    1
+    1.0
   end
   
   ## methods called from initializers/mongo_stored_functions.rb
