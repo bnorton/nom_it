@@ -75,13 +75,12 @@ class Thumb < MongoRuby
   def self.build_common(thumb)
     thumb = Util.created_atify(thumb)
     thumb = Util.de_nid(thumb.as_json, '_id')
-    thumb = Util.nidify(thumb,'user_nid','unid')
     thumb
   end
 
   def self.build_user(thumb)
     thumb = Thumb.build_common(thumb)
-    user_nid = thumb.delete 'nid'
+    user_nid = thumb.delete 'unid'
     thumb[:user] = User.for_nid(user_nid)
     thumb
   end
