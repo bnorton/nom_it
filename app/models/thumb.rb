@@ -15,9 +15,9 @@ class Thumb < MongoRuby
           db.#{Thumb.dbcollection}.save({ nid:nid, unid:unid, value:value });
         } else {
           if (item.value == value) { return -1; }
+          diff = item.value;
           item.value = value;
           db.#{Thumb.dbcollection}.save( item );
-          diff = item.value;
         } } catch ( ex ) { ; }
       return diff; }")
   end
