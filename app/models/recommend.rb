@@ -91,6 +91,7 @@ class Recommend < MongoRuby
     user_nid = rec.delete('unid')
     rec[:user] = User.for_nid(user_nid)
     rec
+  end
 end
 
   # the Schema for the Recommendation model 
