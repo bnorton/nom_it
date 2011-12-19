@@ -70,6 +70,7 @@ class Recommend < MongoRuby
   end
   
   def self.clean(rec)
+    rec = Util.created_atify(rec)
     rec = Util.de_nid(rec, '_id')
     rec = Util.nidify(rec, 'recommendation_nid', 'rnid')
     rec
