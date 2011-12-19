@@ -56,7 +56,7 @@ class Recommend < MongoRuby
 
   def self.fetch_and_build(finder, limit)
     limit = Util.limit(limit,10)
-    Recommend.find(finder).limit(limit).map{|rec|
+    Recommend.find(finder).limit(limit).sort([[:_id , -1]]).map{|rec|
       Recommend.build(rec)
     }
   end

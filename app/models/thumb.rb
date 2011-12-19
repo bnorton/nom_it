@@ -66,7 +66,7 @@ class Thumb < MongoRuby
 
   def self.find_by(finder,lim=30)
     lim = Util.limit(lim,30)
-    Thumb.find(finder).limit(lim)
+    Thumb.find(finder).limit(lim).sort([[:_id , -1]])
   end
 
   def self.build_common(thumb)
@@ -89,7 +89,4 @@ class Thumb < MongoRuby
     thumb
   end
 
-  def self.max_limit(lim)
-    lim > 50 ? 50 : lim < 5 ? 5 : lim
-  end
 end
