@@ -38,19 +38,19 @@ class Recommend < MongoRuby
   end
 
   def self.by_user_nid(nid, limit=10)
-    Recommend.fetch_and_build({:unid => nid})
+    Recommend.fetch_and_build({:unid => nid},limit)
   end
 
   def self.for_user_nid(nid, limit=10)
-    Recommend.fetch_and_build({:to_unid => nid})
+    Recommend.fetch_and_build({:to_unid => nid},limit)
   end
 
   def self.for_location_nid(nid, limit=10)
-    Recommend.fetch_and_build({:lnid => nid})
+    Recommend.fetch_and_build({:lnid => nid},limit)
   end
 
   def self.for_token(token, limit=10)
-    Recommend.fetch_and_build({:token => token})
+    Recommend.fetch_and_build({:token => token},limit)
   end
 
   private

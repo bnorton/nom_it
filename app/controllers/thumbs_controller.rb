@@ -1,7 +1,7 @@
 class ThumbsController < ApplicationController
 
   respond_to :json
-  
+
   before_filter :common
   before_filter :location_params, :only => [:location_new]
   before_filter :to_user_params, :only => [:user_new]
