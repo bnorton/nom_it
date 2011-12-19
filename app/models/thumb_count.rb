@@ -1,12 +1,12 @@
 class ThumbCount < MongoRuby
-  
+
   #          | nom_id | up | meh
   attr_accessor :nid, :up, :meh
-  
+
   def self.dbcollection
     "thumb_counts"
   end
-  
+
   def self.up
     1
   end
@@ -15,7 +15,7 @@ class ThumbCount < MongoRuby
   end
   
   def self.add_new_thumb_count
-    ThumbCount.store_function("update_thumb_count", "function( nid, value ) {
+    ThumbCount.store_function("update_thumb_count", "function( nid,value,old_value ) {
       try { item = db.#{ThumbCount.dbcollection}.findOne({ _id:nid });
         if ( item == null ) {
           if (value == #{ThumbCount.up}) {
@@ -27,17 +27,21 @@ class ThumbCount < MongoRuby
             ++item.up;
           } else {
             ++item.meh; }
+          if (old_value == #{ThumbCount.up}){
+            --item.up;
+          } else if (old_value == #{ThumbCount.meh}) {
+            --item.down; }
           db.#{ThumbCount.dbcollection}.save( item ); }
       } catch ( ex ) { return false; }
       return true; }")
   end
-  
+
   private
-  
-  def self.update_thumb_count(nid,value)
-    if value == ThumbCount.meh || value == ThumbCount.up
-      if (nid = Util.STRINGify(nid))
-        if ThumbCount.eval("update_thumb_count('#{nid}',#{value})")
+
+  def self.update_thumb_count(nid,value,old=0)
+    if(value == ThumbCount.meh || value == ThumbCount.up)
+      if(nid = Util.STRINGify(nid))
+        if ThumbCount.eval("update_thumb_count('#{nid}',#{value}, #{old})")
           Metadata.upped(nid) if value == ThumbCount.up
           Metadata.mehed(nid) if value == ThumbCount.meh
           return true
@@ -46,7 +50,7 @@ class ThumbCount < MongoRuby
     end
     false
   end
-  
+
   ## methods that find ratings or totals
   def self.for_nid(nid)
     nid = Util.STRINGify(nid)
@@ -54,5 +58,4 @@ class ThumbCount < MongoRuby
     return { :up => 0, :meh => 0 } if item.nil?
     { :up => item['up'], :meh => item['meh'] }
   end
-  
 end

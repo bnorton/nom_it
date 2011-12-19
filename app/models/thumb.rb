@@ -9,23 +9,24 @@ class Thumb < MongoRuby
 
   def self.add_new_thumb
     Thumb.store_function('new_thumb', "function( nid,unid,value ) {
+      diff = 0;
       try { item = db.#{Thumb.dbcollection}.findOne({ nid:nid, unid:unid });
         if ( item == null ) {
           db.#{Thumb.dbcollection}.save({ nid:nid, unid:unid, value:value });
         } else {
-          if (item.value == value) { return false; }
+          if (item.value == value) { return -1; }
           item.value = value;
           db.#{Thumb.dbcollection}.save( item );
-        }
-      } catch ( ex ) { return false; }
-      return true; }")
+          diff = item.value;
+        } } catch ( ex ) { ; }
+      return diff; }")
   end
 
   def self.new_thumb(nid,unid,value)
     nid = Util.STRINGify(nid)
     return false unless (value = value.to_i) > 0
-    if Thumb.eval("new_thumb('#{nid}','#{unid}', #{value})")
-      ThumbCount.update_thumb_count(nid,value)
+    if (old_value = Thumb.eval("new_thumb('#{nid}','#{unid}', #{value})")) != -1
+      ThumbCount.update_thumb_count(nid,value,old_value)
     else
       false # dont need to update
     end
