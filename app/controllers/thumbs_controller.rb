@@ -14,7 +14,7 @@ class ThumbsController < ApplicationController
     else
       Status.item_not_created 'thumb'
     end
-    respond_with response
+    respond_with response, :location => nil
   end
 
   def location_new
@@ -64,14 +64,14 @@ class ThumbsController < ApplicationController
   def location_params
     @location_nid = params[:location_nid]
     unless @location_nid.present?
-      respond_with Status.insufficient_arguments
+      respond_with Status.insufficient_arguments, :location => nil
     end
   end
 
   def to_user_params
     @to_user_nid = params[:to_user_nid]
     unless @to_user_nid.present?
-      respond_with Status.insufficient_arguments
+      respond_with Status.insufficient_arguments, :location => nil
     end
   end
 

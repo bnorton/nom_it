@@ -67,12 +67,14 @@ class User < ActiveRecord::Base
     User.follower_fields.find_all_by_user_nid(list_of)
   end
   
-  def self.token_match?(nid, token)
-    begin
-      i = me
-      nid == i(token).user_nid
-    rescue Exception
-      false
+  def self.valid_session?(user_nid, token)
+    Rails.cache.fetch("user_valid_session_#{user_nid}_#{token}", :expires_in => 3.hours) do
+      begin
+        return false unless user_nid.present? && token.present?
+        User.select('auth_token').find_by_user_nid(user_nid).try(:auth_token) == token
+      rescue Exception
+        false
+      end
     end
   end
   
