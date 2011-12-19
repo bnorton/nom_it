@@ -26,7 +26,6 @@ class Recommend < MongoRuby
         :lnid => r.location_nid,
         :inid => r.image_nid,
         :unid => r.user_nid,
-        :uname => r.user_name,
         :to_unid => follower_nid,
         :token => r.token,
         :title => r.title,
@@ -66,13 +65,12 @@ class Recommend < MongoRuby
     rec = Recommend.clean(rec)
     Recommend.image(rec)
     Recommend.location(rec)
+    Recommend.user(rec)
     rec
   end
   
   def self.clean(rec)
     rec = Util.de_nid(rec, '_id')
-    rec = Util.nidify(rec, 'user_nid', 'unid')
-    rec = Util.nidify(rec, 'user_name', 'uname')
     rec = Util.nidify(rec, 'recommendation_nid', 'rnid')
     rec
   end
@@ -89,6 +87,10 @@ class Recommend < MongoRuby
     rec
   end
 
+  def self.user(rec)
+    user_nid = rec.delete('unid')
+    rec[:user] = User.for_nid(user_nid)
+    rec
 end
 
   # the Schema for the Recommendation model 
