@@ -35,8 +35,7 @@ class Thumb < MongoRuby
   def self.for_unids(unid,lim=30)
     unid = [unid] unless unid.kind_of? Array
     Thumb.find_by({ :unid => {'$in' => unid }}, lim).map{|thumb|
-      thumb = Thumb.build_location(thumb)
-      thumb
+      Thumb.build_location(thumb)
     }
   end
 
@@ -44,13 +43,11 @@ class Thumb < MongoRuby
   def self.detail_for_nid(nid,lim=10,what=:user_nid)
     result = if(what == :user_nid)
       Thumb.for_nid(nid,lim).map{|thumb|
-        thumb = Thumb.build_user(thumb)
-        thumb
+        Thumb.build_user(thumb)
       }
     else
       Thumb.for_nid(nid,lim).map{|thumb|
-        thumb = Thumb.build_location(thumb)
-        thumb
+        Thumb.build_location(thumb)
       }
     end
     {
