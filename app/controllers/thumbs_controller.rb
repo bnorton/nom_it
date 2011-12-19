@@ -76,9 +76,9 @@ class ThumbsController < ApplicationController
   end
 
   def common
+    @user_nid = params[:user_nid]
     @limit = Util.limit(params[:limit])
     @value = params[:value]
-    @user_nid = params[:user_nid]
   end
 
   def authentication_required

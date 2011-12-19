@@ -62,7 +62,7 @@ NomIt::Application.routes.draw do
   post 'locations/:location_nid/thumbs/create' => 'thumbs#location_new'
   get 'locations/:location_nid/thumbs' => 'thumbs#thumbs'
 
-  post 'users/:user_nid/thumbs/create' => 'thumbs#user_new'
+  post 'users/:to_user_nid/thumbs/create' => 'thumbs#user_new'
   get 'users/:user_nid/thumbs' => 'user#thumbs'
   get 'users/:user_nid/thumbed' => 'user#thumbed'
 
