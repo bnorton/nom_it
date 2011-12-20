@@ -136,13 +136,13 @@ class Follower < ActiveRecord::Base
   private
 
   def self.followers_changed_for(user_nid)
-    Rails.cache.delete_matched(/^followers_for_#{user_nid}_[0-9]+_[0-9]+$/)
-    Rails.cache.delete_matched(/^followers_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    # Rails.cache.delete_matched(/^followers_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    # Rails.cache.delete_matched(/^followers_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
   end
 
   def self.following_changed_for(user_nid)
-    Rails.cache.delete_matched(/^following_for_#{user_nid}_[0-9]+_[0-9]+$/)
-    Rails.cache.delete_matched(/^following_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    # Rails.cache.delete_matched(/^following_for_#{user_nid}_[0-9]+_[0-9]+$/)
+    # Rails.cache.delete_matched(/^following_nids_for_#{user_nid}_[0-9]+_[0-9]+$/)
   end
 end
 
