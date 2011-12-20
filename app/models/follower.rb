@@ -91,7 +91,7 @@ class Follower < ActiveRecord::Base
     f.save
     Follower.following_changed_for(user_nid)
     Follower.followers_changed_for(other.user_nid)
-    User.for_nid(other.user_nid)
+    other
   end
   
   def self.user_has_joined(to_nid)
