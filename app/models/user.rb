@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
     offset(offset).limit(limit)
   }
   scope :follower_fields, lambda {
-    select("user_nid,screen_name,name,facebook,image_url,city,follower_count,created_at")
+    select("user_nid,name,image_url,city,screen_name,facebook,follower_count,created_at,updated_at")
   }
   scope :public_fields, lambda {
     select(User.fields)
@@ -216,7 +216,7 @@ class User < ActiveRecord::Base
   end
   
   def self.fields(opt=:public)
-    fields = "user_nid,name,image_url,url,last_seen,city,screen_name,follower_count,description,created_at,has_joined"
+    fields = "user_nid,name,image_url,url,city,screen_name,follower_count,description,created_at,updated_at,has_joined"
     if opt == :private
       fields << ",auth_token,street,country,email,phone,facebook,twitter"
     end
