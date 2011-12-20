@@ -1,0 +1,5 @@
+test:
+  servers: ['localhost:11211']
+
+development:
+  servers: ['localhost:11211']
