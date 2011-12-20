@@ -16,7 +16,7 @@ class FollowersController < ApplicationController
     else
       Status.item_not_created 'follower'
     end
-    respond_with response
+    respond_with response, :location => nil
   end
 
   def destroy
@@ -25,7 +25,7 @@ class FollowersController < ApplicationController
     else
       Status.item_not_destroyed 'follower'
     end
-    respond_with response
+    respond_with response, :location => nil
   end
 
   def followers
