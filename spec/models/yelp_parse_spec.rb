@@ -57,7 +57,7 @@ San Francisco, CA 94114
   end
   describe "initial parsing" do
     it "should stub File and parse an item into the serialized form" do
-      tmp_file = "/Users/nort/Dropbox/git/nom_it/spec/tmp/_tmp.txt"
+      tmp_file = File.join(Rails.root,'spec','tmp', '_tmp.txt')
       File.open(tmp_file, 'w+') { |f| 
           f.write(@example2)    # NOTE EXAMPLE 2
       }
@@ -76,7 +76,7 @@ San Francisco, CA 94114
       
     end
     it "should move through the whole flow for multiple items" do
-      tmp_file = "/Users/nort/Dropbox/git/nom_it/spec/tmp/_tmp.txt"
+      tmp_file = File.join(Rails.root, 'spec','tmp', '_tmp.txt')
       File.open(tmp_file, 'w+') { |f| 
           f.write(@example1)
       }
