@@ -17,15 +17,7 @@ class ImagesController < ApplicationController
     else
       Status.item_not_created 'image'
     end
-    respond_with_location resp
-  end
-
-  def show
-    @image = Image.find_by_id(params[:id])
-  end
-
-  def index
-    @images = Image.find(:all) || []
+    respond_with_image image.image_nid
   end
 
   private
@@ -50,6 +42,10 @@ class ImagesController < ApplicationController
     unless @user_nid.present? && @location_nid.present?
       respond_with_location Status.insufficient_arguments({ :message=>"image upload should have an acting `user_nid` and a target `location_nid`"})
     end
+  end
+
+  def respond_with_image(image_nid)
+    respond_with_location Status.user_image_created(Image.for_nid(image_nid))
   end
 
   # redirect the user to root upon form posting

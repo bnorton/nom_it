@@ -83,6 +83,14 @@ module Status
       message(1,"The #{what} was created successfully")
     end
     
+    def item_not_created_destroyed(what='item')
+      message(1,"The #{what} was not created/destroyed successfully")
+    end
+
+    def item_created_destroyed(what='item')
+      message(1,"The #{what} was created/destroyed successfully")
+    end
+    
     def unknown_error
       message(-1, "An API error has occurred")
     end

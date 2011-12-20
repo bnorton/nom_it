@@ -65,8 +65,8 @@ class FollowersController < ApplicationController
   end
 
   def followers_params
-    if @user_nid.blank? || @identifier.blank?
-      respond_with Status.item_not_destroyed 'follower', :location => nil
+    if @user_nid.blank? || @identifier.blank? || (@user_nid == @identifier)
+      respond_with Status.item_not_created_destroyed 'follower', :location => nil
     end
   end
 

@@ -85,7 +85,6 @@ class UsersController < ApplicationController
       thumbs_for_who = Follower.followers_nids(@user_nid)
     end
     thumbs = Thumb.for_unids(thumbs_for_who,@limit)
-
     resp.merge!({:thumbs => thumbs})
     respond_with resp
   end
