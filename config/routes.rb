@@ -83,6 +83,8 @@ NomIt::Application.routes.draw do
   get '/categories/all' => 'categories#all'
   get '/locations/:location_nid/categories' => 'categories#location'
 
+  post '/flag/create' => 'flags#create'
+
   #############################################################################
   #####  ACTIVITIES  ##########################################################
   #############################################################################

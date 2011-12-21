@@ -50,7 +50,7 @@ class ImagesController < ApplicationController
 
   # redirect the user to root upon form posting
   def respond_with_location(resp)
-    respond_with resp, :location => '/'
+    respond_with resp, :location => nil
   end
 
   def lat_lng_user

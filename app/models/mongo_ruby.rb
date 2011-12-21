@@ -14,6 +14,10 @@ class MongoRuby
     @collection ||= self.db[self.dbcollection]
   end
   
+  def self.first
+    self.collection.find_one
+  end
+  
   def self.save(*args)
     self.collection.save(*args)
   end
