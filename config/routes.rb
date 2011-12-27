@@ -3,7 +3,7 @@ NomIt::Application.routes.draw do
   get '/r/:token' => 'details#detail'
 
   post '/image/create' => 'images#create'
-  resources :images
+
   #############################################################################
   #####  USERS  ###############################################################
   #############################################################################
@@ -93,5 +93,7 @@ NomIt::Application.routes.draw do
   get '/config/heartbeat' => 'details#heartbeat'
 
   get '/mu-3638e38f-8dd3e59d-52c5ecf8-1330dbf4' => 'details#blitz'
+
+  root :to => "details#index"
 
 end

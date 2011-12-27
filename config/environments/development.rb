@@ -8,6 +8,9 @@ NomIt::Application.configure do
 
   config.cache_store = :dalli_store, 'localhost:11211'
 
+  # serve them from local
+  config.serve_static_assets = false
+
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 

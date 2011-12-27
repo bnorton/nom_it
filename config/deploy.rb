@@ -70,6 +70,7 @@ namespace :deploy do
   desc "Deploy your application"
   task :default do
     update
+    assets
     clear_cache
     restart
     heartbeat
@@ -137,8 +138,13 @@ namespace :deploy do
 
   desc "Update the deployed code."
   task :update_code, :except => { :no_release => true } do
-    run "cd #{current_path}; git fetch origin ; git reset --hard #{branch}"
+    run "cd #{latest_release}; git fetch origin ; git reset --hard #{branch}"
     finalize_update
+  end
+
+  desc "precompile the assets"
+  task :assets do
+    run "cd #{latest_release}; RAILS_ENV=#{stage} rake assets:precompile"
   end
 
   desc "Update the database (overwritten to avoid symlink)"
@@ -153,7 +159,7 @@ namespace :deploy do
   desc "rollback the last migration"
   task :migrations_rollback do
     transaction do
-      run "cd #{current_path}; RAILS_ENV=#{stage} rake db:rollback ;"
+      run "cd #{latest_release}; RAILS_ENV=#{stage} rake db:rollback ;"
     end
   end
 
@@ -187,7 +193,7 @@ namespace :deploy do
   task :start, :except => { :no_release => true } do
     run "echo starting unicorn_rails"
     run "mkdir -p /apps/#{application}/shared/sockets"
-    run "cd #{current_path} ; #{rvm_use} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+    run "cd #{latest_release} ; #{rvm_use} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
   end
 
   desc "Stop unicorn"
@@ -197,7 +203,7 @@ namespace :deploy do
 
   desc "Clear cache"
   task :clear_cache, :except => { :no_release => true } do
-    run "cd #{current_path}; #{rvm_use}; #{clear_cache_cmd}"
+    run "cd #{latest_release}; #{rvm_use}; #{clear_cache_cmd}"
   end
 
   desc "wait for 10 seconds then just check that we are up"
@@ -214,7 +220,7 @@ namespace :deploy do
 
     desc "Rewrite reflog so HEAD@{1} will continue to point to at the next previous release."
     task :cleanup, :except => { :no_release => true } do
-      run "cd #{current_path}; git reflog delete --rewrite HEAD@{1}; git reflog delete --rewrite HEAD@{1}"
+      run "cd #{latest_release}; git reflog delete --rewrite HEAD@{1}; git reflog delete --rewrite HEAD@{1}"
     end
 
     desc "Rolls back to the previously deployed version."
@@ -226,5 +232,5 @@ namespace :deploy do
 end
 
 def run_rake(cmd)
-  run "cd #{current_path}; #{rake} #{cmd}"
+  run "cd #{latest_release}; #{rake} #{cmd}"
 end

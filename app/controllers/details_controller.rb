@@ -8,6 +8,9 @@ class DetailsController < ApplicationController
     respond_with '42'
   end
 
+  def index
+  end
+
   def detail
     detail = Detail.build_detail_for_token(@token, @limit)
     response = if detail && detail.length > 1

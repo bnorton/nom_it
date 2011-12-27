@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
 <head>
-  <title>NomIt</title>
-  <%= stylesheet_link_tag    "application" %>
-  <%= javascript_include_tag "application" %>
+  <title>Nom Project</title>
+  <%= stylesheet_link_tag    "application", "app", "foundation", "ie", "presentation" %>
+  <%= javascript_include_tag "application", "app", "foundation", "forms.jquery" %>
   <%= csrf_meta_tags %>
+  
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="icon" type="image/ico" href="/favicon.ico">
+
 </head>
 <body>
 
