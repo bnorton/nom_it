@@ -94,6 +94,11 @@ NomIt::Application.routes.draw do
 
   get '/mu-3638e38f-8dd3e59d-52c5ecf8-1330dbf4' => 'details#blitz'
 
+  get '/project' => "details#project"
+  get '/algorithms' => "details#algorithms"
+  get '/team' => "details#team"
+  get '/support' => "details#support"
+  post '/support_new' => 'details#support_submit'
   root :to => "details#index"
 
 end

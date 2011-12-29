@@ -1,0 +1,23 @@
+<%= render :partial => "top" %>
+
+<div id="insideContainer" class="container">
+  <div class="row">
+    <div class="eight columns">
+
+      <%= render :partial => "middle", :locals => { 
+        :title => 'Nom Support',
+        :tagline => "You're having a problem, we get that."
+      } %>
+
+      <p style="max-width:650px"><h4>What's Wrong?</h4>
+      <br>
+      <p>For now just send mail to <a href="mailto:support@justnom.it">Support</a></p>
+
+    </div>
+  </div>
+  <!-- /Row-->
+
+  <%= render :partial => 'footer' %>
+
+</div>
+<!-- /Main Container -->

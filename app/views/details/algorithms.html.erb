@@ -1,0 +1,66 @@
+<%= render :partial => "top" %>
+
+<div id="insideContainer" class="container">
+  <div class="row">
+    <div class="eight columns">
+
+      <%= render :partial => "middle", :locals => { 
+        :title => 'Data and Algorithms',
+        :tagline => 'A Mixture of Analytics coupled with Machine Learning.'
+      } %>
+
+      <p style="max-width:650px"><h4>Data</h4>
+        <br>
+        <ul>
+          <li>Locations and the associated address, geolocation, and phone number.</li>
+          <li>Number of checkins, ratings and any other data that can be pulled from various API's.</li>
+          <li></li>
+          <li></li>
+        </ul>
+      </p>
+
+      <p style="max-width:250px"><h4>Algorithms</h4>
+        <br>
+        <ul>
+          <li>
+            Our data lets us associate various metrics about places
+            so we know what the best places are based on a general
+            consensus about what's popular and good. These are the
+            <strong>best bet</strong> places you can always count on.
+            Then as you use Nom to share (recommend and rank) and express
+            your likes and dislikes
+          </li>
+          <li>
+            If you know a lot about algorithms, then we run classification
+            on all of the data associated with locations and cache associations
+            between users and locations based on the derived information.
+          </li>
+        </ul>
+      </p>
+      <br>
+      <p style="max-width:650px"><h4>How it was Built</h4>
+        <br>
+        <ul>
+          <li>~3 months of time to build out the whole stack and apps.</li>
+          <li>API: Ruby on Rails backed by MySQL, MongoDB, Memcache.</li>
+          <li>iOS application (
+              <a href="<%= nom_itunes_url %>" target="_blank">Nom</a>
+            and 
+              <a href="<%= nom_project_itunes_url %>" target="_blank">Nom Project</a>
+            ) connects to the <a href="<%= nom_locations_api_example %>" target="_blank">API endpoint</a> with the 
+              <a href="http://github.com/bnorton/Nom-iOS-API" target="_blank">Nom-iOS-API</a>
+            .
+          </li>
+        </ul>
+      </p>
+    </div>
+    <div class="four columns right">
+      <%= image_tag "samovar.png" %>
+    </div>
+  </div>
+  <!-- /Row -->
+
+  <%= render :partial => 'footer' %>
+
+</div>
+<!-- /Main Container -->

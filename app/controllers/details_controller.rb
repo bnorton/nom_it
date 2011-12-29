@@ -10,6 +10,14 @@ class DetailsController < ApplicationController
 
   def index
   end
+  def project
+  end
+  def algorithms
+  end
+  def team
+  end
+  def help
+  end
 
   def detail
     detail = Detail.build_detail_for_token(@token, @limit)
