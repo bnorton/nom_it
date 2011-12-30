@@ -28,6 +28,7 @@ class Recommendation < ActiveRecord::Base
     r.lat = this[:lat]
     r.lng = this[:lng]
     if r.save
+      Detail.new_token(r.token, rnid, r.location_nid)
       Metadata.recommended(rnid) # for item analytics
       r
     end
@@ -62,6 +63,23 @@ class Recommendation < ActiveRecord::Base
 
     def for_token(token, limit)
       common Recommendation.compact.order('id DESC').limit(limit).find_all_by_token(token)
+    end
+
+    def compact_item(item)
+      item = item.as_json
+      image_nid = item.delete 'image_nid'
+      item[:image] = Image.for_nid(image_nid) || {}
+      user_nid = item.delete('user_nid')
+      item[:user] = User.for_nid(user_nid) || {}
+      item
+    end
+
+    def compact_for_nid(nid)
+      compact_item Recommendation.compact.find_by_recommendation_nid(nid)
+    end
+
+    def compact_for_token(token)
+      compact_item Recommendation.compact.find_by_token(token)
     end
   end
 end
