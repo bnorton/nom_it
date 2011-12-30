@@ -97,7 +97,7 @@ GEM
     net-ssh-gateway (1.1.0)
       net-ssh (>= 1.99.1)
     newrelic_rpm (3.3.1)
-    nom-ruby (0.1.11)
+    nom-ruby (0.2.0)
       json (>= 1.4.6)
     paperclip (2.3.11)
       activerecord (>= 2.3.0)
@@ -200,7 +200,7 @@ DEPENDENCIES
   mongo
   mysql2
   newrelic_rpm
-  nom-ruby (= 0.1.11)
+  nom-ruby
   paperclip (<= 2.3.11)
   placefinder
   rails
