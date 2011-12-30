@@ -2,7 +2,8 @@ class DetailsController < ApplicationController
   
   respond_to :json, :html
 
-  before_filter :lat_lng_user
+  before_filter :lat_lng_user, :except => [:detail]
+  before_filter :tokens, :only => [:detail]
 
   def blitz
     respond_with '42'
@@ -20,21 +21,24 @@ class DetailsController < ApplicationController
   end
 
   def detail
-    detail = Detail.build_detail_for_token(@token, @limit)
-    response = if detail && detail.length > 1
-        resp = {
-          :recommendation => detail[:recommendation],
-          :metadata => detail[:metadata]
-        }
-        Status.detail(resp)
+    @detail = Detail.build_detail_for_token(@token, @limit)
+    @response = if @detail.present?
+      Status.OK(@detail)
     else
       Status.not_found 'detail'
     end
-    respond_with response
+    respond_with @response
   end
 
   def heartbeat
     respond_with 'alive'
+  end
+
+  private
+
+  def tokens
+    @token = params[:token]
+    @limit = Util.limit(params[:limit], 10)
   end
 
   def lat_lng_user
