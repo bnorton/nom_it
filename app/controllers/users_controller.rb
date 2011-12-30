@@ -44,7 +44,7 @@ class UsersController < ApplicationController
   end
 
   def login
-    condition = User.login(@email_or_nid,@password)
+    condition = User.login(@email_or_nid,@password,@screen_name)
     if condition == 'login_failed'
       respond_with((Status.user_login_failed), :location => nil)
       return

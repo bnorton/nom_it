@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gem 'nom-ruby'
+
 gem 'rails'
 
 gem 'aws-s3'
