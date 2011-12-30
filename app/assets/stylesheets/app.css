@@ -25,10 +25,30 @@
   width: 200px;
 }
 
-
-
 /* -----------------------------------------
    Detail
 ----------------------------------------- */
 
+.recommendation_container {
+    width: 900px;
+    min-width: 600px;
+    min-height:350px;
+    height:460px;
+    margin-top: 30px;
+    border: 1px solid;
+    border-color: gray;
+}
+
+.image_frame {
+    width: 600px;
+    height: 320px;
+    padding: 15px 15px 5px 15px;
+}
+
+.nommed_text {
+    width: 600px;
+    min-height: 30px;
+    padding-left: 15px;
+    padding-top: 0px;
+}
 
