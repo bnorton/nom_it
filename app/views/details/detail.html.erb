@@ -1,2 +1,29 @@
-<h1>It worked</h1>
-<p><%= @detail.inspect %></p>
+<%= render :partial => "top" %>
+
+<div id="insideContainer" class="container">
+  <div class="row">
+    <div class="eight columns">
+
+      <% if @detail.present? %>
+        <% rec = @detail[:recommendation] %>
+        <% loc = @detail[:location] %>
+        <% user = rec[:user] rescue {} %>
+        <% image = rec[:image] rescue {} %>
+
+        <p style="margin-top:110px; max-width:650px"><h4><%= rec[:title] || "Recommendation for #{loc[:name]}" %></h4></p>
+        <div class="recommendation_container">
+          <img src="<%= image[:url] %>" class="image_frame"></img>
+          <div class="nommed_text">
+            <h5><%= rec['text'] %></h5>
+          </div>
+        </div>
+
+      <% else %>
+
+        <p style="margin-top:150px; max-width:650px"><h4>404 - Recommendation for <%= @token %> not found...</h4>
+
+      <% end %>
+
+    </div>
+  </div>
+</div>
