@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
   
   def self.register_with_facebook(fbHash,user_nid,email,access_token='',username='')
     fbHash_str = fbHash
-    if fbHash.is_a? String
+    if fbHash.kind_of? String
       fbHash = begin
         JSON.parse(fbHash)
       rescue Exception

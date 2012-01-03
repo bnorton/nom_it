@@ -17,8 +17,8 @@ class UsersController < ApplicationController
     response = if @screen_name.blank?
       Status.insufficient_arguments
     else
-      if (time = User.find_by_screen_name(@screen_name)).blank?
-        ok_or_not(true,{:results => [{:reserved_until => Time.now + 1.minutes}]})
+      if User.find_by_screen_name(@screen_name).blank?
+        ok_or_not(true,{:results => [{:reserved_until => Time.now.utc + 2.minutes}]})
       else
         ok_or_not(false,{:name_taken=>true})
       end
@@ -39,14 +39,9 @@ class UsersController < ApplicationController
         end
         reg
       end
+    UserMailer.welcome_email(reg).deliver if registration.present?
     response = ok_or_not(registration.present?,{:results=>registration})
     respond_with response, :location => nil
-  end
-
-  def email
-    @user = User.find_by_user_nid(params[:user_nid])
-    UserMailer.welcome_email(@user).deliver
-    render :json => {:status => 1}
   end
 
   def login

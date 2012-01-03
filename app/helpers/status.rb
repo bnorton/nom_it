@@ -2,7 +2,7 @@ module Status
   class << self
     
     def method_missing(method_name, *args)
-      message(-1, "An Error has occurred while calling #{method_name}")
+      unknown_error
     end
     
     def message(status, message, options={})
@@ -25,24 +25,24 @@ module Status
     end
     
     def user_not_authorized
-      message(-1, "you are not authorized as that user")
+      message(-1, "You are not authorized as that user")
     end
     
     def user_login_failed
-      message(-1,"Looks like you're registerd but the login failed")
+      message(-1,"Looks like you're registerd but login failed")
     end
     
     def image_saved(image_nid)
       d = [{:image_nid => image_nid}]
-      status_message_results(1,'image uploaded',d)
+      status_message_results(1,'Image uploaded seccessfully',d)
     end
     
     def user_image_created(img_r)
-      status_message_results(1, 'user_image created', img_r)
+      status_message_results(1, 'User avatar created', img_r)
     end
     
     def screen_name_taken
-      message(-1, "the screen_name you were looking for is not available")
+      message(-2, "The handle you entered was not available")
     end
     
     def search_result(results)
