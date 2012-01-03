@@ -193,7 +193,7 @@ namespace :deploy do
   task :start, :except => { :no_release => true } do
     run "echo starting unicorn_rails"
     run "mkdir -p /apps/#{application}/shared/sockets"
-    run "cd #{latest_release} ; #{rvm_use} ; bundle exec unicorn_rails -c config/unicorn.rb -D"
+    run "cd #{latest_release} ; #{rvm_use} ; bundle exec unicorn_rails -c config/unicorn.rb -E production -D"
   end
 
   desc "Stop unicorn"
