@@ -99,6 +99,10 @@ NomIt::Application.routes.draw do
   get '/team' => "details#team"
   get '/support' => "details#support"
   post '/support_new' => 'details#support_submit'
+
+  get '/users/:user_nid/email' => 'users#email'
+
   root :to => "details#index"
+  
 
 end

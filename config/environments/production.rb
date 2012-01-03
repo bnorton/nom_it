@@ -27,7 +27,7 @@ NomIt::Application.configure do
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  # config.force_ssl = true
+  config.force_ssl = true
 
   # See everything in the log (default is :info)
   # config.log_level = :debug
@@ -55,6 +55,25 @@ NomIt::Application.configure do
     :namespace => 'nom_sessions', 
     :key => '_session_store' 
   }
+
+  # allow email to be delivered from the stack
+  config.action_mailer.delivery_method       = :smtp
+  config.action_mailer.charset               = 'utf-8'
+  config.action_mailer.perform_deliveries    = true
+  config.action_mailer.raise_delivery_errors = true
+
+  config.action_mailer.smtp_settings = {
+    :enable_starttls_auto => true,
+    :tls                  => true,
+    :address              => "smtp.gmail.com",
+    :port                 => '587',
+    :authentication       => :plain,
+    :domain               => 'justnom.it',
+    :user_name            => 'signup@justnom.it',
+    :password             => 'ko995mHjVfdE'
+  }
+
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 

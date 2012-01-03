@@ -43,6 +43,12 @@ class UsersController < ApplicationController
     respond_with response, :location => nil
   end
 
+  def email
+    @user = User.find_by_user_nid(params[:user_nid])
+    UserMailer.welcome_email(@user).deliver
+    render :json => {:status => 1}
+  end
+
   def login
     condition = User.login(@email_or_nid,@password,@screen_name)
     if condition == 'login_failed'

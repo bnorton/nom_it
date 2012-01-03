@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h2>Welcome to the Nom Project..</h2>
+    <h5>
+      Hey <%= @name %>, you've just signed up for the coolest thing finder since ever.
+    </h5>
+    <p>
+      Nom answers "what's best?".
+      You are part of the early majority and can help us build metadata
+      for the <%= link_to 'Nom Project', 'https://justnom.it/project' %>.
+      Upload images, recommend places, follow people who share your tastes,
+      but most of all use Nom to explore your world.
+    </p>
+    <p>
+      Enjoy being Nommer #<%= @id %>!
+    </p>
+    </p>
+    <p>Any comments questions can be directed to the founder, <%= mail_to 'bn@justnom.it', 'bn@justnom.it' %></p>
+    <p>Please report issues to <%= link_to 'Suppport', 'https://justnom.it/support' %></p>
+    <br/>
+  </body>
+</html>
