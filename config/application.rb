@@ -46,3 +46,7 @@ module NomIt
     config.assets.version = '1.0'
   end
 end
+
+def local_request?
+  return false if Rails.env.production?
+end
