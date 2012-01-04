@@ -37,8 +37,8 @@ class User < ActiveRecord::Base
   scope :login_with_nid_or_email, lambda {|nid|
     select("salt,password").where(["user_nid=? or email=?",nid,nid]).has_joined
   }
-  scope :login_with_screen_name, lambda {|sn|
-    select("salt,password").where(["screen_name=?",sn]).has_joined
+  scope :login_with_email_or_screen_name, lambda {|email,sn|
+    select("salt,password").where(["email=? or screen_name=?",email,sn]).has_joined
   }
   scope :find_by_any_means, lambda {|id|
     items = [id,id,id,id.to_s,id]
@@ -85,10 +85,12 @@ class User < ActiveRecord::Base
   end
   
   def self.login(nid_or_email,password,vname='')
-    if nid_or_email.present?
+    if nid_or_email.present? && vname.blank?
       user = User.login_with_nid_or_email(nid_or_email).first
     elsif vname.present?
-      user = User.login_with_screen_name(vname).first
+      user = User.login_with_email_or_screen_name(nid_or_email, vname).first
+    else
+      user = User.login_with_nid_or_email(nid_or_email).first
     end
     if user.present?
       if user.password == Digest::SHA2.hexdigest(user.salt.to_s + password, 256)
