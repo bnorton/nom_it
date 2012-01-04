@@ -123,7 +123,7 @@ class UsersController < ApplicationController
   end
 
   def login_required
-    if !(@email.present? || @user_nid.present?) || @password.blank?
+    unless (@email.present? || @user_nid.present? || @screen_name.present?) && @password.present?
       respond_with Status.user_not_authorized, :location => nil
     end
   end

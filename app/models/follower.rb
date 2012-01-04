@@ -88,9 +88,11 @@ class Follower < ActiveRecord::Base
     else
       f.approved = true
     end
-    f.save
-    Follower.following_changed_for(user_nid)
-    Follower.followers_changed_for(other.user_nid)
+    if f.save
+      me.follower_count += 1
+      me.save
+      Follower.following_changed_for(user_nid)
+      Follower.followers_changed_for(other.user_nid)
     other
   end
   
@@ -111,9 +113,9 @@ class Follower < ActiveRecord::Base
   end
   
   def self.block_follower(user_nid,to_user_nid)
-    user_nid = Util.STRINGify(user_nid)
-    to_user_nid = Util.STRINGify(to_user_nid)
-    to_user_nid = User.find_by_any_means_necessary(to_user_nid).user_nid
+    return false if user_nid.blank? || to_user_nid.blank?
+    to_user_nid = User.find_by_any_means_necessary(to_user_nid).try(:user_nid)
+    return false if to_user_nid.blank?
     follower = fields.find_by_to_user_nid_and_user_nid(user_nid,to_user_nid)
     return false if follower.blank? || to_user_nid.blank?
     follower.approved = false
@@ -128,8 +130,6 @@ class Follower < ActiveRecord::Base
   end
 
   def self.new_or_old(user_nid,to_user_nid)
-    user_nid = Util.STRINGify(user_nid)
-    to_user_nid = Util.STRINGify(to_user_nid)
     Follower.fields.valid.find_by_user_nid_and_to_user_nid(user_nid,to_user_nid) || Follower.new
   end
 
