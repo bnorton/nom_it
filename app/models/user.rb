@@ -120,8 +120,10 @@ class User < ActiveRecord::Base
     user.city = city
     user.auth_token = User.new_auth_token
     user.user_nid ||= Util.ID
-    user.save
-    User.private_fields.find_by_email(email)
+    if user.save
+      UserMailer.welcome_email(user).try(:deliver)
+      User.private_fields.find_by_email(email)
+    end
   end
   
   def self.register_with_facebook(fbHash,user_nid,email,access_token='',username='')
@@ -155,8 +157,10 @@ class User < ActiveRecord::Base
     user.has_joined = true
     user.auth_token ||= User.new_auth_token
     user.user_nid ||= Util.ID
-    user.save
-    User.private_fields.find_by_user_nid(user.user_nid)
+    if user.save
+      UserMailer.welcome_email(user).try(:deliver)
+      User.private_fields.find_by_user_nid(user.user_nid)
+    end
   end
   
   def self.register_with_twitter(twHash,username='',email='')
@@ -175,7 +179,10 @@ class User < ActiveRecord::Base
     user.token_expires = Time.now + 14.days
     user.has_joined = true
     user.user_nid ||= Util.ID
-    user.save
+    if user.save
+      UserMailer.welcome_email(user).try(:deliver)
+      User.private_fields.find_by_user_nid(user.user_nid)
+    end
   end
     
   def self.new_or_hasnt_joined(identifier)

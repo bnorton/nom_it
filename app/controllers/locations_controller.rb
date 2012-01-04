@@ -52,7 +52,10 @@ class LocationsController < ApplicationController
       @location_nids << @location_nid if @location_nid.present?
     end
     if @location_nids.blank? || !(@location_nids =~ NID_LIST)
-      respond_with Status.location_not_properly_formatted({ :plural=>true })
+      respond_with Status.not_properly_formatted({ 
+        :item => 'location', 
+        :example => 'location_nid=id1,id2,id3',
+        :plural=>true })
     end
   end
 

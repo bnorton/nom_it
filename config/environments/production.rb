@@ -60,7 +60,6 @@ NomIt::Application.configure do
   config.action_mailer.delivery_method       = :smtp
   config.action_mailer.charset               = 'utf-8'
   config.action_mailer.perform_deliveries    = true
-  config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.smtp_settings = {
     :enable_starttls_auto => true,
@@ -69,10 +68,9 @@ NomIt::Application.configure do
     :port                 => '587',
     :authentication       => :plain,
     :domain               => 'justnom.it',
-    :user_name            => 'signup@justnom.it',
-    :password             => 'ko995mHjVfdE'
+    :user_name            => 'nom@justnom.it',
+    :password             => 'KkpGT7svb8Bv'
   }
-
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"

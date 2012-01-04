@@ -103,6 +103,10 @@ class Util
       rand(RAND_SEED).to_s(36)
     end
     
+    def secure_token
+      Digest::SHA2.hexdigest(rand(RAND_SEED).to_s)
+    end
+    
     def placefinder
       @placefinder ||= Placefinder::Base.new(:api_key => YAHOO_API_KEY)
     end

@@ -48,8 +48,8 @@ NomIt::Application.configure do
     :port                 => '587',
     :authentication       => :plain,
     :domain               => 'justnom.it',
-    :user_name            => 'signup@justnom.it',
-    :password             => 'ko995mHjVfdE'
+    :user_name            => 'nom@justnom.it',
+    :password             => 'KkpGT7svb8Bv'
   }
 
 end

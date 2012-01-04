@@ -29,7 +29,7 @@ module Status
     end
     
     def user_login_failed
-      message(-1,"Looks like you're registerd but login failed")
+      message(-1,"You've registerd but login failed")
     end
     
     def image_saved(image_nid)
@@ -104,13 +104,18 @@ module Status
       }
     end
 
-    def location_not_properly_formatted(options={})
-      example = 'id=lid'
+    def not_properly_formatted(options={})
+      str = "The specified #{options[:item] || 'item'}"
       if options[:plural]
-        s      = 's'
-        example='ids=lid1,lid2,lid3'
+        str << 's were '
+      else
+        str << ' was '
       end
-      message(-1, "The specified location#{s} were not properly formatted eg. #{example}")
+      str << 'not properly formatted'
+      if options[:example]
+        str << " eg. #{options[:example]}"
+      end
+      message(-1, str)
     end
 
     private

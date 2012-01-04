@@ -39,7 +39,6 @@ class UsersController < ApplicationController
         end
         reg
       end
-    UserMailer.welcome_email(reg).deliver if registration.present?
     response = ok_or_not(registration.present?,{:results=>registration})
     respond_with response, :location => nil
   end
