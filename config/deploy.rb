@@ -69,11 +69,13 @@ default_run_options[:shell] = 'bash'
 namespace :deploy do
   desc "Deploy your application"
   task :default do
-    update
-    assets
-    clear_cache
-    restart
-    heartbeat
+    transaction do
+      update
+      assets
+      clear_cache
+      restart
+      heartbeat
+    end
   end
 
   desc "Setup your git-based deployment app"
