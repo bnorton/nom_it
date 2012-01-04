@@ -93,6 +93,7 @@ class Follower < ActiveRecord::Base
       me.save
       Follower.following_changed_for(user_nid)
       Follower.followers_changed_for(other.user_nid)
+    end
     other
   end
   
