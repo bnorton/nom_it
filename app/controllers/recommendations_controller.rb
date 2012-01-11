@@ -128,6 +128,7 @@ class RecommendationsController < ApplicationController
     @all_params = {
       :user_nid => @user_nid,
       :location_nid => @location_nid,
+      :image_nid => params[:image_nid]
       :text => @text,
       :token => params[:token],
       ## optional

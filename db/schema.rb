@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111218081437) do
+ActiveRecord::Schema.define(:version => 20120104042032) do
 
   create_table "followers", :force => true do |t|
     t.datetime "created_at"
@@ -172,6 +172,8 @@ ActiveRecord::Schema.define(:version => 20111218081437) do
     t.binary   "schemaless"
     t.string   "image_nid"
     t.string   "fb_access_token"
+    t.float    "lat"
+    t.float    "lng"
   end
 
   add_index "users", ["email"], :name => "users_email", :unique => true
