@@ -1,6 +1,6 @@
 class DetailsController < ApplicationController
   
-  respond_to :json, :html
+  respond_to :json, :js, :html
 
   before_filter :lat_lng_user, :except => [:detail]
   before_filter :tokens, :only => [:detail]
