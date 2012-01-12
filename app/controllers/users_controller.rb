@@ -29,11 +29,17 @@ class UsersController < ApplicationController
   def register
     registration = case @registration_type
       when 'facebook'
-        User.register_with_facebook(@FBHash,@user_nid,@email,@fb_access_token)
+        User.register_with_facebook(@FBHash,@user_nid,@email,@fb_access_token, {
+          :lat => @lat,
+          :lng => @lng
+        })
       when 'twitter'
         User.register_with_twitter(@TWHash)
       when 'nom'
-        if (reg = User.register(@email, @password, @screen_name, @name, @city)) == 'login_failed'
+        if (reg = User.register(@email, @password, @screen_name, @name, @city, {
+          :lat => @lat,
+          :lng => @lng
+        })) == 'login_failed'
           respond_with(Status.user_login_failed, :location => nil)
           return
         end

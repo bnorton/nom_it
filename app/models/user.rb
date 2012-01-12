@@ -103,7 +103,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.register(email, pass, username, name='', city='')
+  def self.register(email, pass, username, name='', city='', options={})
     return false if pass.blank?
     username = nil unless username.present?
     if log = User.login(email,pass,username)
@@ -120,6 +120,8 @@ class User < ActiveRecord::Base
     user.screen_name = username
     user.name = name
     user.city = city
+    user.lat = options[:lat]
+    user.lng = options[:lng]
     user.auth_token = User.new_auth_token
     user.user_nid ||= Util.ID
     if user.save
@@ -128,7 +130,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def self.register_with_facebook(fbHash,user_nid,email,access_token='',username='')
+  def self.register_with_facebook(fbHash,user_nid,email,access_token='',options={})
     fbHash_str = fbHash
     if fbHash.kind_of? String
       fbHash = begin
@@ -155,6 +157,8 @@ class User < ActiveRecord::Base
     user.last_seen = Time.now
     location = fbHash['locaton']
     user.city, user.state = Util.parse_location(location)
+    user.lat = options[:lat]
+    user.lng = options[:lng]
     user.token_expires = Time.now + 14.days
     user.has_joined = true
     user.auth_token ||= User.new_auth_token
