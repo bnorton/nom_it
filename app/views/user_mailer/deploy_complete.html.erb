@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <h3>Production deploy at <%= Time.now %> completed successfully.</h3>
+
+    <p><strong>Commit that triggered the build:</strong>
+    <br/>
+      <%= `git log -n1` %>
+    </p>
+
+    <p><strong>Files changed:</strong>
+      <br/>
+      <%= `git diff HEAD^ HEAD --stat` %>
+    </p>
+
+    <p><strong>Full diff to last commit:</strong>
+      <br/>
+      <%= `git diff HEAD^ HEAD` %>
+    </p>
+    
+    <p>Any questions about the deploy or the deployer contact, <%= mail_to 'bn@justnom.it', 'bn@justnom.it' %></p>
+    <br/>
+  </body>
+</html>
