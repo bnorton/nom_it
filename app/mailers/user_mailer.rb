@@ -13,7 +13,7 @@ class UserMailer < ActionMailer::Base
       puts "EMAIL to #{@user.inspect} failed"
     end
   end
-  
+
   def password_reset(user)
     begin
       @user = user
@@ -29,9 +29,12 @@ class UserMailer < ActionMailer::Base
       puts "EMAIL to #{@user.inspect} failed for password reset"
     end
   end
-  
-  def self.deploy_complete
-    mail(:to => 'team@justnom.it', :subject => 'Deploy Complete')
+
+  def deploy_complete
+    begin
+      mail(:to => 'team@justnom.it', :subject => 'Deploy Complete').deliver
+    rescue Exception
+    end
   end
   
 end
