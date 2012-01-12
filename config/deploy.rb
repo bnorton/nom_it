@@ -76,6 +76,7 @@ namespace :deploy do
       restart
       heartbeat
     end
+    email_complete
   end
 
   desc "Setup your git-based deployment app"
@@ -99,6 +100,11 @@ namespace :deploy do
       update_code
       setup_config
     end
+  end
+
+  desc "Email the team"
+  task :email_complete, :except => { :no_release => true } do
+    run "cd #{latest_release}; #{rvm_use}; rails runner UserMailer.deploy_complete"
   end
 
   desc "setup the config files for mongodb, memcached"
