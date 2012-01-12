@@ -29,7 +29,7 @@ set :keep_releases, 4
 set :deploy_to,       "/apps/#{application}"
 set :normalize_asset_timestamps, false
 set :clear_cache_cmd, "rails runner Rails.cache.clear"
-set :email_complete,  "rails runner UserMailer.deploy_complete"
+set :completed_email, "rails runner UserMailer.deploy_complete"
 
 set :unicorn_pid,     "#{shared_path}/pids/unicorn.pid" # "/apps/#{application}/current/tmp/pids/unicorn.pid"
 
