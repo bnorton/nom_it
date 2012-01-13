@@ -37,18 +37,46 @@
     margin-top: 30px;
     border: 1px solid;
     border-color: gray;
+    overflow: hidden;
 }
 
 .image_frame {
     width: 600px;
     height: 320px;
     padding: 15px 15px 5px 15px;
+    float: left;
+    overflow: hidden;
+}
+
+.user_frame {
+    width: 270px;
+    height: 320px;
+    float: left;
+}
+
+.user {
+    width: 240px;
+    margin: 15px 15px 10px 15px;
+    background: -moz-linear-gradient(top, rgba(0,0,0,0.14) 0%, rgba(0,0,0,0) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.14)), color-stop(100%,rgba(0,0,0,0))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(0,0,0,0.14) 0%,rgba(0,0,0,0) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(0,0,0,0.14) 0%,rgba(0,0,0,0) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, rgba(0,0,0,0.14) 0%,rgba(0,0,0,0) 100%); /* IE10+ */
+    background: linear-gradient(top, rgba(0,0,0,0.14) 0%,rgba(0,0,0,0) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#24000000', endColorstr='#00000000',GradientType=0 ); /* IE6-9 */
+
+}
+
+.user_image_frame {
+    width: 100px;
+    height: 100px;
+    padding: 10px;
 }
 
 .nommed_text {
     width: 600px;
     min-height: 30px;
     padding-left: 15px;
-    padding-top: 0px;
+    margin-top: 10px;
 }
 

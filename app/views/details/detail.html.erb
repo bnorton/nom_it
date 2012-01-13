@@ -11,8 +11,30 @@
         <% image = rec[:image] rescue {} %>
 
         <p style="margin-top:110px; max-width:650px"><h4><%= rec[:title] || "Recommendation for #{loc[:name]}" %></h4></p>
+        <h6><%= time_ago_in_words rec['created_at'] %>&nbsp;ago</h6>
         <div class="recommendation_container">
-          <img src="<%= image[:url] %>" class="image_frame"></img>
+          <div class="image_frame">
+            <img src="<%= image[:url] %>"></img>
+          </div>
+          <div class="user_frame">
+            <div class ="user">
+              <div class="user_image_frame">
+                <img src="<%= user[:image_url] %>" style="border: 1px solid;"></img>
+                <div class="user_info">
+                  <h4><%= user[:name].presence || user[:screen_name].presence || "No user name"%></h4>
+                  <% unless user[:city].blank? %>
+                    <p style="padding-top:8px"><%= "#{I18n.t('detail.from')}#{user[:city]}"%></p>
+                  <% end %>
+                  <% unless user[:follower_count].blank? %>
+                    <p style="padding-top:8px"><%= "#{user[:follower_count]} #{I18n.t('detail.followers')}"%></p>
+                  <% end %>
+                </div>
+                <div class="user_details"></div>
+                <div class="recommendation_details"></div>
+              </div>
+            </div>
+          </div>
+          
           <div class="nommed_text">
             <h5><%= rec['text'] %></h5>
           </div>
