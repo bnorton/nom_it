@@ -2,14 +2,14 @@
 
 <div id="insideContainer" class="container">
   <div class="row">
-    <div class="eight columns">
 
-      <% if @detail.present? %>
-        <% rec = @detail[:recommendation] %>
-        <% loc = @detail[:location] %>
-        <% user = rec[:user] rescue {} %>
-        <% image = rec[:image] rescue {} %>
+    <% rec = @detail[:recommendation] rescue {} %>
+    <% loc = @detail[:location] rescue {} %>
+    <% user = rec[:user] rescue {} %>
+    <% image = rec[:image] rescue {} %>
 
+    <% unless (@detail.blank? || rec.blank? || loc.blank?) %>
+      <div class="eight columns">
         <p style="margin-top:110px; max-width:650px"><h4><%= rec[:title] || "Recommendation for #{loc[:name]}" %></h4></p>
         <h6><%= time_ago_in_words rec['created_at'] %>&nbsp;ago</h6>
         <div class="recommendation_container">
@@ -25,6 +25,7 @@
                   <% unless user[:city].blank? %>
                     <p style="padding-top:8px"><%= "#{I18n.t('detail.from')}#{user[:city]}"%></p>
                   <% end %>
+
                   <% unless user[:follower_count].blank? %>
                     <p style="padding-top:8px"><%= "#{user[:follower_count]} #{I18n.t('detail.followers')}"%></p>
                   <% end %>
@@ -39,13 +40,19 @@
             <h5><%= rec['text'] %></h5>
           </div>
         </div>
+      </div>
+    <% else %>
 
-      <% else %>
+      <p style="margin-top:150px; max-width:650px">
+        <h4>hmph 404 - Recommendation for <%= @token %> not found...</h4>
+        <br>
+        <h5><%=I18n.t('detail.while_youre_here') %></h5>
+      </p>
+      <div class="four columns right" style="float:right;">
+        <%= image_tag "samovar.png" %>
+      </div>
 
-        <p style="margin-top:150px; max-width:650px"><h4>404 - Recommendation for <%= @token %> not found...</h4>
+    <% end %>
 
-      <% end %>
-
-    </div>
   </div>
 </div>
