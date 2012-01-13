@@ -147,7 +147,7 @@ class User < ActiveRecord::Base
     user ||= u
     return user unless flag
     user.facebook_hash = fbHash_str
-    user.screen_name ||= username || fbHash['user_name']
+    user.screen_name ||= fbHash['user_name']
     user.facebook = fb_id
     user.name ||= fbHash['name']
     user.fb_access_token = access_token
