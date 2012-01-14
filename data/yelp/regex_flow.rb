@@ -1,3 +1,17 @@
+
+all = ['berkeley', 'boston', 'chicago' 'dc', 'denver', 'losangeles', 'seattle', 'vegas']
+current = 'berkeley'
+
+BASE = File.join(Rails.root, 'data', 'yelp', current)
+
+Dir.glob("#{BASE}*.txt").each do |file_name|
+  File.open(file_name) { |ff|
+    ff.each { |f|
+      
+    }
+  }
+end
+
 # remove all Photo + description lines and replace with ==========
 /\bPhoto.+\.\n.+[\.!?…]/ => ==========
 
