@@ -9,3 +9,4 @@ config/database.yml
 config/mongodb.yml
 config/memcached.yml
 .DS_Store
+/**/.DS_Store
