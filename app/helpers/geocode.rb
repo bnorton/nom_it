@@ -1,7 +1,7 @@
 require 'ostruct'
 REGIONS = ['austin','berkeley','boston','chicago','dc','denver','losangeles',
            'newyork','paloalto','portland','sacramento','sandiego','sanjose',
-           'sanfrancisco','seattle','vegas', 'cupertino']
+           'sanfrancisco','seattle','vegas', 'cupertino', 'orangecounty']
 BASE_DIR = './data/yelp'
 DELIM = /<\^&/
 
@@ -9,7 +9,7 @@ class Geocode
   class << self
     
     def current_regions
-      Geocode.scan_regions(['cupertino'])
+      Geocode.scan_regions(['berkeley', 'boston', 'chicago', 'dc', 'orangecounty'])
     end
     
     # write each region to its own file

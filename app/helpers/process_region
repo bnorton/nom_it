@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd /apps/nom/current; rvm use ree@nom; rails runner Geocode.current_regions
+cd /apps/nom/current; rvm use ree@nom; rails runner Foursquare.fetch
+cd /apps/nom/current; rvm use ree@nom; rails runner NomRank.rank_v2
