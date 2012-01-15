@@ -12,6 +12,13 @@ class Geocode
       Geocode.scan_regions(['berkeley', 'boston', 'chicago', 'dc', 'orangecounty'])
     end
     
+    def excep_tion(s, e)
+      puts s
+      puts file.inspect
+      puts item.inspect
+      puts e.message
+    end
+    
     # write each region to its own file
     def scan_regions(regions=[])
       regions_to_scan = regions || REGIONS
@@ -66,20 +73,11 @@ class Geocode
         end
         item.gsub(/\n/,'<^&')
       rescue Exception => e
-        puts "Exception"
-        puts file.inspect
-        puts item.inspect
-        puts e.message
+        excep_tion "Exception", e
       rescue Errno::EISDIR => e
-        puts "Errno::EISDIR"
-        puts file.inspect
-        puts item.inspect
-        puts e.message
+        excep_tion "Errno::EISDIR", e
       rescue => e
-        puts "e"
-        puts file.inspect
-        puts item.inspect
-        puts e.message
+        excep_tion "e", e
       end
     end
     
