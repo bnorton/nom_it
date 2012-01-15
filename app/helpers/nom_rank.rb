@@ -91,11 +91,13 @@ class NomRank
 
     def prepare_for_extract(meta)
       @value = 0
-      @yelp_count = meta['yelp_count'].to_f
-      @yelp_rating = meta['yelp_rating'].to_f
-      @fsq_users = meta['fsq_users'].to_f
-      @fsq_checkins = meta['fsq_checkins'].to_f
-      @fsq_tips = meta['fsq_tips'].to_f
+      unless meta.blank?
+        @yelp_count = meta['yelp_count'].to_f
+        @yelp_rating = meta['yelp_rating'].to_f
+        @fsq_users = meta['fsq_users'].to_f
+        @fsq_checkins = meta['fsq_checkins'].to_f
+        @fsq_tips = meta['fsq_tips'].to_f
+      end
     end
     
     def extract_features_v1(meta)
@@ -154,7 +156,7 @@ class NomRank
       ## capture the value of transient users
       fsq_total = 0
 
-      if @fsq_checkins > 0
+      if @fsq_checkins && @fsq_users && @fsq_checkins > 0
         if @fsq_users / @fsq_checkins > 0.42
           fsq_total += @fsq_checkins * 0.15
         end
@@ -173,17 +175,17 @@ class NomRank
       end
       ###
 
-      if @fsq_tips > 16
+      if @fsq_tips && @fsq_tips > 16
         fsq_total += 2 * @fsq_tips
       end
-      if @fsq_tips > 32
+      if @fsq_tips && @fsq_tips > 32
         fsq_total += 4 * @fsq_tips
       end
-      if @fsq_tips > 64
+      if @fsq_tips && @fsq_tips > 64
         fsq_total += 8 * @fsq_tips
       end
       # too high signals boredom
-      if @fsq_tips > 128
+      if @fsq_tips &&  @fsq_tips > 128
         fsq_total += 2 * @fsq_tips
       end
 
