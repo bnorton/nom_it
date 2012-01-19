@@ -42,11 +42,11 @@ class Thumb < MongoRuby
   # an individual item such as a user or location
   def self.detail_for_nid(nid,lim=10,what=:user_nid)
     result = if(what == :user_nid)
-      Thumb.for_nid(nid,lim).map{|thumb|
+      Thumb.for_nid(nid,lim).map{ |thumb|
         Thumb.build_common(thumb)
         Thumb.build_user(thumb)
         Thumb.build_location(thumb)
-      end
+      }
     end
     {
       :thumbs => result,
