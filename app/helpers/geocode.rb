@@ -30,8 +30,10 @@ class Geocode
           File.open(out, 'w+') { |f| 
             f.write(these_locations.to_json)
           }
-        rescue Exception
+        rescue Exception => e
+          puts "scan_regions ex #{e.message}"
         rescue => e
+          puts "scan_regions #{e.message}"
         end
       end
     end
@@ -85,7 +87,7 @@ class Geocode
       begin
         if (yahoo_raw = Util.geocode_address(addr))
           result = yahoo_raw['ResultSet']['Result']
-          if result.is_a? Array
+          if result.kind_of?(Array) && result.length > 0
             result = result[0]
           end
           return OpenStruct.new(result) unless result.blank?
@@ -113,6 +115,7 @@ class Geocode
     def yahoo_cross_street(yahoo)
       cross = yahoo.cross
       cross.gsub('the intersection of ','') if cross
+      cross
     end
     
     def store_location(yahoo,opt={})

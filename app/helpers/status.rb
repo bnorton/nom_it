@@ -29,7 +29,7 @@ module Status
     end
     
     def user_login_failed
-      message(-1,"You've registerd but login failed")
+      message(-1,"You've registered but login failed")
     end
     
     def image_saved(image_nid)

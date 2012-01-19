@@ -170,6 +170,10 @@ class Location < ActiveRecord::Base
     end
   end
   
+  def remove_from_searches
+    Geolocation.find_by_location_nid(self.location_nid).try(:destroy)
+  end
+  
 end
 
   # create_table "locations", :force => true do |t|

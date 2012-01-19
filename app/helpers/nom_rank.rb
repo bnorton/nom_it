@@ -19,7 +19,7 @@ class NomRank
       puts "setup"; setup
       puts "pre_process"; pre_process
       puts "order"; order
-      puts "process"; send(:"process_by_#{@process_by}")
+      puts "process_by_#{@process_by}"; send(:"process_by_#{@process_by}")
       puts "post_process"; post_process
       true
     end
@@ -51,10 +51,13 @@ class NomRank
         loc.rank = rank
         loc.rank_value = value
         loc.save
-        if loc = Geolocation.find_by_location_nid(nid)
+        if (loc = Geolocation.find_by_location_nid(nid)).present?
           loc.rank = rank
           loc.rank_value = value
           loc.save
+        end
+        if (value % 300) == 0
+          puts rank
         end
         value += 1
       end
