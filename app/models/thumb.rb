@@ -43,12 +43,9 @@ class Thumb < MongoRuby
   def self.detail_for_nid(nid,lim=10,what=:user_nid)
     result = if(what == :user_nid)
       Thumb.for_nid(nid,lim).map{|thumb|
+        Thumb.build_common(thumb)
         Thumb.build_user(thumb)
-      }
-    else
-      Thumb.for_nid(nid,lim).map{|thumb|
         Thumb.build_location(thumb)
-      }
     end
     {
       :thumbs => result,
@@ -76,14 +73,12 @@ class Thumb < MongoRuby
   end
 
   def self.build_user(thumb)
-    thumb = Thumb.build_common(thumb)
     user_nid = thumb.delete 'unid'
     thumb[:user] = User.for_nid(user_nid)
     thumb
   end
 
   def self.build_location(thumb)
-    thumb = Thumb.build_common(thumb)
     location_nid = thumb.delete 'nid'
     thumb[:location] = Location.compact_detail_for_nid(location_nid)
     thumb
