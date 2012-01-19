@@ -35,7 +35,7 @@ class Thumb < MongoRuby
   def self.for_unids(unid,lim=30)
     unid = [unid] unless unid.kind_of? Array
     Thumb.find_by({ :unid => {'$in' => unid }}, lim).map{|thumb|
-      Thumb.build_location(thumb)
+      Thumb.build_common(thumb)
     }
   end
 
@@ -44,8 +44,6 @@ class Thumb < MongoRuby
     result = if(what == :user_nid)
       Thumb.for_nid(nid,lim).map{ |thumb|
         Thumb.build_common(thumb)
-        Thumb.build_user(thumb)
-        Thumb.build_location(thumb)
       }
     end
     {
@@ -70,19 +68,10 @@ class Thumb < MongoRuby
   def self.build_common(thumb)
     thumb = Util.created_atify(thumb)
     thumb = Util.de_nid(thumb.as_json, '_id')
-    thumb
-  end
-
-  def self.build_user(thumb)
     user_nid = thumb.delete 'unid'
     thumb[:user] = User.for_nid(user_nid)
-    thumb
-  end
-
-  def self.build_location(thumb)
     location_nid = thumb.delete 'nid'
     thumb[:location] = Location.compact_detail_for_nid(location_nid)
     thumb
   end
-
 end
