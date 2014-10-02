@@ -1,7 +1,0 @@
-test:
-  dbdatabase: nom_test
-  dbcollection_prefix: test
-  
-development:
-  dbdatabase: nom_development
-  dbcollection_prefix: development
