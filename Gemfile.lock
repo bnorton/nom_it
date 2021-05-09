@@ -35,7 +35,7 @@ GEM
       builder
       mime-types
       xml-simple
-    bson (1.4.0)
+    bson (4.12.0)
     bson_ext (1.4.0)
     builder (3.0.0)
     capistrano (2.9.0)
@@ -84,8 +84,8 @@ GEM
     memcache (1.2.13)
     memcache-client (1.8.5)
     mime-types (1.17.2)
-    mongo (1.4.0)
-      bson (= 1.4.0)
+    mongo (2.14.0)
+      bson (>= 4.8.2, < 5.0.0)
     multi_json (1.0.4)
     multi_xml (0.4.1)
     mysql2 (0.3.11)
@@ -185,7 +185,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-s3
-  bson (<= 1.4.0)
+  bson (<= 4.13.0)
   bson_ext (= 1.4.0)
   capistrano
   capistrano-unicorn
