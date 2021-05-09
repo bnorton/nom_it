@@ -18,7 +18,7 @@ gem 'dalli'
 
 gem 'twilio-ruby'
 
-gem 'bson',     '<= 1.4.0'
+gem 'bson',     '<= 4.13.0'
 gem 'bson_ext', '1.4.0'
 
 gem 'json'
